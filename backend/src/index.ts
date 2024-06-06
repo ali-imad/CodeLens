@@ -21,7 +21,22 @@ app.get("/", (res: Response) => {
 });
 
 // Code Samples Routes
-const codeSamples: CodeSample[] = [];
+const mockData: CodeSample[] = [
+  {
+    id: 1,
+    code: "const foo = () => console.log('Hello World!')",
+    description: "Prints 'Hello World!' to the console",
+  },
+  {
+    id: 2,
+    code: "const foo = (a, b) => a * b",
+    description: "Multiplies two numbers and returns the result",
+  },
+];
+
+const codeSamples: CodeSample[] = [
+  ...mockData
+];
 let codeSampleIdCounter: number = 1;
 
 app.get("/code-samples", (res: Response) => {
