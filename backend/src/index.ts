@@ -3,9 +3,9 @@ import bodyParser from "body-parser";
 
 // Define types for Code Sample and Test entities
 interface CodeSample {
-  id: number;
-  code: string;
-  description: string;
+  id: number;             // 1-indexed id
+  code: string;           // code snippet
+  description: string;    // description of the code snippet
 }
 
 // Initialize Express app
@@ -34,33 +34,46 @@ const mockData: CodeSample[] = [
   },
 ];
 
+// Initialize the code samples array with mock data
 const codeSamples: CodeSample[] = [
   ...mockData
 ];
-let codeSampleIdCounter: number = 1;
 
+// Counter to keep track of the code sample IDs
+let codeSampleIdCounter: number = (codeSamples).length + 1;
+
+// Get all code samples
 app.get("/code-samples", (_: Request, res: Response) => {
   return res.json(codeSamples)
 });
 
+// Get a code sample by ID
+app.get("/code-samples/:id", (req: Request<{ id: string }>, res: Response) => {
+  const id: number = parseInt(req.params.id);
+  return res.json(codeSamples[id - 1])
+});
+
+// Create a new code sample
 app.post("/code-samples", (req: Request, res: Response) => {
-  const newCodeSample: CodeSample = req.body;
-  newCodeSample.id = codeSampleIdCounter++;
-  codeSamples.push(newCodeSample);
+  const newCodeSample: CodeSample = req.body; // get the new code sample from the request body
+  newCodeSample.id = codeSampleIdCounter++;   // increment the id counter and assign it to the new code sample
+  codeSamples.push(newCodeSample);            // add the new code sample to the codeSamples array
   res.status(201).json(newCodeSample);
 });
 
+// Update a code sample by ID
 app.put("/code-samples/:id", (req: Request<{ id: string }>, res: Response) => {
   const id: number = parseInt(req.params.id);
   const index: number = codeSamples.findIndex((sample) => sample.id === id);
   if (index === -1) {
     res.status(404).send("Code Sample not found");
   } else {
-    codeSamples[index] = { ...codeSamples[index], ...req.body };
+    codeSamples[index] = { ...codeSamples[index], ...req.body };  // update the code sample with the new data
     res.json(codeSamples[index]);
   }
 });
 
+// Delete a code sample by ID
 app.delete(
   "/code-samples/:id",
   (req: Request<{ id: string }>, res: Response) => {
