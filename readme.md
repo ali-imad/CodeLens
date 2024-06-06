@@ -29,7 +29,7 @@ CodeLens is a web application designed to enhance novice programmers' learning a
 git clone https://github.students.cs.ubc.ca/CPSC310-2024S/Project-Groups-07-Lab-B.git
 ```
 
-## Backend Setup
+## Setup
 
 ### Installation
 
@@ -51,16 +51,9 @@ Create a .env file in the backend directory and configure environment variables 
 
 # Backend .env.example
 
-# Database connection string
-
 DB_CONNECTION_STRING=mongodb://localhost:27017/codelens
-
-# Port for the backend server
-
 PORT=3000
 
 # Frontend .env.example
-
-# Backend API URL
 
 REACT_APP_BACKEND_URL=http://localhost:3000
