@@ -39,8 +39,8 @@ const codeSamples: CodeSample[] = [
 ];
 let codeSampleIdCounter: number = 1;
 
-app.get("/code-samples", (res: Response) => {
-  res.json(codeSamples);
+app.get("/code-samples", (_: Request, res: Response) => {
+  return res.json(codeSamples)
 });
 
 app.post("/code-samples", (req: Request, res: Response) => {
