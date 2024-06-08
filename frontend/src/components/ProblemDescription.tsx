@@ -1,5 +1,5 @@
 import React from "react";
-import { Problem } from "../types";
+import { Difficulty, Problem } from "../types";
 
 interface ProblemDescriptionProps {
   problem: Problem;
@@ -8,14 +8,14 @@ interface ProblemDescriptionProps {
 const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ problem }) => {
   const codeSnippet = problem.functionBody;
   let difficultyColor: string;
-  switch (problem.difficulty.toLowerCase()) {
-    case "easy":
+  switch (problem.difficulty) {
+    case Difficulty.Easy:
       difficultyColor = "bg-green-400";
       break;
-    case "medium":
+    case Difficulty.Medium:
       difficultyColor = "bg-yellow-400";
       break;
-    case "hard":
+    case Difficulty.Hard:
       difficultyColor = "bg-red-400";
       break;
     default:
@@ -24,8 +24,10 @@ const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ problem }) => {
 
   return (
     <div className="bg-white p-4 rounded shadow">
-      <div className={`text-xl font-bold mb-2`}>{problem.title}</div>
-      <div className={`w-16 h-6 mr-2 mb-4 ${difficultyColor}`}>
+      <div className="text-xl font-bold mb-2">{problem.title}</div>
+      <div
+        className={`w-16 h-6 mr-2 mb-4 flex items-center justify-center rounded border border-black ${difficultyColor}`}
+      >
         {problem.difficulty}
       </div>
       <pre className="bg-gray-100 p-4 rounded">
