@@ -20,11 +20,11 @@ router.get("/random", async (_req: Request, res: Response) => {
       { $sample: { size: 1 } },
     ]);
     if (randomProblem.length === 0) {
-      return res.status(404).json({ message: "No problems found" });
+      res.status(404).json({ message: "No problems found" });
     }
-    return res.json(randomProblem[0]);
+    res.json(randomProblem[0]);
   } catch (error: any) {
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -34,11 +34,11 @@ router.get("/:id", async (req: Request, res: Response) => {
     const problemId: string | undefined = req.params["id"];
     const problem: IProblem | null = await Problem.findById(problemId);
     if (!problem) {
-      return res.status(404).json({ message: "Problem not found" });
+      res.status(404).json({ message: "Problem not found" });
     }
-    return res.json(problem);
+    res.json(problem);
   } catch (error: any) {
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 

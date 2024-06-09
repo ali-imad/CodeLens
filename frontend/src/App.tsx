@@ -9,7 +9,7 @@ const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin: () => void = () => {
     if (isLoggedIn) {
       setIsLoggedIn(false);
       setUsername("");
@@ -30,8 +30,8 @@ const App: React.FC = () => {
         <div>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/problems/:id" element={<Dashboard />} />
             <Route path="/problems" element={<ProblemsPage />} />
+            <Route path="/problems/:id" element={<Dashboard />} />
           </Routes>
         </div>
       </div>

@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import mongoose, { Connection } from "mongoose";
-import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import problemRouter from "./routes/problemRoutes";
@@ -13,7 +12,8 @@ const app = express();
 const PORT: number = parseInt(process.env["PORT"] || "3000");
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded());
 
 // Connect to MongoDB
 const uri: string = process.env["MONGODB_URI"] || "";
@@ -35,9 +35,7 @@ connection.once("open", async () => {
           functionBody,
         });
         await newProblem.save();
-        console.log(`Inserted problem: ${title}`);
       }
-
       console.log("All problems inserted successfully.");
     } else {
       console.log(
