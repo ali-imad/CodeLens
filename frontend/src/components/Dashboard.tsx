@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
-import ProblemDescription from "./ProblemDescription";
+import ProblemDescription from "../pages/ProblemDescription";
 import DescriptionInput from "./DescriptionInput";
 import Feedback from "./Feedback";
 import { IProblem } from "../../../backend/src/models/Problem";
