@@ -1,10 +1,10 @@
-import express, { Request, Response } from "express";
+import express, { Router, Request, Response } from "express";
 import Problem, { IProblem } from "../models/Problem";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Retrieve all problems
-router.get("/", async (res: Response) => {
+router.get("/", async (_req: Request, res: Response) => {
   try {
     const problems: IProblem[] = await Problem.find();
     res.json(problems);

@@ -1,6 +1,5 @@
-// app.ts
 import express, { Response } from "express";
-import mongoose from "mongoose";
+import mongoose, { Connection } from "mongoose";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -17,7 +16,8 @@ app.use(bodyParser.json());
 // Connect to MongoDB
 const uri: string = process.env["MONGODB_URI"] || "";
 mongoose.connect(uri);
-const connection = mongoose.connection;
+
+const connection: Connection = mongoose.connection;
 connection.once("open", () => {
   console.log("Connected to MongoDB");
 });
