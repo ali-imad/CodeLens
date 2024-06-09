@@ -1,8 +1,9 @@
 import React from "react";
-import { Difficulty, Problem } from "../types";
+import { Difficulty } from "../types";
+import { IProblem } from "../../../backend/src/models/Problem";
 
 interface ProblemDescriptionProps {
-  problem: Problem;
+  problem: IProblem;
 }
 
 const ProblemDescription: React.FC<ProblemDescriptionProps> = ({ problem }) => {

@@ -13,6 +13,21 @@ router.get("/", async (_req: Request, res: Response) => {
   }
 });
 
+// Retrieve a random problem
+router.get("/random", async (_req: Request, res: Response) => {
+  try {
+    const randomProblem: IProblem[] = await Problem.aggregate([
+      { $sample: { size: 1 } },
+    ]);
+    if (randomProblem.length === 0) {
+      return res.status(404).json({ message: "No problems found" });
+    }
+    return res.json(randomProblem[0]);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 // Retrieve a specific problem by ID
 router.get("/:id", async (req: Request, res: Response) => {
   try {

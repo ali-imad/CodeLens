@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import mockProblems from "../mockProblems";
+import axios from "axios";
 
 interface HeaderProps {
   isLoggedIn: boolean;
@@ -11,9 +11,14 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogin }) => {
   const navigate = useNavigate();
 
-  const handleRandomProblem = () => {
-    const randomId = Math.floor(Math.random() * mockProblems.length) + 1;
-    navigate(`/problems/${randomId}`);
+  const handleRandomProblem = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/problems/random");
+      const randomProblem = response.data;
+      navigate(`/problems/${randomProblem._id}`);
+    } catch (error) {
+      console.error("Error fetching random problem:", error);
+    }
   };
 
   return (

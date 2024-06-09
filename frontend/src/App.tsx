@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import Dashboard from "./components/Dashboard";
-import ProblemsPage from "./components/ProblemsPage";
+import ProblemsPage from "./pages/ProblemsPage";
+import HomePage from "./pages/HomePage";
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -26,9 +27,9 @@ const App: React.FC = () => {
           username={username}
           onLogin={handleLogin}
         />
-        <div className="p-6">
+        <div>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/problems/:id" element={<Dashboard />} />
             <Route path="/problems" element={<ProblemsPage />} />
           </Routes>
