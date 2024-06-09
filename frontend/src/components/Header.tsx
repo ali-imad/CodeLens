@@ -5,10 +5,10 @@ import axios from "axios";
 interface HeaderProps {
   isLoggedIn: boolean;
   username: string;
-  onLogin: () => void;
+  onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogin }) => {
+const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
   const navigate = useNavigate();
 
   const handleRandomProblem = async () => {
@@ -47,14 +47,20 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogin }) => {
               alt="User Avatar"
               className="rounded-full w-8 h-8"
             />
+            <button
+              onClick={onLogout}
+              className="p-2 bg-red-500 rounded hover:bg-red-600"
+            >
+              Log Out
+            </button>
           </div>
         ) : (
-          <button
-            onClick={onLogin}
+          <Link
+            to="/login"
             className="p-2 bg-yellow-500 rounded hover:bg-yellow-600"
           >
             Log In
-          </button>
+          </Link>
         )}
       </nav>
     </header>

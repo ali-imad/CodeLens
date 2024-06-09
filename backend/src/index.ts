@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import problemRouter from "./routes/problemRoutes";
 import Problem, { IProblem } from "./models/Problem";
 import mockProblems from "./sampleProblems";
+import loginRouter from "./routes/login";
+import registerRouter from "./routes/register";
 
 dotenv.config();
 
@@ -13,7 +15,7 @@ const PORT: number = parseInt(process.env["PORT"] || "3000");
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
 const uri: string = process.env["MONGODB_URI"] || "";
@@ -52,6 +54,8 @@ app.get("/", (_req: Request, res: Response) => {
   res.send("Welcome to CodeLens API");
 });
 
+app.use("/register", registerRouter);
+app.use("/login", loginRouter);
 app.use("/problems", problemRouter);
 
 // Start the server
