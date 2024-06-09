@@ -26,8 +26,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         "http://localhost:3000/login",
         formData
       );
-      console.log("Login successful:", response.data);
-      onLoginSuccess(response.data.username);
+      if (response.status === 200) {
+        onLoginSuccess(response.data.username);
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {

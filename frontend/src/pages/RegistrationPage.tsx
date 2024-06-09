@@ -35,7 +35,6 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
         "http://localhost:3000/register",
         formData
       );
-      console.log(response.data);
       if (response.status === 201) {
         onLoginSuccess(formData.username);
       }

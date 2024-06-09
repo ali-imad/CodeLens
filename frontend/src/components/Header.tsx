@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
         </Link>
         {isLoggedIn ? (
           <div className="flex items-center space-x-2">
-            <span>{username}</span>
+            <span>Hi, {username}</span>
             <img
               src="https://via.placeholder.com/32"
               alt="User Avatar"
