@@ -1,6 +1,8 @@
 import { Schema, Document, model } from "mongoose";
 import bcrypt from "bcrypt";
 
+const SALT_DIGIT = 10;
+
 export interface IUser extends Document {
   username: string;
   email: string;
@@ -18,7 +20,7 @@ UserSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
-  const salt = await bcrypt.genSalt(10);
+  const salt = await bcrypt.genSalt(SALT_DIGIT);
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });

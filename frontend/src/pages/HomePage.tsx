@@ -18,7 +18,7 @@ const HomePage: React.FC = () => {
         </p>
         <div className="space-x-4">
           <Link
-            to="/problems/6664eacff2ec6568d821c815"
+            to="/problems"
             className="px-6 py-3 bg-red-500 rounded hover:bg-red-600"
           >
             START LEARNING
