@@ -48,16 +48,6 @@ const App: React.FC = () => {
           ) : (
             <Routes>
               <Route
-                path="/login"
-                element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
-              />
-              <Route
-                path="/register"
-                element={
-                  <RegistrationPage onLoginSuccess={handleLoginSuccess} />
-                }
-              />
-              <Route
                 path="/"
                 element={
                   <div className="max-w-lg mx-auto p-24 mt-24">
@@ -80,6 +70,16 @@ const App: React.FC = () => {
                       </Link>
                     </div>
                   </div>
+                }
+              />
+              <Route
+                path="/login"
+                element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
+              />
+              <Route
+                path="/register"
+                element={
+                  <RegistrationPage onLoginSuccess={handleLoginSuccess} />
                 }
               />
             </Routes>
