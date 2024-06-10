@@ -21,10 +21,14 @@
   "dependencies": {
     "express": "^4.19.2",
     "@types/bcrypt": "^5.0.2",
-    "@types/mongoose": "^5.11.97",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "mongoose": "^8.4.1"
+  },
+  "overrides": {
+    "eslint": {
+      "file-entry-cache": "^8.0.0"
+    }
   }
 }
