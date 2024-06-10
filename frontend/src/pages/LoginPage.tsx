@@ -28,6 +28,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       );
       if (response.status === 200) {
         onLoginSuccess(response.data.username);
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("username", response.data.username);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

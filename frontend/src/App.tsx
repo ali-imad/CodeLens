@@ -9,13 +9,17 @@ import Header from "./components/Header";
 import Dashboard from "./components/Dashboard";
 import ProblemsPage from "./pages/ProblemsPage";
 import HomePage from "./pages/HomePage";
-import { Link } from "react-router-dom";
+import NotLoggedInPage from "./pages/NotLoggedInPage";
 import LoginPage from "./pages/LoginPage";
 import RegistrationPage from "./pages/RegistrationPage";
 
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>("");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    localStorage.getItem("token") ? true : false
+  );
+  const [username, setUsername] = useState<string>(
+    localStorage.getItem("username") || ""
+  );
 
   const handleLoginSuccess = (username: string) => {
     setIsLoggedIn(true);
@@ -25,6 +29,8 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUsername("");
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
   };
 
   return (
@@ -47,31 +53,9 @@ const App: React.FC = () => {
             </Routes>
           ) : (
             <Routes>
-              <Route
-                path="/"
-                element={
-                  <div className="max-w-lg mx-auto p-24 mt-24">
-                    <h4 className="text-xl font-semibold mb-6">
-                      Welcome to CodeLens! You are not permitted to view our
-                      problems until you have logged in.
-                    </h4>
-                    <div className="flex flex-col space-y-4">
-                      <Link
-                        to="/login"
-                        className="w-full p-3 bg-blue-500 text-center text-white rounded hover:bg-blue-700"
-                      >
-                        Log in
-                      </Link>
-                      <Link
-                        to="/register"
-                        className="w-full p-3 bg-gray-200 text-center text-gray-800 rounded border border-gray-300 hover:bg-gray-300"
-                      >
-                        Sign up
-                      </Link>
-                    </div>
-                  </div>
-                }
-              />
+              <Route path="/" element={<NotLoggedInPage />} />
+              <Route path="/problems" element={<NotLoggedInPage />} />
+              <Route path="/problems/:id" element={<NotLoggedInPage />} />
               <Route
                 path="/login"
                 element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
