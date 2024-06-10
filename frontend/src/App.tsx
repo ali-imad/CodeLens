@@ -1,21 +1,36 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import Header from "./components/Header";
 import Dashboard from "./components/Dashboard";
-import ProblemsPage from "./components/ProblemsPage";
+import ProblemsPage from "./pages/ProblemsPage";
+import HomePage from "./pages/HomePage";
+import NotLoggedInPage from "./pages/NotLoggedInPage";
+import LoginPage from "./pages/LoginPage";
+import RegistrationPage from "./pages/RegistrationPage";
 
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    localStorage.getItem("token") ? true : false
+  );
+  const [username, setUsername] = useState<string>(
+    localStorage.getItem("username") || ""
+  );
 
-  const handleLogin = () => {
-    if (isLoggedIn) {
-      setIsLoggedIn(false);
-      setUsername("");
-    } else {
-      setIsLoggedIn(true);
-      setUsername("John Doe");
-    }
+  const handleLoginSuccess = (username: string) => {
+    setIsLoggedIn(true);
+    setUsername(username);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUsername("");
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
   };
 
   return (
@@ -24,14 +39,35 @@ const App: React.FC = () => {
         <Header
           isLoggedIn={isLoggedIn}
           username={username}
-          onLogin={handleLogin}
+          onLogout={handleLogout}
         />
-        <div className="p-6">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/problems/:id" element={<Dashboard />} />
-            <Route path="/problems" element={<ProblemsPage />} />
-          </Routes>
+        <div>
+          {isLoggedIn ? (
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/problems" element={<ProblemsPage />} />
+              <Route path="/problems/:id" element={<Dashboard />} />
+              {/* Redirect to homepage when logged in */}
+              <Route path="/login" element={<Navigate to="/" replace />} />
+              <Route path="/register" element={<Navigate to="/" replace />} />
+            </Routes>
+          ) : (
+            <Routes>
+              <Route path="/" element={<NotLoggedInPage />} />
+              <Route path="/problems" element={<NotLoggedInPage />} />
+              <Route path="/problems/:id" element={<NotLoggedInPage />} />
+              <Route
+                path="/login"
+                element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
+              />
+              <Route
+                path="/register"
+                element={
+                  <RegistrationPage onLoginSuccess={handleLoginSuccess} />
+                }
+              />
+            </Routes>
+          )}
         </div>
       </div>
     </Router>

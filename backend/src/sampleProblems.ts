@@ -1,6 +1,10 @@
-import { Difficulty, Problem } from "./types";
+export enum Difficulty {
+  Easy = "Easy",
+  Medium = "Medium",
+  Hard = "Hard",
+}
 
-const mockProblems: Problem[] = [
+const mockProblems = [
   {
     id: 1,
     title: "Two Sum",
