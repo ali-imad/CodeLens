@@ -8,6 +8,8 @@
 - Polina Sorokvashina
 - Tony Chen
 
+## Project Description
+
 CodeLens is a web application designed to enhance novice programmers' learning and understanding of code. The application presents users with code samples and requires them to provide plain English descriptions of the code's functionality. It leverages the LLM Ollama to generate new code based on the provided descriptions and compares it against the original code using pre-written test cases. Students receive feedback on their descriptions and can iteratively refine their explanations to improve their comprehension skills.
 
 ## Table of Contents
