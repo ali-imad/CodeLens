@@ -8,6 +8,7 @@ import mockProblems from "./sampleProblems";
 import loginRouter from "./routes/login";
 import registerRouter from "./routes/register";
 import attemptRouter from "./routes/attempt";
+import { User } from "./models/User";
 
 dotenv.config();
 
@@ -54,6 +55,20 @@ connection.once("open", async () => {
 // Routes
 app.get("/", (_req: Request, res: Response) => {
   res.send("Welcome to CodeLens API");
+});
+
+app.get("/email/:email", async (req: Request, res: Response) => {
+  const { email } = req.params;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.json(user);
+  } catch (err) {
+    return res.status(500).json({ message: "Failed to fetch user" });
+  }
 });
 
 app.use("/register", registerRouter);

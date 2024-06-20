@@ -6,11 +6,19 @@ import DescriptionInput from "./DescriptionInput";
 import Feedback from "./Feedback";
 import { IProblem } from "../../../backend/src/models/Problem";
 
+interface IAttemptResponse {
+  generatedCode: string;
+  feedback: string;
+  isPassed: boolean;
+  description: string;
+}
+
 const Dashboard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [problem, setProblem] = useState<IProblem | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<string>("");
+  const [attemptResponse, setAttemptResponse] =
+    useState<IAttemptResponse | null>(null);
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -42,16 +50,48 @@ const Dashboard: React.FC = () => {
     return <div>Problem not found</div>;
   }
 
-  const handleDescriptionSubmit = (description: string) => {
-    const simulatedFeedback = `Your description: "${description}" was received and processed.`;
-    setFeedback(simulatedFeedback);
+  const handleDescriptionSubmit = async (description: string) => {
+    try {
+      const userEmail = localStorage.getItem("email");
+      const userResponse = await axios.get(
+        `http://localhost:3000/email/${userEmail}`
+      );
+      const userId = userResponse.data._id; // Assuming _id is the user's ObjectId
+
+      const response: AxiosResponse<IAttemptResponse> = await axios.post(
+        `http://localhost:3000/attempts`,
+        {
+          problemId: id,
+          userId,
+          description,
+        }
+      );
+      setAttemptResponse(response.data);
+    } catch (err) {
+      console.error("Error submitting description:", err);
+    }
   };
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!problem) {
+    return <div>Problem not found</div>;
+  }
 
   return (
     <div className="p-6 space-y-6">
       <ProblemDescription problem={problem} />
       <DescriptionInput onSubmit={handleDescriptionSubmit} />
-      {feedback && <Feedback feedback={feedback} />}
+      {attemptResponse && (
+        <Feedback
+          description={attemptResponse.description}
+          feedback={attemptResponse.feedback}
+          isPassed={attemptResponse.isPassed}
+          generatedCode={attemptResponse.generatedCode}
+        />
+      )}
     </div>
   );
 };
