@@ -7,8 +7,6 @@ import Problem, { IProblem } from "./models/Problem";
 import mockProblems from "./sampleProblems";
 import loginRouter from "./routes/login";
 import registerRouter from "./routes/register";
-import attemptRouter from "./routes/attempt";
-import { User } from "./models/User";
 
 dotenv.config();
 
