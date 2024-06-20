@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Attempt, { IAttempt } from "../models/Attempt";
 import Problem from "../models/Problem";
 import { runTests } from "../services/testCase";
+// TODO: Uncomment this line after implementing the LLM service
 // import { callLLM } from "../services/llmService";
 
 const router = express.Router();
