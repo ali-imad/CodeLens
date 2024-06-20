@@ -1,6 +1,9 @@
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import Attempt, { IAttempt } from "../models/Attempt";
+import Problem from "../models/Problem";
+import { runTests } from "../services/testCase";
+// import { callLLM } from "../services/llmService";
 
 const router = express.Router();
 
@@ -15,13 +18,64 @@ router.post("/", async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid ObjectId format" });
     }
 
+    const problem = await Problem.findById(problemId);
+    if (!problem) {
+      return res.status(404).json({ message: "Problem not found" });
+    }
+
+    // TODO: implementing the LLM API logic
+
+    // const prompt = `
+    // Problem Function Signature:
+    // \`\`\`javascript
+    // ${problem.functionBody}
+    // \`\`\`
+
+    // User Description:
+    // "${description}"
+
+    // Test Cases:
+    // \`${JSON.stringify(problem.testCases)}\`
+
+    // Instructions:
+    // 1. Generate a JavaScript function based on the given problem function signature and user description.
+    // 2. Ensure that the function adheres to the signature format provided.
+    // 3. Use the given test cases to validate the function’s correctness.
+    // 4. Return the generated function as a string.
+
+    // Example Response Format:
+
+    // \`\`\`json
+    // {
+    //   "generatedFunction": "function add(a, b) { return a + b; }"
+    // }
+    // \`\`\`
+    // `;
+
+    // TODO: uncomment the following line after implementing the LLM API logic
+    // const generatedFunction = await callLLM(prompt);
+
+    const generatedFunction = `function twoSum(nums, target) {
+      for (let i = 0; i < nums.length; i++) {
+        for (let j = i + 1; j < nums.length; j++) {
+          if (nums[i] + nums[j] === target) {
+            return [i, j];
+          }
+        }
+      }
+    }`;
+    const { passed, feedbackArray } = runTests(
+      generatedFunction,
+      problem.testCases
+    );
+
     const newAttemptData: Partial<IAttempt> = {
       problemId: new mongoose.Types.ObjectId(problemId),
       userId: new mongoose.Types.ObjectId(userId),
       description,
-      generatedCode: "",
-      feedback: "",
-      isPassed: false,
+      generatedCode: generatedFunction,
+      feedback: feedbackArray,
+      isPassed: passed,
       createdAt: new Date(),
     };
 

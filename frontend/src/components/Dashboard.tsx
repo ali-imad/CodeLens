@@ -5,10 +5,11 @@ import ProblemDescription from "../pages/ProblemDescription";
 import DescriptionInput from "./DescriptionInput";
 import Feedback from "./Feedback";
 import { IProblem } from "../../../backend/src/models/Problem";
+import { TestCaseResult } from "../../../backend/src/services/testCase";
 
 interface IAttemptResponse {
   generatedCode: string;
-  feedback: string;
+  feedback: TestCaseResult[];
   isPassed: boolean;
   description: string;
 }
@@ -56,7 +57,7 @@ const Dashboard: React.FC = () => {
       const userResponse = await axios.get(
         `http://localhost:3000/email/${userEmail}`
       );
-      const userId = userResponse.data._id; // Assuming _id is the user's ObjectId
+      const userId = userResponse.data._id;
 
       const response: AxiosResponse<IAttemptResponse> = await axios.post(
         `http://localhost:3000/attempts`,

@@ -1,12 +1,14 @@
 import mongoose, { Schema, Document } from "mongoose";
 import Problem from "./Problem";
 import { User } from "./User";
+import { TestCaseResult } from "../services/testCase";
+
 export interface IAttempt extends Document {
   problemId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   description: string;
   generatedCode: string;
-  feedback: string;
+  feedback: TestCaseResult[];
   isPassed: boolean;
   createdAt: Date;
 }
@@ -20,7 +22,14 @@ const AttemptSchema: Schema = new Schema<IAttempt>({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   description: { type: String, required: true },
   generatedCode: { type: String },
-  feedback: { type: String },
+  feedback: [
+    {
+      input: { type: [Schema.Types.Mixed], required: true },
+      expectedOutput: { type: Schema.Types.Mixed, required: true },
+      actualOutput: { type: Schema.Types.Mixed },
+      passed: { type: Boolean, required: true },
+    },
+  ],
   isPassed: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
