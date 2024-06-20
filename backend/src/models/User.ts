@@ -15,7 +15,6 @@ const UserSchema: Schema = new Schema({
   password: { type: String, required: true },
 });
 
-// Hash and salt password before saving
 UserSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
@@ -25,7 +24,6 @@ UserSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
-// Method to compare passwords
 UserSchema.methods["comparePassword"] = async function (
   password: string
 ): Promise<boolean> {

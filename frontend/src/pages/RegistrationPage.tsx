@@ -37,7 +37,7 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
       );
       if (response.status === 201) {
         onLoginSuccess(formData.username);
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("email", response.data.email);
         localStorage.setItem("username", formData.username);
       }
     } catch (error) {

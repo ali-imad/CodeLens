@@ -2,11 +2,12 @@ import express, { Request, Response } from "express";
 import mongoose, { Connection } from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import problemRouter from "./routes/problemRoutes";
+import problemRouter from "./routes/problem";
 import Problem, { IProblem } from "./models/Problem";
 import mockProblems from "./sampleProblems";
 import loginRouter from "./routes/login";
 import registerRouter from "./routes/register";
+import attemptRouter from "./routes/attempt";
 
 dotenv.config();
 
@@ -30,11 +31,12 @@ connection.once("open", async () => {
 
     if (existingProblemsCount === 0) {
       for (const mockProblem of mockProblems) {
-        const { title, difficulty, functionBody } = mockProblem;
+        const { title, difficulty, functionBody, testCases } = mockProblem;
         const newProblem: IProblem = new Problem({
           title,
           difficulty,
           functionBody,
+          testCases,
         });
         await newProblem.save();
       }
@@ -57,6 +59,7 @@ app.get("/", (_req: Request, res: Response) => {
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 app.use("/problems", problemRouter);
+app.use("/attempts", attemptRouter);
 
 // Start the server
 app.listen(PORT, () => {
