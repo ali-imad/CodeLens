@@ -12,6 +12,14 @@ export interface IProblem extends Document {
   functionBody: string;
 }
 
+  testCases: ITestCase[];
+}
+
+const TestCaseSchema: Schema = new Schema({
+  input: { type: Schema.Types.Mixed, required: true },
+  expectedOutput: { type: Schema.Types.Mixed, required: true },
+});
+
 const ProblemSchema: Schema = new Schema<IProblem>({
   title: { type: String, required: true },
   difficulty: { type: String, enum: Object.values(Difficulty), required: true },

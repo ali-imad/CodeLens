@@ -42,16 +42,48 @@ const Dashboard: React.FC = () => {
     return <div>Problem not found</div>;
   }
 
-  const handleDescriptionSubmit = (description: string) => {
-    const simulatedFeedback = `Your description: "${description}" was received and processed.`;
-    setFeedback(simulatedFeedback);
+  const handleDescriptionSubmit = async (description: string) => {
+    try {
+      const userEmail = localStorage.getItem("email");
+      const userResponse = await axios.get(
+        `http://localhost:3000/email/${userEmail}`
+      );
+      const userId = userResponse.data._id;
+
+      const response: AxiosResponse<IAttemptResponse> = await axios.post(
+        `http://localhost:3000/attempts`,
+        {
+          problemId: id,
+          userId,
+          description,
+        }
+      );
+      setAttemptResponse(response.data);
+    } catch (err) {
+      console.error("Error submitting description:", err);
+    }
   };
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  if (!problem) {
+    return <div>Problem not found</div>;
+  }
 
   return (
     <div className="p-6 space-y-6">
       <ProblemDescription problem={problem} />
       <DescriptionInput onSubmit={handleDescriptionSubmit} />
-      {feedback && <Feedback feedback={feedback} />}
+      {attemptResponse && (
+        <Feedback
+          description={attemptResponse.description}
+          feedback={attemptResponse.feedback}
+          isPassed={attemptResponse.isPassed}
+          generatedCode={attemptResponse.generatedCode}
+        />
+      )}
     </div>
   );
 };
