@@ -15,7 +15,7 @@ import RegistrationPage from './pages/RegistrationPage';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    localStorage.getItem('token') ? true : false,
+    localStorage.getItem('email') ? true : false,
   );
   const [username, setUsername] = useState<string>(
     localStorage.getItem('username') || '',
@@ -29,7 +29,7 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUsername('');
-    localStorage.removeItem('token');
+    localStorage.removeItem('email');
     localStorage.removeItem('username');
   };
 
