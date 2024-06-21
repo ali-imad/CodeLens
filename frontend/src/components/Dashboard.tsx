@@ -21,6 +21,7 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [attemptResponse, setAttemptResponse] =
     useState<IAttemptResponse | null>(null);
+  const [showFeedback, setShowFeedback] = useState(true);
 
   useEffect(() => {
     const fetchProblem = async () => {
