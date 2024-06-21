@@ -18,7 +18,11 @@ router.post("/", async (req: Request, res: Response) => {
     const newUser = new User({ username, email, password });
     await newUser.save();
 
-    return res.status(201).json({ message: "User registered successfully." });
+    return res.status(201).json({
+      message: "New User Registered Successfully.",
+      username: newUser.username,
+      email: newUser.email,
+    });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ error: "Internal server error." });

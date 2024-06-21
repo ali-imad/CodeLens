@@ -6,6 +6,7 @@ import DescriptionInput from "./DescriptionInput";
 import Feedback from "./Feedback";
 import { IProblem } from "../../../backend/src/models/Problem";
 import { TestCaseResult } from "../../../backend/src/services/testCase";
+import { set } from "mongoose";
 
 interface IAttemptResponse {
   generatedCode: string;
@@ -20,7 +21,6 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [attemptResponse, setAttemptResponse] =
     useState<IAttemptResponse | null>(null);
-  const [showFeedback, setShowFeedback] = useState(true);
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -41,6 +41,7 @@ const Dashboard: React.FC = () => {
 
     if (id) {
       fetchProblem();
+      setAttemptResponse(null);
     }
   }, [id]);
 
@@ -82,10 +83,6 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="flex flex-col w-1/2 p-4 overflow-y-auto">
-        <button
-          onClick={() => setShowFeedback(!showFeedback)}
-          className="mb-2"
-        ></button>
         {attemptResponse && (
           <Feedback
             description={attemptResponse.description}
