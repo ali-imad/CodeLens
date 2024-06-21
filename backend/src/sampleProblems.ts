@@ -1,7 +1,7 @@
 export enum Difficulty {
-  Easy = "Easy",
-  Medium = "Medium",
-  Hard = "Hard",
+  Easy = 'Easy',
+  Medium = 'Medium',
+  Hard = 'Hard',
 }
 
 const twoSumTestCases = [
@@ -21,26 +21,26 @@ const findMedianSortedArraysTestCases = [
 ];
 
 const isPalindromeTestCases = [
-  { input: "A man, a plan, a canal: Panama", expectedOutput: true },
-  { input: "race a car", expectedOutput: false },
-  { input: " ", expectedOutput: true },
-  { input: "0P", expectedOutput: false },
-  { input: "madam", expectedOutput: true },
+  { input: 'A man, a plan, a canal: Panama', expectedOutput: true },
+  { input: 'race a car', expectedOutput: false },
+  { input: ' ', expectedOutput: true },
+  { input: '0P', expectedOutput: false },
+  { input: 'madam', expectedOutput: true },
 ];
 
 const deepEqualTestCases = [
   {
-    input: { a: { name: "Alice" }, b: { name: "Alice" } },
+    input: { a: { name: 'Alice' }, b: { name: 'Alice' } },
     expectedOutput: true,
   },
   {
-    input: { a: { name: "Alice" }, b: { name: "Bob" } },
+    input: { a: { name: 'Alice' }, b: { name: 'Bob' } },
     expectedOutput: false,
   },
   { input: { a: [1, 2, 3], b: [1, 2, 3] }, expectedOutput: true },
   { input: { a: [1, 2, 3], b: [3, 2, 1] }, expectedOutput: false },
   {
-    input: { a: { name: "Alice", age: 25 }, b: { name: "Alice", age: 25 } },
+    input: { a: { name: 'Alice', age: 25 }, b: { name: 'Alice', age: 25 } },
     expectedOutput: true,
   },
 ];
@@ -53,24 +53,24 @@ const maxAreaTestCases = [
 ];
 const isNumberTestCases = [
   { input: 123, expectedOutput: true },
-  { input: "123", expectedOutput: false },
+  { input: '123', expectedOutput: false },
   { input: Infinity, expectedOutput: false },
   { input: -123.45, expectedOutput: true },
   { input: NaN, expectedOutput: false },
 ];
 
 const reverseStringTestCases = [
-  { input: "hello", expectedOutput: "olleh" },
-  { input: "world", expectedOutput: "dlrow" },
-  { input: "12345", expectedOutput: "54321" },
-  { input: "racecar", expectedOutput: "racecar" },
-  { input: "", expectedOutput: "" },
+  { input: 'hello', expectedOutput: 'olleh' },
+  { input: 'world', expectedOutput: 'dlrow' },
+  { input: '12345', expectedOutput: '54321' },
+  { input: 'racecar', expectedOutput: 'racecar' },
+  { input: '', expectedOutput: '' },
 ];
 
 const mockProblems = [
   {
     id: 1,
-    title: "Two Sum",
+    title: 'Two Sum',
     difficulty: Difficulty.Easy,
     functionBody: `
 function twoSum(nums: number[], target: number): number[] {
@@ -89,7 +89,7 @@ function twoSum(nums: number[], target: number): number[] {
   },
   {
     id: 2,
-    title: "Palindrome Check",
+    title: 'Palindrome Check',
     difficulty: Difficulty.Easy,
     functionBody: `
 function isPalindrome(s: string): boolean {
@@ -101,7 +101,7 @@ function isPalindrome(s: string): boolean {
   },
   {
     id: 3,
-    title: "Median of Two Sorted Arrays",
+    title: 'Median of Two Sorted Arrays',
     difficulty: Difficulty.Hard,
     functionBody: `
 function findMedianSortedArrays(nums1: number[], nums2: number[]): number {
@@ -114,7 +114,7 @@ function findMedianSortedArrays(nums1: number[], nums2: number[]): number {
   },
   {
     id: 4,
-    title: "Deep Comparison",
+    title: 'Deep Comparison',
     difficulty: Difficulty.Medium,
     functionBody: `
 function deepEqual(a: any, b: any): boolean {
@@ -133,7 +133,7 @@ function deepEqual(a: any, b: any): boolean {
   },
   {
     id: 5,
-    title: "Container With Most Water",
+    title: 'Container With Most Water',
     difficulty: Difficulty.Medium,
     functionBody: `
 function maxArea(height: number[]): number {
@@ -159,7 +159,7 @@ function maxArea(height: number[]): number {
   },
   {
     id: 6,
-    title: "Type Checking",
+    title: 'Type Checking',
     difficulty: Difficulty.Easy,
     functionBody: `
 function isNumber(value: any): boolean {
@@ -170,7 +170,7 @@ function isNumber(value: any): boolean {
   },
   {
     id: 7,
-    title: "String Reversal",
+    title: 'String Reversal',
     difficulty: Difficulty.Easy,
     functionBody: `
 function reverseString(str: string): string {

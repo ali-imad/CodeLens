@@ -1,24 +1,24 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
-} from "react-router-dom";
-import Header from "./components/Header";
-import Dashboard from "./components/Dashboard";
-import ProblemsPage from "./pages/ProblemsPage";
-import HomePage from "./pages/HomePage";
-import NotLoggedInPage from "./pages/NotLoggedInPage";
-import LoginPage from "./pages/LoginPage";
-import RegistrationPage from "./pages/RegistrationPage";
+} from 'react-router-dom';
+import Header from './components/Header';
+import Dashboard from './components/Dashboard';
+import ProblemsPage from './pages/ProblemsPage';
+import HomePage from './pages/HomePage';
+import NotLoggedInPage from './pages/NotLoggedInPage';
+import LoginPage from './pages/LoginPage';
+import RegistrationPage from './pages/RegistrationPage';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    localStorage.getItem("token") ? true : false
+    localStorage.getItem('token') ? true : false,
   );
   const [username, setUsername] = useState<string>(
-    localStorage.getItem("username") || ""
+    localStorage.getItem('username') || '',
   );
 
   const handleLoginSuccess = (username: string) => {
@@ -28,14 +28,14 @@ const App: React.FC = () => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setUsername("");
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
+    setUsername('');
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
   };
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
+      <div className='min-h-screen bg-gray-100'>
         <Header
           isLoggedIn={isLoggedIn}
           username={username}
@@ -44,24 +44,24 @@ const App: React.FC = () => {
         <div>
           {isLoggedIn ? (
             <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/problems" element={<ProblemsPage />} />
-              <Route path="/problems/:id" element={<Dashboard />} />
+              <Route path='/' element={<HomePage />} />
+              <Route path='/problems' element={<ProblemsPage />} />
+              <Route path='/problems/:id' element={<Dashboard />} />
               {/* Redirect to homepage when logged in */}
-              <Route path="/login" element={<Navigate to="/" replace />} />
-              <Route path="/register" element={<Navigate to="/" replace />} />
+              <Route path='/login' element={<Navigate to='/' replace />} />
+              <Route path='/register' element={<Navigate to='/' replace />} />
             </Routes>
           ) : (
             <Routes>
-              <Route path="/" element={<NotLoggedInPage />} />
-              <Route path="/problems" element={<NotLoggedInPage />} />
-              <Route path="/problems/:id" element={<NotLoggedInPage />} />
+              <Route path='/' element={<NotLoggedInPage />} />
+              <Route path='/problems' element={<NotLoggedInPage />} />
+              <Route path='/problems/:id' element={<NotLoggedInPage />} />
               <Route
-                path="/login"
+                path='/login'
                 element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
               />
               <Route
-                path="/register"
+                path='/register'
                 element={
                   <RegistrationPage onLoginSuccess={handleLoginSuccess} />
                 }

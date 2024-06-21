@@ -1,14 +1,14 @@
-import express, { Request, Response } from "express";
-import mongoose from "mongoose";
-import Attempt, { IAttempt } from "../models/Attempt";
-import Problem from "../models/Problem";
-import { runTests } from "../services/testCase";
+import express, { Request, Response } from 'express';
+import mongoose from 'mongoose';
+import Attempt, { IAttempt } from '../models/Attempt';
+import Problem from '../models/Problem';
+import { runTests } from '../services/testCase';
 // TODO: Uncomment this line after implementing the LLM service
 // import { callLLM } from "../services/llmService";
 
 const router = express.Router();
 
-router.post("/", async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   const { problemId, userId, description } = req.body;
 
   try {
@@ -16,12 +16,12 @@ router.post("/", async (req: Request, res: Response) => {
       !mongoose.Types.ObjectId.isValid(problemId) ||
       !mongoose.Types.ObjectId.isValid(userId)
     ) {
-      return res.status(400).json({ message: "Invalid ObjectId format" });
+      return res.status(400).json({ message: 'Invalid ObjectId format' });
     }
 
     const problem = await Problem.findById(problemId);
     if (!problem) {
-      return res.status(404).json({ message: "Problem not found" });
+      return res.status(404).json({ message: 'Problem not found' });
     }
 
     // TODO: implementing the LLM API logic
@@ -68,7 +68,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     const { passed, feedbackArray } = runTests(
       generatedFunction,
-      problem.testCases
+      problem.testCases,
     );
 
     const newAttemptData: Partial<IAttempt> = {
@@ -90,7 +90,7 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/", async (_req: Request, res: Response) => {
+router.get('/', async (_req: Request, res: Response) => {
   try {
     const attempts = await Attempt.find();
     res.json(attempts);
@@ -99,15 +99,15 @@ router.get("/", async (_req: Request, res: Response) => {
   }
 });
 
-router.get("/problem/:problemId", async (req: Request, res: Response) => {
+router.get('/problem/:problemId', async (req: Request, res: Response) => {
   const { problemId } = req.params;
 
   try {
     if (
-      typeof problemId === "undefined" ||
+      typeof problemId === 'undefined' ||
       !mongoose.Types.ObjectId.isValid(problemId)
     ) {
-      return res.status(400).json({ message: "Invalid problemId format" });
+      return res.status(400).json({ message: 'Invalid problemId format' });
     }
 
     const attempts = await Attempt.find({
@@ -119,17 +119,17 @@ router.get("/problem/:problemId", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    if (typeof id === "undefined" || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid attempt id format" });
+    if (typeof id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid attempt id format' });
     }
 
     const attempt = await Attempt.findById(id);
     if (!attempt) {
-      return res.status(404).json({ message: "Attempt not found" });
+      return res.status(404).json({ message: 'Attempt not found' });
     }
 
     return res.json(attempt);
@@ -139,23 +139,23 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // PUT update attempt by id
-router.put("/:id", async (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const { generatedCode, feedback, isPassed } = req.body;
 
   try {
-    if (typeof id === "undefined" || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid attempt id format" });
+    if (typeof id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid attempt id format' });
     }
 
     const updatedAttempt = await Attempt.findByIdAndUpdate(
       id,
       { generatedCode, feedback, isPassed },
-      { new: true }
+      { new: true },
     );
 
     if (!updatedAttempt) {
-      return res.status(404).json({ message: "Attempt not found" });
+      return res.status(404).json({ message: 'Attempt not found' });
     }
 
     return res.json(updatedAttempt);

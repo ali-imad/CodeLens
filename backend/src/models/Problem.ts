@@ -1,9 +1,9 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
 export enum Difficulty {
-  Easy = "Easy",
-  Medium = "Medium",
-  Hard = "Hard",
+  Easy = 'Easy',
+  Medium = 'Medium',
+  Hard = 'Hard',
 }
 
 export interface ITestCase {
@@ -30,4 +30,4 @@ const ProblemSchema: Schema = new Schema<IProblem>({
   testCases: [TestCaseSchema],
 });
 
-export default mongoose.model<IProblem>("Problem", ProblemSchema);
+export default mongoose.model<IProblem>('Problem', ProblemSchema);

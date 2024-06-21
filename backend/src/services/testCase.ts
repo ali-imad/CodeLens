@@ -1,4 +1,4 @@
-import { ITestCase } from "../models/Problem";
+import { ITestCase } from '../models/Problem';
 
 export interface TestCaseResult {
   input: any[];
@@ -14,12 +14,12 @@ export interface TestResult {
 
 export function runTests(
   generatedFunction: string,
-  testCases: ITestCase[]
+  testCases: ITestCase[],
 ): TestResult {
   const feedbackArray: TestCaseResult[] = [];
 
   try {
-    const func = new Function("return " + generatedFunction)();
+    const func = new Function('return ' + generatedFunction)();
 
     let allPassed = true;
 
@@ -45,7 +45,7 @@ export function runTests(
   } catch (error) {
     return {
       passed: false,
-      feedbackArray: testCases.map((testCase) => ({
+      feedbackArray: testCases.map(testCase => ({
         input: testCase.input,
         expectedOutput: testCase.expectedOutput,
         actualOutput: null,

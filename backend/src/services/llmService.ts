@@ -1,12 +1,12 @@
-import axios from "axios";
+import axios from 'axios';
 
 // TODO: Implement this function CORRECTLY
 export async function callLLM(prompt: string): Promise<string> {
   try {
-    const response = await axios.post("http://localhost:11434/api/generate", {
-      model: "llama3",
+    const response = await axios.post('http://localhost:11434/api/generate', {
+      model: 'llama3',
       prompt: prompt,
-      format: "json",
+      format: 'json',
       stream: false,
     });
 
@@ -17,10 +17,10 @@ export async function callLLM(prompt: string): Promise<string> {
     ) {
       return response.data.generatedFunction;
     } else {
-      throw new Error("Failed to generate function");
+      throw new Error('Failed to generate function');
     }
   } catch (error: any) {
-    console.error("Error calling LLM:", error.message);
+    console.error('Error calling LLM:', error.message);
     throw error;
   }
 }

@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
-import Problem from "./Problem";
-import { User } from "./User";
-import { TestCaseResult } from "../services/testCase";
+import mongoose, { Schema, Document } from 'mongoose';
+import Problem from './Problem';
+import { User } from './User';
+import { TestCaseResult } from '../services/testCase';
 
 export interface IAttempt extends Document {
   problemId: mongoose.Types.ObjectId;
@@ -16,10 +16,10 @@ export interface IAttempt extends Document {
 const AttemptSchema: Schema = new Schema<IAttempt>({
   problemId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Problem",
+    ref: 'Problem',
     required: true,
   },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   description: { type: String, required: true },
   generatedCode: { type: String },
   feedback: [
@@ -35,17 +35,17 @@ const AttemptSchema: Schema = new Schema<IAttempt>({
 });
 
 // Pre-save hook to validate userId and problemId
-AttemptSchema.pre<IAttempt>("save", async function (next) {
+AttemptSchema.pre<IAttempt>('save', async function (next) {
   try {
     const problem = await Problem.findById(this.problemId);
     const user = await User.findById(this.userId);
 
     if (!problem) {
-      throw new Error("Invalid problemId: problem does not exist");
+      throw new Error('Invalid problemId: problem does not exist');
     }
 
     if (!user) {
-      throw new Error("Invalid userId: user does not exist");
+      throw new Error('Invalid userId: user does not exist');
     }
 
     next();
@@ -54,4 +54,4 @@ AttemptSchema.pre<IAttempt>("save", async function (next) {
   }
 });
 
-export default mongoose.model<IAttempt>("Attempt", AttemptSchema);
+export default mongoose.model<IAttempt>('Attempt', AttemptSchema);

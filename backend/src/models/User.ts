@@ -1,5 +1,5 @@
-import { Schema, Document, model } from "mongoose";
-import bcrypt from "bcrypt";
+import { Schema, Document, model } from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const SALT_DIGIT = 10;
 
@@ -15,8 +15,8 @@ const UserSchema: Schema = new Schema({
   password: { type: String, required: true },
 });
 
-UserSchema.pre<IUser>("save", async function (next) {
-  if (!this.isModified("password")) {
+UserSchema.pre<IUser>('save', async function (next) {
+  if (!this.isModified('password')) {
     return next();
   }
   const salt = await bcrypt.genSalt(SALT_DIGIT);
@@ -24,10 +24,10 @@ UserSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
-UserSchema.methods["comparePassword"] = async function (
-  password: string
+UserSchema.methods['comparePassword'] = async function (
+  password: string,
 ): Promise<boolean> {
-  return await bcrypt.compare(password, this["password"]);
+  return await bcrypt.compare(password, this['password']);
 };
 
-export const User = model<IUser>("User", UserSchema);
+export const User = model<IUser>('User', UserSchema);

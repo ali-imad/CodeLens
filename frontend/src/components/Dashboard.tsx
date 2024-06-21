@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios, { AxiosResponse } from "axios";
-import ProblemDescription from "../pages/ProblemDescription";
-import DescriptionInput from "./DescriptionInput";
-import Feedback from "./Feedback";
-import { IProblem } from "../../../backend/src/models/Problem";
-import { TestCaseResult } from "../../../backend/src/services/testCase";
-import { set } from "mongoose";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios, { AxiosResponse } from 'axios';
+import ProblemDescription from '../pages/ProblemDescription';
+import DescriptionInput from './DescriptionInput';
+import Feedback from './Feedback';
+import { IProblem } from '../../../backend/src/models/Problem';
+import { TestCaseResult } from '../../../backend/src/services/testCase';
 
 interface IAttemptResponse {
   generatedCode: string;
@@ -21,13 +20,12 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [attemptResponse, setAttemptResponse] =
     useState<IAttemptResponse | null>(null);
-  const [showFeedback, setShowFeedback] = useState(true);
 
   useEffect(() => {
     const fetchProblem = async () => {
       try {
         const response: AxiosResponse<IProblem> = await axios.get(
-          `http://localhost:3000/problems/${id}`
+          `http://localhost:3000/problems/${id}`,
         );
         setProblem(response.data);
         setError(null);
@@ -35,7 +33,7 @@ const Dashboard: React.FC = () => {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data.message || err.message);
         } else {
-          setError("An unexpected error occurred");
+          setError('An unexpected error occurred');
         }
       }
     };
@@ -48,9 +46,9 @@ const Dashboard: React.FC = () => {
 
   const handleDescriptionSubmit = async (description: string) => {
     try {
-      const userEmail = localStorage.getItem("email");
+      const userEmail = localStorage.getItem('email');
       const userResponse = await axios.get(
-        `http://localhost:3000/email/${userEmail}`
+        `http://localhost:3000/email/${userEmail}`,
       );
       const userId = userResponse.data._id;
 
@@ -60,11 +58,11 @@ const Dashboard: React.FC = () => {
           problemId: id,
           userId,
           description,
-        }
+        },
       );
       setAttemptResponse(response.data);
     } catch (err) {
-      console.error("Error submitting description:", err);
+      console.error('Error submitting description:', err);
     }
   };
 
@@ -77,13 +75,13 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen">
-      <div className="flex flex-col w-1/2 p-4 border-r border-gray-200 overflow-y-auto">
+    <div className='flex h-screen'>
+      <div className='flex flex-col w-1/2 p-4 border-r border-gray-200 overflow-y-auto'>
         <ProblemDescription problem={problem} />
         <DescriptionInput onSubmit={handleDescriptionSubmit} />
       </div>
 
-      <div className="flex flex-col w-1/2 p-4 overflow-y-auto">
+      <div className='flex flex-col w-1/2 p-4 overflow-y-auto'>
         {attemptResponse && (
           <Feedback
             description={attemptResponse.description}

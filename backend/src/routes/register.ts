@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import { User } from "../models/User";
-import express, { Router } from "express";
+import { Request, Response } from 'express';
+import { User } from '../models/User';
+import express, { Router } from 'express';
 
 const router: Router = express.Router();
 
-router.post("/", async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
     const { username, email, password } = req.body;
     const existingUser = await User.findOne({ email });
@@ -12,20 +12,20 @@ router.post("/", async (req: Request, res: Response) => {
     if (existingUser) {
       return res
         .status(400)
-        .json({ error: "User already exists with this email." });
+        .json({ error: 'User already exists with this email.' });
     }
 
     const newUser = new User({ username, email, password });
     await newUser.save();
 
     return res.status(201).json({
-      message: "New User Registered Successfully.",
+      message: 'New User Registered Successfully.',
       username: newUser.username,
       email: newUser.email,
     });
   } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ error: "Internal server error." });
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
