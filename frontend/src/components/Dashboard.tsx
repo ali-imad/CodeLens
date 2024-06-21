@@ -5,12 +5,22 @@ import ProblemDescription from "../pages/ProblemDescription";
 import DescriptionInput from "./DescriptionInput";
 import Feedback from "./Feedback";
 import { IProblem } from "../../../backend/src/models/Problem";
+import { TestCaseResult } from "../../../backend/src/services/testCase";
+
+interface IAttemptResponse {
+  generatedCode: string;
+  feedback: TestCaseResult[];
+  isPassed: boolean;
+  description: string;
+}
 
 const Dashboard: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [problem, setProblem] = useState<IProblem | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<string>("");
+  const [attemptResponse, setAttemptResponse] =
+    useState<IAttemptResponse | null>(null);
+  const [showFeedback, setShowFeedback] = useState(true);
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -34,6 +44,28 @@ const Dashboard: React.FC = () => {
     }
   }, [id]);
 
+  const handleDescriptionSubmit = async (description: string) => {
+    try {
+      const userEmail = localStorage.getItem("email");
+      const userResponse = await axios.get(
+        `http://localhost:3000/email/${userEmail}`
+      );
+      const userId = userResponse.data._id;
+
+      const response: AxiosResponse<IAttemptResponse> = await axios.post(
+        `http://localhost:3000/attempts`,
+        {
+          problemId: id,
+          userId,
+          description,
+        }
+      );
+      setAttemptResponse(response.data);
+    } catch (err) {
+      console.error("Error submitting description:", err);
+    }
+  };
+
   if (error) {
     return <div>{error}</div>;
   }
@@ -42,16 +74,27 @@ const Dashboard: React.FC = () => {
     return <div>Problem not found</div>;
   }
 
-  const handleDescriptionSubmit = (description: string) => {
-    const simulatedFeedback = `Your description: "${description}" was received and processed.`;
-    setFeedback(simulatedFeedback);
-  };
-
   return (
-    <div className="p-6 space-y-6">
-      <ProblemDescription problem={problem} />
-      <DescriptionInput onSubmit={handleDescriptionSubmit} />
-      {feedback && <Feedback feedback={feedback} />}
+    <div className="flex h-screen">
+      <div className="flex flex-col w-1/2 p-4 border-r border-gray-200 overflow-y-auto">
+        <ProblemDescription problem={problem} />
+        <DescriptionInput onSubmit={handleDescriptionSubmit} />
+      </div>
+
+      <div className="flex flex-col w-1/2 p-4 overflow-y-auto">
+        <button
+          onClick={() => setShowFeedback(!showFeedback)}
+          className="mb-2"
+        ></button>
+        {attemptResponse && (
+          <Feedback
+            description={attemptResponse.description}
+            feedback={attemptResponse.feedback}
+            isPassed={attemptResponse.isPassed}
+            generatedCode={attemptResponse.generatedCode}
+          />
+        )}
+      </div>
     </div>
   );
 };
