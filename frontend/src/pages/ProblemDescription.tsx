@@ -1,5 +1,5 @@
 import React from 'react';
-import { Difficulty } from '../types';
+import { Difficulty } from '../../../backend/src/models/Problem';
 import { IProblem } from '../../../backend/src/models/Problem';
 
 interface ProblemDescriptionProps {
