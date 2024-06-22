@@ -45,11 +45,12 @@ router.get('/:id', async (req: Request, res: Response) => {
 // Create a new problem
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { title, difficulty, functionBody } = req.body;
+    const { title, difficulty, functionBody, testCases } = req.body;
     const newProblem: IProblem = new Problem({
       title,
       difficulty,
       functionBody,
+      testCases,
     });
     await newProblem.save();
     res.status(201).json(newProblem);
@@ -81,8 +82,9 @@ router.put('/:id', async (req: Request, res: Response) => {
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const problemId: string | undefined = req.params['id'];
-    const deletedProblem: IProblem | null =
-      await Problem.findByIdAndDelete(problemId);
+    const deletedProblem: IProblem | null = await Problem.findByIdAndDelete(
+      problemId,
+    );
     if (!deletedProblem) {
       return res.status(404).json({ message: 'Problem not found' });
     }

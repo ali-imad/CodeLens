@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import AddProblemModal from '../components/AddProblemModal';
 
 interface ProblemState {
   _id: string;
@@ -10,6 +11,7 @@ interface ProblemState {
 
 const AdminHomePage: React.FC = () => {
   const [problems, setProblems] = useState<ProblemState[]>([]);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchProblems = async () => {
@@ -24,6 +26,12 @@ const AdminHomePage: React.FC = () => {
     fetchProblems();
   }, []);
 
+  const handleProblemAdded = () => {
+    axios.get('http://localhost:3000/problems').then(response => {
+      setProblems(response.data);
+    });
+  };
+
   return (
     <div className='container mx-auto p-4'>
       <div className='flex justify-between items-center mb-4'>
@@ -32,7 +40,10 @@ const AdminHomePage: React.FC = () => {
           placeholder='Search by name or number...'
           className='border p-2 rounded'
         />
-        <button className='bg-blue-500 text-white p-2 rounded'>
+        <button
+          onClick={() => setShowModal(true)}
+          className='bg-blue-500 text-white p-2 rounded'
+        >
           Add Problem
         </button>
       </div>
@@ -64,6 +75,12 @@ const AdminHomePage: React.FC = () => {
           ))}
         </tbody>
       </table>
+      {showModal && (
+        <AddProblemModal
+          onClose={() => setShowModal(false)}
+          onProblemAdded={handleProblemAdded}
+        />
+      )}
     </div>
   );
 };
