@@ -6,6 +6,7 @@ interface FormData {
   username: string;
   email: string;
   password: string;
+  role: string;
 }
 
 interface RegistrationPageProps {
@@ -19,10 +20,13 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
     username: '',
     email: '',
     password: '',
+    role: 'Student',
   });
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setErrorMessage('');
@@ -36,9 +40,10 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
         formData,
       );
       if (response.status === 201) {
-        onLoginSuccess(formData.username);
         localStorage.setItem('email', response.data.email);
         localStorage.setItem('username', formData.username);
+        localStorage.setItem('role', formData.role);
+        onLoginSuccess(formData.username);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -92,6 +97,16 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
           className='w-full mb-2 p-2 border rounded'
           required
         />
+        <select
+          name='role'
+          value={formData.role}
+          onChange={handleChange}
+          className='w-full mb-2 p-2 border rounded'
+          required
+        >
+          <option value='Student'>Student</option>
+          <option value='Instructor'>Instructor</option>
+        </select>
         <button
           type='submit'
           className='w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-700'

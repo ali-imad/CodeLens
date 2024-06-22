@@ -27,9 +27,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         formData,
       );
       if (response.status === 200) {
-        onLoginSuccess(response.data.username);
         localStorage.setItem('email', response.data.email);
         localStorage.setItem('username', response.data.username);
+        localStorage.setItem('role', response.data.role);
+        onLoginSuccess(response.data.username);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

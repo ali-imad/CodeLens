@@ -7,12 +7,19 @@ export interface IUser extends Document {
   username: string;
   email: string;
   password: string;
+  role: UserRole;
+}
+
+export enum UserRole {
+  Instructor = 'Instructor',
+  Student = 'Student',
 }
 
 const UserSchema: Schema = new Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role: { type: String, enum: Object.values(UserRole), required: true },
 });
 
 UserSchema.pre<IUser>('save', async function (next) {
