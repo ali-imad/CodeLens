@@ -23,6 +23,9 @@ refine their explanations to improve their comprehension skills.
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Technical Details](#technical-details)
+- [Key Functionalities](#key-functionalities)
+- [Development Practices](#development-practices)
 
 ## Features
 
@@ -47,9 +50,7 @@ refine their explanations to improve their comprehension skills.
 git clone https://github.students.cs.ubc.ca/CPSC310-2024S/Project-Groups-07-Lab-B.git
 ```
 
-## Setup
-
-### Installation
+### Terminal Setup
 
 Have two separate terminals, one for front end and one for back end.
 
