@@ -66,19 +66,28 @@ npm install
 npm run dev
 ```
 
-Create a .env file in the backend directory and configure environment variables
-(e.g., database connection string, port).
+### Frontend .env.example
+
+Create a .env file in the frontend directory and configure environment variables
+(e.g., database connection string, port) according to the .env.example file
+located in the frontend root directory.
+
+```bash
+REACT_APP_BACKEND_URL=http://localhost:3000
+```
 
 ### Backend .env.example
 
-DB_CONNECTION_STRING=mongodb://localhost:27017/codelens PORT=3000
-
 Create a .env file in the backend directory and configure environment variables
-(e.g., database connection string, port).
+(e.g., database connection string, port) according to the .env.example file
+located in the backend root directory.
 
-### Frontend .env.example
-
-REACT_APP_BACKEND_URL=http://localhost:3000
+```bash
+MONGODB_URI=YOUR_MONGODB_URI
+PORT=3000
+JWT_SECRET=YOUR_SECRET_KEY
+NODE_ENV=development
+```
 
 ### Docker Setup
 
