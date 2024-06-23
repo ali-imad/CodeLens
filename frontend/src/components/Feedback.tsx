@@ -1,5 +1,5 @@
 import React from 'react';
-import { TestCaseResult } from '../../../backend/src/services/testCase';
+import { TestCaseResult } from '../types';
 
 interface FeedbackProps {
   generatedCode: string;

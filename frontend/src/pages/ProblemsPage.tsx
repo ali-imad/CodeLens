@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios, { AxiosResponse } from 'axios';
-import { IProblem } from '../../../backend/src/models/Problem';
+import { IProblem } from '../types';
 
 const ProblemsPage: React.FC = () => {
   const [problems, setProblems] = useState<IProblem[]>([]);

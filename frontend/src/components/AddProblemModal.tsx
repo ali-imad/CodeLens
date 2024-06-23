@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Difficulty, ITestCase } from '../../../backend/src/models/Problem';
+
+enum Difficulty {
+  Easy = 'Easy',
+  Medium = 'Medium',
+  Hard = 'Hard',
+}
+interface ITestCase {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  input: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  expectedOutput: any;
+}
 
 interface AddProblemModalProps {
   onClose: () => void;

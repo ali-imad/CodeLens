@@ -4,8 +4,14 @@ import axios, { AxiosResponse } from 'axios';
 import ProblemDescription from '../pages/ProblemDescription';
 import DescriptionInput from './DescriptionInput';
 import Feedback from './Feedback';
-import { IProblem } from '../../../backend/src/models/Problem';
-import { TestCaseResult } from '../../../backend/src/services/testCase';
+import { Difficulty, ITestCase, TestCaseResult } from '../types';
+
+export interface IProblem extends Document {
+  title: string;
+  difficulty: Difficulty;
+  functionBody: string;
+  testCases: ITestCase[];
+}
 
 interface IAttemptResponse {
   generatedCode: string;
