@@ -43,6 +43,7 @@ refine their explanations to improve their comprehension skills.
 
 - Node.js (version v21.5.0)
 - Vite
+- Docker Desktop
 
 ### Clone the Repository
 
@@ -50,50 +51,11 @@ refine their explanations to improve their comprehension skills.
 git clone https://github.students.cs.ubc.ca/CPSC310-2024S/Project-Groups-07-Lab-B.git
 ```
 
-### Terminal Setup
-
-Have two separate terminals, one for front end and one for back end.
-
-```bash
-cd backend
-npm install
-npm start
-```
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### Frontend .env.example
-
-Create a .env file in the frontend directory and configure environment variables
-(e.g., database connection string, port) according to the .env.example file
-located in the frontend root directory.
-
-```bash
-REACT_APP_BACKEND_URL=http://localhost:3000
-```
-
-### Backend .env.example
-
-Create a .env file in the backend directory and configure environment variables
-(e.g., database connection string, port) according to the .env.example file
-located in the backend root directory.
-
-```bash
-MONGODB_URI=YOUR_MONGODB_URI
-PORT=3000
-JWT_SECRET=YOUR_SECRET_KEY
-NODE_ENV=development
-```
-
 ### Docker Setup
 
-Ensure Docker is installed and running on your system. Navigate to the root
-directory of the project (where the docker-compose.yml file is located). Build
-and start the containers:
+Ensure Docker Desktop is installed and running on your system. Navigate to the
+root directory of the project (where the docker-compose.yml file is located).
+Build and start the containers:
 
 ```bash
 docker-compose up --build
@@ -115,8 +77,7 @@ npx prettier --write .
 
 Once the setup is complete and both servers are running, you can access the
 application through your web browser. The backend should be running on
-`http://localhost:3000`, and the frontend on `http://localhost:5173` (or another
-port if specified).
+`http://localhost:3000`, and the frontend on `http://localhost:5173`
 
 ## Technical Details
 

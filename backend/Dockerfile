@@ -10,9 +10,6 @@ COPY package*.json ./
 # Install nodemon globally (if not already installed)
 RUN npm install -g nodemon
 
-# Install necessary dependencies
-RUN npm install --save bcrypt
-
 # Ensure ts-node and typescript are installed globally or locally as needed
 RUN npm install -g ts-node typescript
 
