@@ -1,4 +1,4 @@
-# Use a supported Node.js LTS version as a base image
+# Use the latest Node.js image version as a base image
 FROM node
 
 # Set the working directory inside the container
@@ -13,7 +13,7 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Expose port 8080 (adjust as needed for your application)
+# Expose port 5173
 EXPOSE 5173
 
 # Command to run the application
