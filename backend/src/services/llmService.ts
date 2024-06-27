@@ -1,23 +1,33 @@
 import axios from 'axios';
 
-// TODO: Implement this function CORRECTLY
-export async function callLLM(prompt: string): Promise<string> {
-  try {
-    const response = await axios.post('http://localhost:11434/api/generate', {
-      model: 'llama3',
-      prompt: prompt,
-      format: 'json',
-      stream: false,
-    });
+interface LLMResponse {
+  response: string|null;
+}
 
-    if (
-      response.status === 200 &&
-      response.data &&
-      response.data.generatedFunction
-    ) {
-      return response.data.generatedFunction;
+export async function callLLM(prompt: string): Promise<LLMResponse> {
+  // TODO: Implement case switching with the prompt based on the prepending
+  //  '[XYZ]' tag
+  try {
+    const req = {
+      model: 'codegeneval-llama3',
+      prompt: prompt,
+      stream: false,
+      // format: 'json', // breaks the response
+    }
+
+    // TODO: replace with debug print
+    //console.log("Requesting LLM with:\n", req)
+
+    const response = await axios.post('http://localhost:11434/api/generate', req);
+
+    if (response.status === 200 && response.data && response.data.done && response.data.response) {
+      return {
+        response: response.data.response,
+      }
     } else {
-      throw new Error('Failed to generate function');
+      return {
+        response: null
+      }
     }
   } catch (error: any) {
     console.error('Error calling LLM:', error.message);

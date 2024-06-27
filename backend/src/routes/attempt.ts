@@ -3,14 +3,15 @@ import mongoose from 'mongoose';
 import Attempt, { IAttempt } from '../models/Attempt';
 import Problem from '../models/Problem';
 import { runTests } from '../services/testCase';
-// TODO: Uncomment this line after implementing the LLM service
-// import { callLLM } from "../services/llmService";
+import { callLLM } from '../services/llmService';
 
 const router = express.Router();
 
 router.post('/', async (req: Request, res: Response) => {
   const { problemId, userId, description } = req.body;
 
+  const START_TOKEN = '[[[START]]]';
+  const END_TOKEN = '[[[END]]]';
   try {
     if (
       !mongoose.Types.ObjectId.isValid(problemId) ||
@@ -23,8 +24,6 @@ router.post('/', async (req: Request, res: Response) => {
     if (!problem) {
       return res.status(404).json({ message: 'Problem not found' });
     }
-
-    // TODO: implementing the LLM API logic
 
     // const prompt = `
     // Problem Function Signature:
@@ -53,18 +52,50 @@ router.post('/', async (req: Request, res: Response) => {
     // \`\`\`
     // `;
 
-    // TODO: uncomment the following line after implementing the LLM API logic
-    // const generatedFunction = await callLLM(prompt);
 
-    const generatedFunction = `function twoSum(nums, target) {
-      for (let i = 0; i < nums.length; i++) {
-        for (let j = i + 1; j < nums.length; j++) {
-          if (nums[i] + nums[j] === target) {
-            return [i, j];
-          }
-        }
-      }
-    }`;
+    // Problem Function Signature:
+    // \`\`\`javascript
+    // ${problem.functionBody}
+    // \`\`\`
+    //
+    // User Description:
+    // "${description}"
+    //
+    // Test Cases:
+    // \`${JSON.stringify(problem.testCases)}\`
+    //
+    // Instructions:
+    // 1. Generate a JavaScript function based on the given problem function signature and user description.
+    // 2. Ensure that the function adheres to the signature format provided.
+    // 3. Use the given test cases to validate the function’s correctness.
+    // 4. Return the generated function as a string.
+    //
+    // Example Response Format:
+    //
+    // \`\`\`json
+    // {
+    //   "generatedFunction": "function add(a, b) { return a + b; }"
+    // }
+    // \`\`\`
+
+    const prompt = `[CODEGEN] ${description}`;
+
+    const promptResp = await callLLM(prompt);
+    let generatedFunction = promptResp.response;
+    if (generatedFunction && generatedFunction.includes(START_TOKEN) && generatedFunction.includes(END_TOKEN)) {
+      // find the lines between `START_TOKEN` and `END_TOKEN`
+      const start = generatedFunction.indexOf(START_TOKEN);
+      const end = generatedFunction.indexOf(END_TOKEN);
+      // remove the tokens
+      generatedFunction = generatedFunction.substring(start, end).replace(START_TOKEN, '').replace(END_TOKEN, '');
+      // strip out new line characters in the beginning and end of the string
+      generatedFunction = generatedFunction.trim();
+    } else { // return placeholder function
+      generatedFunction = `function hello() { return "Hello, World!"; }`;
+    }
+
+    // TODO: replace with debug print
+    // console.log('Generated Function:\n', generatedFunction)
 
     const { passed, feedbackArray } = runTests(
       generatedFunction,
@@ -85,10 +116,12 @@ router.post('/', async (req: Request, res: Response) => {
     const savedAttempt = await newAttempt.save();
 
     return res.status(201).json(savedAttempt);
-  } catch (err: any) {
+  } catch
+    (err: any) {
     return res.status(500).json({ message: err.message });
   }
 });
+
 
 router.get('/', async (_req: Request, res: Response) => {
   try {
