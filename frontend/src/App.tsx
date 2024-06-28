@@ -13,6 +13,7 @@ import NotLoggedInPage from './pages/NotLoggedInPage';
 import LoginPage from './pages/LoginPage';
 import RegistrationPage from './pages/RegistrationPage';
 import AdminHomePage from './pages/AdminHomePage';
+import SelectInstructorPage from './pages/SelectInstructorPage';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
@@ -64,6 +65,12 @@ const App: React.FC = () => {
               )}
               {role === 'Student' && (
                 <Route path='/' element={<StudentHomePage />} />
+              )}
+              {role === 'Student' && (
+                <Route
+                  path='/select-instructor'
+                  element={<SelectInstructorPage />}
+                />
               )}
               <Route path='/problems' element={<ProblemsPage />} />
               <Route path='/problems/:id' element={<Dashboard />} />

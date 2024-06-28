@@ -16,7 +16,13 @@ const StudentHomePage: React.FC = () => {
           describing code snippets and testing your comprehension against
           generated solutions.
         </p>
-        <div className='space-x-4'>
+        <div className='space-x-8'>
+          <Link
+            to='/select-instructor'
+            className='px-6 py-3 bg-blue-500 rounded hover:bg-blue-600'
+          >
+            FIND YOUR INSTRUCTOR
+          </Link>
           <Link
             to='/problems'
             className='px-6 py-3 bg-red-500 rounded hover:bg-red-600'
