@@ -6,6 +6,7 @@ import { IProblem } from '../types';
 const ProblemsPage: React.FC = () => {
   const [problems, setProblems] = useState<IProblem[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string>('Student');
 
   useEffect(() => {
     const fetchProblems = async () => {
@@ -25,6 +26,11 @@ const ProblemsPage: React.FC = () => {
     };
 
     fetchProblems();
+
+    const storedRole = localStorage.getItem('role');
+    if (storedRole) {
+      setUserRole(storedRole);
+    }
   }, []);
 
   return (
@@ -34,10 +40,14 @@ const ProblemsPage: React.FC = () => {
         <div className='text-red-500'>Error: {error}</div>
       ) : (
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {problems.map((problem: IProblem) => (
+          {problems.map((problem: IProblem, index: number) => (
             <Link key={problem._id as string} to={`/problems/${problem._id}`}>
               <div className='p-4 border rounded-md shadow-md cursor-pointer'>
-                <h2 className='text-xl font-semibold mb-2'>{problem.title}</h2>
+                <h2 className='text-xl font-semibold mb-2'>
+                  {userRole === 'Student'
+                    ? `Problem ${index + 1}`
+                    : problem.title}
+                </h2>
                 <p className='text-gray-600'>{`Difficulty: ${problem.difficulty}`}</p>
               </div>
             </Link>
