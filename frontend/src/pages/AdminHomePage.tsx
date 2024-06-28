@@ -5,6 +5,7 @@ import AddProblemModal from '../components/AddProblemModal';
 import { BsSearch } from 'react-icons/bs';
 import { CiSquarePlus } from 'react-icons/ci';
 import Pagination from '../components/Pagination';
+import CustomButton from '../components/CustomButton';
 
 export interface ProblemState {
   _id: string;
@@ -113,17 +114,11 @@ const AdminHomePage: React.FC = () => {
           />
           <BsSearch className='absolute top-3 left-3 text-gray-400' />
         </div>
-        <button
+        <CustomButton
           onClick={() => setShowModal(true)}
-          className='w-full sm:w-60 md:w-72 lg:w-96 xl:w-[180px] h-12 px-3 py-4 bg-blue-600 rounded-lg border-2 border-blue-600 flex items-center space-x-2'
-        >
-          <CiSquarePlus className='w-7 h-7 relative text-white' />
-          <div className='justify-center items-center gap-2.5 flex'>
-            <div className='text-white text-base font-medium font-roboto leading-none tracking-wide'>
-              Add Problem
-            </div>
-          </div>
-        </button>
+          text='Add Problem'
+          icon={<CiSquarePlus className='w-6 h-7 relative text-white' />}
+        />
       </div>
       <CustomTable
         problems={problems}
