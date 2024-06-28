@@ -5,6 +5,8 @@ import PolicyPopup from '../components/PolicyPopup';
 
 interface FormData {
   username: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   role: string;
@@ -20,6 +22,8 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
 }) => {
   const [formData, setFormData] = useState<FormData>({
     username: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     role: 'Student',
@@ -57,6 +61,8 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
       if (response.status === 201) {
         localStorage.setItem('email', response.data.email);
         localStorage.setItem('username', formData.username);
+        localStorage.setItem('firstName', formData.firstName);
+        localStorage.setItem('lastName', formData.lastName);
         localStorage.setItem('role', formData.role);
         onLoginSuccess(formData.username);
       }
@@ -91,6 +97,24 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
           value={formData.username}
           onChange={handleChange}
           placeholder='Username'
+          className='w-full mb-2 p-2 border rounded'
+          required
+        />
+         <input
+          type='text'
+          name='firstName'
+          value={formData.firstName}
+          onChange={handleChange}
+          placeholder='First Name'
+          className='w-full mb-2 p-2 border rounded'
+          required
+        />
+         <input
+          type='text'
+          name='lastName'
+          value={formData.lastName}
+          onChange={handleChange}
+          placeholder='Last Name'
           className='w-full mb-2 p-2 border rounded'
           required
         />

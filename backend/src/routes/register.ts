@@ -6,7 +6,7 @@ const router: Router = express.Router();
 
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { username, firstName, lastName, email, password, role } = req.body;
     const existingUser = await User.findOne({ email });
 
     if (!Object.values(UserRole).includes(role)) {
@@ -19,12 +19,14 @@ router.post('/', async (req: Request, res: Response) => {
         .json({ error: 'User already exists with this email.' });
     }
 
-    const newUser = new User({ username, email, password, role });
+    const newUser = new User({ username, firstName, lastName, email, password, role });
     await newUser.save();
 
     return res.status(201).json({
       message: 'New User Registered Successfully.',
       username: newUser.username,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
       email: newUser.email,
       role: newUser.role,
     });

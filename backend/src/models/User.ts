@@ -5,6 +5,8 @@ const SALT_DIGIT = 10;
 
 export interface IUser extends Document {
   username: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   role: UserRole;
@@ -18,6 +20,8 @@ export enum UserRole {
 
 const UserSchema: Schema = new Schema({
   username: { type: String, required: true, unique: true },
+  firstName: { type: String, required: false, unique: false },
+  lastName: { type: String, required: false, unique: false },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: Object.values(UserRole), required: true },
