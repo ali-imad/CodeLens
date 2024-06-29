@@ -82,9 +82,8 @@ router.put('/:id', async (req: Request, res: Response) => {
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const problemId: string | undefined = req.params['id'];
-    const deletedProblem: IProblem | null = await Problem.findByIdAndDelete(
-      problemId,
-    );
+    const deletedProblem: IProblem | null =
+      await Problem.findByIdAndDelete(problemId);
     if (!deletedProblem) {
       return res.status(404).json({ message: 'Problem not found' });
     }

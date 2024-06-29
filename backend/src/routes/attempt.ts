@@ -52,7 +52,6 @@ router.post('/', async (req: Request, res: Response) => {
     // \`\`\`
     // `;
 
-
     // Problem Function Signature:
     // \`\`\`javascript
     // ${problem.functionBody}
@@ -82,15 +81,23 @@ router.post('/', async (req: Request, res: Response) => {
 
     const promptResp = await callLLM(prompt);
     let generatedFunction = promptResp.response;
-    if (generatedFunction && generatedFunction.includes(START_TOKEN) && generatedFunction.includes(END_TOKEN)) {
+    if (
+      generatedFunction &&
+      generatedFunction.includes(START_TOKEN) &&
+      generatedFunction.includes(END_TOKEN)
+    ) {
       // find the lines between `START_TOKEN` and `END_TOKEN`
       const start = generatedFunction.indexOf(START_TOKEN);
       const end = generatedFunction.indexOf(END_TOKEN);
       // remove the tokens
-      generatedFunction = generatedFunction.substring(start, end).replace(START_TOKEN, '').replace(END_TOKEN, '');
+      generatedFunction = generatedFunction
+        .substring(start, end)
+        .replace(START_TOKEN, '')
+        .replace(END_TOKEN, '');
       // strip out new line characters in the beginning and end of the string
       generatedFunction = generatedFunction.trim();
-    } else { // return placeholder function
+    } else {
+      // return placeholder function
       generatedFunction = `function hello() { return "Hello, World!"; }`;
     }
 
@@ -116,12 +123,10 @@ router.post('/', async (req: Request, res: Response) => {
     const savedAttempt = await newAttempt.save();
 
     return res.status(201).json(savedAttempt);
-  } catch
-    (err: any) {
+  } catch (err: any) {
     return res.status(500).json({ message: err.message });
   }
 });
-
 
 router.get('/', async (_req: Request, res: Response) => {
   try {

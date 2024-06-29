@@ -100,7 +100,7 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
           className='w-full mb-2 p-2 border rounded'
           required
         />
-         <input
+        <input
           type='text'
           name='firstName'
           value={formData.firstName}
@@ -109,7 +109,7 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
           className='w-full mb-2 p-2 border rounded'
           required
         />
-         <input
+        <input
           type='text'
           name='lastName'
           value={formData.lastName}

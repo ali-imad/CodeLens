@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 interface LLMResponse {
-  response: string|null;
+  response: string | null;
 }
 
 export async function callLLM(prompt: string): Promise<LLMResponse> {
@@ -13,21 +13,29 @@ export async function callLLM(prompt: string): Promise<LLMResponse> {
       prompt: prompt,
       stream: false,
       // format: 'json', // breaks the response
-    }
+    };
 
     // TODO: replace with debug print
     //console.log("Requesting LLM with:\n", req)
 
-    const response = await axios.post('http://localhost:11434/api/generate', req);
+    const response = await axios.post(
+      'http://localhost:11434/api/generate',
+      req,
+    );
 
-    if (response.status === 200 && response.data && response.data.done && response.data.response) {
+    if (
+      response.status === 200 &&
+      response.data &&
+      response.data.done &&
+      response.data.response
+    ) {
       return {
         response: response.data.response,
-      }
+      };
     } else {
       return {
-        response: null
-      }
+        response: null,
+      };
     }
   } catch (error: any) {
     console.error('Error calling LLM:', error.message);

@@ -19,7 +19,14 @@ router.post('/', async (req: Request, res: Response) => {
         .json({ error: 'User already exists with this email.' });
     }
 
-    const newUser = new User({ username, firstName, lastName, email, password, role });
+    const newUser = new User({
+      username,
+      firstName,
+      lastName,
+      email,
+      password,
+      role,
+    });
     await newUser.save();
 
     return res.status(201).json({

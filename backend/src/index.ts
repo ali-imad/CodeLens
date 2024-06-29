@@ -3,13 +3,15 @@ import mongoose, { Connection } from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import problemRouter from './routes/problem';
-import Problem, { IProblem } from './models/Problem';
-import mockProblems from './sampleProblems';
 import loginRouter from './routes/login';
 import registerRouter from './routes/register';
 import attemptRouter from './routes/attempt';
+import authRouter from './routes/authToken';
 import userRouter from './routes/user';
+
 import { User } from './models/User';
+import Problem, { IProblem } from './models/Problem';
+import mockProblems from './sampleProblems';
 
 dotenv.config();
 
@@ -76,6 +78,7 @@ app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 app.use('/problems', problemRouter);
 app.use('/attempts', attemptRouter);
+app.use('/authToken', authRouter);
 app.use('/users', userRouter);
 
 // Start the server
