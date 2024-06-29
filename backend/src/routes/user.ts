@@ -23,6 +23,25 @@ router.get('/students', async (_req: Request, res: Response) => {
   }
 });
 
+router.get(
+  '/students/by-instructor/:instructorId',
+  async (req: Request, res: Response) => {
+    try {
+      const { instructorId } = req.params;
+
+      const students = await User.find({
+        instructor: instructorId,
+        role: 'Student',
+      });
+
+      res.status(200).json(students);
+    } catch (error) {
+      console.error('Error fetching students:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  },
+);
+
 router.get('/instructors', async (_req: Request, res: Response) => {
   try {
     const instructors = await User.find({ role: 'Instructor' }, 'username');

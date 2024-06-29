@@ -2,6 +2,9 @@ import express, { Request, Response, Router } from 'express';
 import { IUser, User } from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const JWT_SECRET_KEY: string =
   process.env['JWT_SECRET'] || 'default_secret_key';

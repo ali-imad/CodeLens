@@ -82,12 +82,24 @@ const SelectInstructorPage: React.FC = () => {
     navigate('/');
   };
 
+  const handleBackToHome = () => {
+    navigate('/');
+  };
+
   return (
     <div className='min-h-screen bg-gray-100 flex flex-col justify-center items-center'>
       <div className='container mx-auto p-4'>
-        <h1 className='text-3xl font-bold mb-12 text-center'>
-          Select Your Instructor
-        </h1>
+        <div className='flex justify-between items-center mb-4'>
+          <button
+            onClick={handleBackToHome}
+            className='bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md'
+          >
+            Back to Home
+          </button>
+          <h1 className='text-3xl font-bold text-center flex-1'>
+            Select Your Instructor
+          </h1>
+        </div>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           {instructors.map(instructor => (
             <div
