@@ -26,6 +26,7 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [attemptResponse, setAttemptResponse] =
     useState<IAttemptResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -51,6 +52,7 @@ const Dashboard: React.FC = () => {
   }, [id]);
 
   const handleDescriptionSubmit = async (description: string) => {
+    setIsLoading(true);
     try {
       const userEmail = localStorage.getItem('email');
       const userResponse = await axios.get(
@@ -69,6 +71,8 @@ const Dashboard: React.FC = () => {
       setAttemptResponse(response.data);
     } catch (err) {
       console.error('Error submitting description:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -84,7 +88,10 @@ const Dashboard: React.FC = () => {
     <div className='flex h-screen'>
       <div className='flex flex-col w-1/2 p-4 border-r border-gray-200 overflow-y-auto'>
         <ProblemDescription problem={problem} />
-        <DescriptionInput onSubmit={handleDescriptionSubmit} />
+        <DescriptionInput
+          onSubmit={handleDescriptionSubmit}
+          isLoading={isLoading}
+        />
       </div>
 
       <div className='flex flex-col w-1/2 p-4 overflow-y-auto'>
