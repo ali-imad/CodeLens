@@ -53,7 +53,7 @@ git clone https://github.students.cs.ubc.ca/CPSC310-2024S/Project-Groups-07-Lab-
 
 ### Docker Setup
 
-Ensure Docker Desktop is installed and running on your system. Navigate to the
+Ensure Docker Desktop is installed and running on your system. Provide Docker with at least 10 GB of system memory to adequately run the large language model. Navigate to the
 root directory of the project (where the docker-compose.yml file is located).
 Build and start the containers:
 

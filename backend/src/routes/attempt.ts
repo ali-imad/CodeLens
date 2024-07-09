@@ -3,15 +3,41 @@ import mongoose from 'mongoose';
 import Attempt, { IAttempt } from '../models/Attempt';
 import Problem from '../models/Problem';
 import { runTests } from '../services/testCase';
-import { callLLM } from '../services/llmService';
+import {
+  ANNOTATE_TAG,
+  callLLM,
+  CODEGEN_TAG,
+  LLMContext,
+} from '../services/llmService';
 
 const router = express.Router();
+
+interface AttemptResponse {
+  attempt: IAttempt;
+  history: LLMContext[] | undefined;
+}
+
+// Constants for cleaning generated code
+const START_TOKEN = '[[[START]]]';
+const END_TOKEN = '[[[END]]]';
+
+function cleanGenCode(
+  generatedFunction: string,
+  start_token: string,
+  end_token: string,
+) {
+  const start = generatedFunction.indexOf(start_token);
+  const end = generatedFunction.indexOf(end_token);
+  generatedFunction = generatedFunction
+    .substring(start, end)
+    .replace(start_token, '')
+    .replace(end_token, '');
+  return generatedFunction.trim();
+}
 
 router.post('/', async (req: Request, res: Response) => {
   const { problemId, userId, description } = req.body;
 
-  const START_TOKEN = '[[[START]]]';
-  const END_TOKEN = '[[[END]]]';
   try {
     if (
       !mongoose.Types.ObjectId.isValid(problemId) ||
@@ -25,84 +51,25 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Problem not found' });
     }
 
-    // const prompt = `
-    // Problem Function Signature:
-    // \`\`\`javascript
-    // ${problem.functionBody}
-    // \`\`\`
+    const prompt = `${CODEGEN_TAG} ${description}`;
 
-    // User Description:
-    // "${description}"
-
-    // Test Cases:
-    // \`${JSON.stringify(problem.testCases)}\`
-
-    // Instructions:
-    // 1. Generate a JavaScript function based on the given problem function signature and user description.
-    // 2. Ensure that the function adheres to the signature format provided.
-    // 3. Use the given test cases to validate the function’s correctness.
-    // 4. Return the generated function as a string.
-
-    // Example Response Format:
-
-    // \`\`\`json
-    // {
-    //   "generatedFunction": "function add(a, b) { return a + b; }"
-    // }
-    // \`\`\`
-    // `;
-
-    // Problem Function Signature:
-    // \`\`\`javascript
-    // ${problem.functionBody}
-    // \`\`\`
-    //
-    // User Description:
-    // "${description}"
-    //
-    // Test Cases:
-    // \`${JSON.stringify(problem.testCases)}\`
-    //
-    // Instructions:
-    // 1. Generate a JavaScript function based on the given problem function signature and user description.
-    // 2. Ensure that the function adheres to the signature format provided.
-    // 3. Use the given test cases to validate the function’s correctness.
-    // 4. Return the generated function as a string.
-    //
-    // Example Response Format:
-    //
-    // \`\`\`json
-    // {
-    //   "generatedFunction": "function add(a, b) { return a + b; }"
-    // }
-    // \`\`\`
-
-    const prompt = `[CODEGEN] ${description}`;
-
-    const promptResp = await callLLM(prompt);
+    const promptResp = await callLLM(prompt, []);
     let generatedFunction = promptResp.response;
-    if (
-      generatedFunction &&
-      generatedFunction.includes(START_TOKEN) &&
-      generatedFunction.includes(END_TOKEN)
-    ) {
-      // find the lines between `START_TOKEN` and `END_TOKEN`
-      const start = generatedFunction.indexOf(START_TOKEN);
-      const end = generatedFunction.indexOf(END_TOKEN);
-      // remove the tokens
-      generatedFunction = generatedFunction
-        .substring(start, end)
-        .replace(START_TOKEN, '')
-        .replace(END_TOKEN, '');
-      // strip out new line characters in the beginning and end of the string
-      generatedFunction = generatedFunction.trim();
+    if (generatedFunction) {
+      if (
+        generatedFunction.includes(START_TOKEN) &&
+        generatedFunction.includes(END_TOKEN)
+      ) {
+        generatedFunction = cleanGenCode(
+          generatedFunction,
+          START_TOKEN,
+          END_TOKEN,
+        );
+      }
     } else {
       // return placeholder function
       generatedFunction = `function hello() { return "Hello, World!"; }`;
     }
-
-    // TODO: replace with debug print
-    // console.log('Generated Function:\n', generatedFunction)
 
     const { passed, feedbackArray } = runTests(
       generatedFunction,
@@ -122,7 +89,12 @@ router.post('/', async (req: Request, res: Response) => {
     const newAttempt = new Attempt(newAttemptData);
     const savedAttempt = await newAttempt.save();
 
-    return res.status(201).json(savedAttempt);
+    const response: AttemptResponse = {
+      attempt: savedAttempt,
+      history: promptResp.context,
+    };
+
+    return res.status(201).json(response);
   } catch (err: any) {
     return res.status(500).json({ message: err.message });
   }
@@ -171,6 +143,47 @@ router.get('/:id', async (req: Request, res: Response) => {
     }
 
     return res.json(attempt);
+  } catch (err: any) {
+    return res.status(500).json({ message: err.message });
+  }
+});
+
+router.post('/:id/annotate', async (req: Request, res: Response) => {
+  // Find the attempt by id
+  const { id } = req.params;
+
+  // Get the LLM history
+  const history = req.body.history;
+  try {
+    if (typeof id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid attempt id format' });
+    }
+
+    let attempt = await Attempt.findById(id);
+
+    if (!attempt) {
+      return res.status(404).json({ message: 'Attempt not found' });
+    }
+
+    const promptResp = await callLLM(ANNOTATE_TAG, history);
+    let generatedFunction = promptResp.response;
+    if (generatedFunction) {
+      // Check for the bug
+      if (
+        generatedFunction.includes(START_TOKEN) &&
+        generatedFunction.includes(END_TOKEN)
+      ) {
+        generatedFunction = cleanGenCode(
+          generatedFunction,
+          START_TOKEN,
+          END_TOKEN,
+        );
+      }
+    } else {
+      return res.status(403).json({ message: 'Attempt not annotated' });
+    }
+
+    return res.json({ response: generatedFunction, history: history });
   } catch (err: any) {
     return res.status(500).json({ message: err.message });
   }

@@ -1,27 +1,89 @@
 import React from 'react';
-import { TestCaseResult } from '../types';
+import axios from 'axios';
+import { IAttemptResponse } from './Dashboard.tsx';
 
-interface FeedbackProps {
-  generatedCode: string;
-  description: string;
-  feedback: TestCaseResult[];
-  isPassed: boolean;
+interface AnnotateButtonProps {
+  oc: () => void;
+  className?: string;
+  isLoading: boolean;
 }
 
-const Feedback: React.FC<FeedbackProps> = ({
-  generatedCode,
-  description,
-  feedback,
-  isPassed,
-}) => {
+const AnnotateButton: React.FC<AnnotateButtonProps> = (
+  props: AnnotateButtonProps,
+) => {
+  return (
+    <button
+      onClick={props.oc}
+      disabled={props.isLoading}
+      className={`
+        ${props.isLoading ? 'bg-gray-300 cursor-not-allowed' : 'bg-yellow-300 hover:bg-yellow-400'}
+        text-gray-800
+        font-medium 
+        outline-gray-800
+        py-2 px-4 
+        rounded-full 
+        transition duration-300 ease-in-out 
+        focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 
+        text-sm
+        ${props.className || ''}
+      `}
+    >
+      Annotate
+    </button>
+  );
+};
+
+interface FeedbackProps extends IAttemptResponse {
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
+}
+
+const Feedback: React.FC<FeedbackProps> = (props: FeedbackProps) => {
+  // Extract props
+  const { _id, generatedCode, description, feedback, isPassed } = props.attempt;
+  const { isLoading, setIsLoading } = props;
+  const history = props.history;
+
+  const [isAnnotated, setIsAnnotated] = React.useState<boolean>(false);
+  const [annotatedCode, setAnnotatedCode] = React.useState<string>('');
+  const [code, setCode] = React.useState<string>(generatedCode);
+
+  const handleAnnotateFeedback = async (_id: string) => {
+    if (isAnnotated) {
+      setCode(generatedCode);
+    } else {
+      if (!annotatedCode) {
+        setIsLoading(true);
+        try {
+          // annotate and pass in the history
+          const response = await axios.post(
+            `http://localhost:3000/attempts/${_id}/annotate`,
+            { history },
+          );
+          setCode(response.data.response);
+          setAnnotatedCode(response.data.response);
+          setIsLoading(false);
+        } catch (error: any) {
+          console.error('Error annotating feedback:', error.message);
+        }
+      } else {
+        setCode(annotatedCode);
+      }
+    }
+    setIsAnnotated(!isAnnotated);
+  };
+
   return (
     <div className='bg-white shadow-md rounded-lg p-6 space-y-6'>
       <div>
-        <h2 className='text-xl font-bold mb-4'>
-          Generated Code Based on User Input
-        </h2>
-        <pre className='bg-gray-100 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap'>
-          {generatedCode}
+        <div className='flex justify-between items-center'>
+          <h2 className='text-xl font-bold mb-4'>
+            Generated Code Based on User Input
+          </h2>
+          <AnnotateButton isLoading={isLoading} oc={() => handleAnnotateFeedback(_id)} />
+        </div>
+        <pre className='bg-gray-100 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap text-xs'>
+          {code}
         </pre>
       </div>
 

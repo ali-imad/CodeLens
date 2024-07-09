@@ -6,6 +6,7 @@ enum Difficulty {
   Medium = 'Medium',
   Hard = 'Hard',
 }
+
 interface ITestCase {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   input: any;

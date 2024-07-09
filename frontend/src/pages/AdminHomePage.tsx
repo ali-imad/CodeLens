@@ -11,6 +11,7 @@ export interface ProblemState {
   _id: string;
   title: string;
   difficulty: string;
+
   [key: string]: string;
 }
 

@@ -13,11 +13,22 @@ export interface IProblem extends Document {
   testCases: ITestCase[];
 }
 
-interface IAttemptResponse {
+interface IAttempt {
+  _id: string;
   generatedCode: string;
   feedback: TestCaseResult[];
   isPassed: boolean;
   description: string;
+}
+
+interface ILLMHistory {
+  role: string;
+  content: string;
+}
+
+export interface IAttemptResponse {
+  attempt: IAttempt;
+  history: ILLMHistory[];
 }
 
 const Dashboard: React.FC = () => {
@@ -52,6 +63,9 @@ const Dashboard: React.FC = () => {
   }, [id]);
 
   const handleDescriptionSubmit = async (description: string) => {
+    if (attemptResponse) {
+      setAttemptResponse(null);
+    }
     setIsLoading(true);
     try {
       const userEmail = localStorage.getItem('email');
@@ -68,6 +82,9 @@ const Dashboard: React.FC = () => {
           description,
         },
       );
+      if (!response.data || !response.data.attempt) {
+        throw new Error('could not query LLM');
+      }
       setAttemptResponse(response.data);
     } catch (err) {
       console.error('Error submitting description:', err);
@@ -95,14 +112,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className='flex flex-col w-1/2 p-4 overflow-y-auto'>
-        {attemptResponse && (
-          <Feedback
-            description={attemptResponse.description}
-            feedback={attemptResponse.feedback}
-            isPassed={attemptResponse.isPassed}
-            generatedCode={attemptResponse.generatedCode}
-          />
-        )}
+        {attemptResponse && <Feedback isLoading={isLoading} setIsLoading={setIsLoading} {...attemptResponse} />}
       </div>
     </div>
   );
