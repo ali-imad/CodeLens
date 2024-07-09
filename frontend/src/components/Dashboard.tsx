@@ -112,7 +112,13 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className='flex flex-col w-1/2 p-4 overflow-y-auto'>
-        {attemptResponse && <Feedback isLoading={isLoading} setIsLoading={setIsLoading} {...attemptResponse} />}
+        {attemptResponse && (
+          <Feedback
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            {...attemptResponse}
+          />
+        )}
       </div>
     </div>
   );

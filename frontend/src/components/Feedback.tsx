@@ -80,7 +80,10 @@ const Feedback: React.FC<FeedbackProps> = (props: FeedbackProps) => {
           <h2 className='text-xl font-bold mb-4'>
             Generated Code Based on User Input
           </h2>
-          <AnnotateButton isLoading={isLoading} oc={() => handleAnnotateFeedback(_id)} />
+          <AnnotateButton
+            isLoading={isLoading}
+            oc={() => handleAnnotateFeedback(_id)}
+          />
         </div>
         <pre className='bg-gray-100 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap text-xs'>
           {code}
