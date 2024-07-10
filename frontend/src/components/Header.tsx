@@ -26,25 +26,25 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
       <div className='text-2xl font-bold'>
         <Link to='/'>CodeLens</Link>
       </div>
-      <nav className='space-x-8 flex items-center'>
+      <nav className='space-x-4 flex items-center'>
         <button
           onClick={handleRandomProblem}
-          className='p-2 bg-blue-500 rounded hover:bg-blue-600'
+          className='px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out shadow-md'
         >
           Random Problem
         </button>
         <Link
           to='/problems'
-          className='p-2 bg-green-500 rounded hover:bg-green-600'
+          className='px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200 ease-in-out shadow-md'
         >
           Problems
         </Link>
         {isLoggedIn ? (
-          <div className='flex items-center space-x-2'>
+          <div className='flex items-center space-x-4'>
             {localStorage.getItem('role') === 'Instructor' && (
               <Link
                 to='/all-students'
-                className='p-2 bg-purple-500 rounded hover:bg-purple-600'
+                className='px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition duration-200 ease-in-out shadow-md'
               >
                 All Students
               </Link>
@@ -58,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
             />
             <button
               onClick={onLogout}
-              className='p-2 bg-red-500 rounded hover:bg-red-600'
+              className='px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200 ease-in-out shadow-md'
             >
               Log Out
             </button>
@@ -66,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
         ) : (
           <Link
             to='/login'
-            className='p-2 bg-yellow-500 rounded hover:bg-yellow-600'
+            className='px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition duration-200 ease-in-out shadow-md'
           >
             Log In
           </Link>

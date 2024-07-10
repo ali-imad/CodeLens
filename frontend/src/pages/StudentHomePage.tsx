@@ -16,16 +16,16 @@ const StudentHomePage: React.FC = () => {
           describing code snippets and testing your comprehension against
           generated solutions.
         </p>
-        <div className='space-x-8'>
+        <div className='flex space-x-8 justify-center'>
           <Link
             to='/select-instructor'
-            className='px-6 py-3 bg-blue-500 rounded hover:bg-blue-600'
+            className='px-8 py-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200 ease-in-out shadow-md'
           >
             FIND YOUR INSTRUCTOR
           </Link>
           <Link
             to='/problems'
-            className='px-6 py-3 bg-red-500 rounded hover:bg-red-600'
+            className='px-8 py-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200 ease-in-out shadow-md'
           >
             START LEARNING
           </Link>

@@ -92,7 +92,7 @@ const SelectInstructorPage: React.FC = () => {
         <div className='flex justify-between items-center mb-4'>
           <button
             onClick={handleBackToHome}
-            className='bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md'
+            className='bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition duration-200 ease-in-out'
           >
             Back to Home
           </button>
@@ -128,7 +128,7 @@ const SelectInstructorPage: React.FC = () => {
         <div className='flex justify-center mt-16'>
           <button
             onClick={handleSubmit}
-            className='bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md inline-block'
+            className='bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md inline-block transition duration-200 ease-in-out'
           >
             Confirm Selection
           </button>
@@ -141,7 +141,7 @@ const SelectInstructorPage: React.FC = () => {
               </p>
               <button
                 onClick={handleSuccessClose}
-                className='bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md'
+                className='bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md transition duration-200 ease-in-out'
               >
                 Close
               </button>

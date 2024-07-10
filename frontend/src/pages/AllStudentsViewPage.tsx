@@ -3,8 +3,8 @@ import axios from 'axios';
 import { BsFilter } from 'react-icons/bs';
 import { CiExport } from 'react-icons/ci';
 import Pagination from '../components/Pagination';
-import CustomButton from '../components/CustomButton';
-import CustomTable from '../components/CustomTable';
+import CustomButton from '../utility/CustomButton';
+import CustomTable from '../utility/CustomTable';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

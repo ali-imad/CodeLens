@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import CustomTable from '../components/CustomTable';
+import CustomTable from '../utility/CustomTable';
 import AddProblemModal from '../components/AddProblemModal';
 import { BsSearch } from 'react-icons/bs';
 import { CiSquarePlus } from 'react-icons/ci';
 import Pagination from '../components/Pagination';
-import CustomButton from '../components/CustomButton';
+import CustomButton from '../utility/CustomButton';
 
 export interface ProblemState {
   _id: string;
@@ -25,7 +25,7 @@ const AdminHomePage: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   useEffect(() => {
     const fetchProblems = async () => {
