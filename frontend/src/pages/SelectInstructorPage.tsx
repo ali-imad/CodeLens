@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Instructor {
   _id: string;
@@ -12,7 +14,6 @@ const SelectInstructorPage: React.FC = () => {
   const [selectedInstructor, setSelectedInstructor] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [showSuccess, setShowSuccess] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,15 +72,25 @@ const SelectInstructorPage: React.FC = () => {
         userId,
         instructorId: selectedInstructor,
       });
-      setShowSuccess(true);
+      toast.success('Instructor assigned successfully!', {
+        position: 'top-left',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } catch (error) {
       console.error('Error selecting instructor:', error);
+      toast.error('Error selecting instructor. Please try again.', {
+        position: 'top-left',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
-  };
-
-  const handleSuccessClose = () => {
-    setShowSuccess(false);
-    navigate('/');
   };
 
   const handleBackToHome = () => {
@@ -88,6 +99,7 @@ const SelectInstructorPage: React.FC = () => {
 
   return (
     <div className='min-h-screen bg-gray-100 flex flex-col justify-center items-center'>
+      <ToastContainer />
       <div className='container mx-auto p-4'>
         <div className='flex justify-between items-center mb-4'>
           <button
@@ -133,21 +145,6 @@ const SelectInstructorPage: React.FC = () => {
             Confirm Selection
           </button>
         </div>
-        {showSuccess && (
-          <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-75'>
-            <div className='bg-white p-6 rounded-lg shadow-lg text-center'>
-              <p className='text-green-600 text-lg font-bold mb-4'>
-                Instructor assigned successfully!
-              </p>
-              <button
-                onClick={handleSuccessClose}
-                className='bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md transition duration-200 ease-in-out'
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
