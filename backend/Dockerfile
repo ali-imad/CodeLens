@@ -4,6 +4,11 @@ FROM node:20
 # Set the working directory inside the container
 WORKDIR /app
 
+# Install necessary dependencies for sharp
+RUN apt-get update && apt-get install -y \
+    libvips-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
@@ -15,6 +20,7 @@ RUN npm install -g ts-node typescript
 
 # Install dependencies including devDependencies (needed for building native modules)
 # Use --unsafe-perm=true --allow-root to avoid permission issues during npm install
+RUN npm install --unsafe-perm=true --allow-root --platform=linux --arch=x64 sharp
 RUN npm install --unsafe-perm=true --allow-root
 
 # Copy the rest of the application code
