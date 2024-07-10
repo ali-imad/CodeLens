@@ -41,7 +41,7 @@ refine their explanations to improve their comprehension skills.
 
 ### Prerequisites
 
-- Node.js (version v21.5.0)
+- Node.js (version v20.15.1)
 - Vite
 - Docker Desktop
 
