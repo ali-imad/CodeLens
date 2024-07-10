@@ -15,11 +15,11 @@ router.get('/', async (_req: Request, res: Response) => {
 
 router.get('/students', async (_req: Request, res: Response) => {
   try {
-    const students = await User.find({ role: 'Student' }, 'username');
-    res.json(students);
+    const students = await User.find({ role: 'Student' });
+    return res.json(students);
   } catch (error) {
     console.error('Error fetching students:', error);
-    res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ error: 'Server error' });
   }
 });
 

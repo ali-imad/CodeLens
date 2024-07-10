@@ -41,6 +41,15 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
         </Link>
         {isLoggedIn ? (
           <div className='flex items-center space-x-2'>
+            {localStorage.getItem('role') === 'Instructor' && (
+              <Link
+                to='/all-students'
+                className='p-2 bg-purple-500 rounded hover:bg-purple-600'
+              >
+                All Students
+              </Link>
+            )}
+
             <span>Hi, {username}</span>
             <img
               src='https://via.placeholder.com/32'

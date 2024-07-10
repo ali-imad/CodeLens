@@ -85,10 +85,12 @@ const AdminHomePage: React.FC = () => {
   };
 
   const handleSelectAll = () => {
-    if (selectedProblems.size === currentProblems.length) {
+    if (selectedProblems.size === filteredProblems.length) {
       setSelectedProblems(new Set());
     } else {
-      setSelectedProblems(new Set(currentProblems.map(problem => problem._id)));
+      setSelectedProblems(
+        new Set(filteredProblems.map(student => student._id)),
+      );
     }
   };
 
@@ -101,6 +103,22 @@ const AdminHomePage: React.FC = () => {
     }
     setSelectedProblems(newSelectedProblems);
   };
+
+  const columns = [
+    { header: 'Problem #', accessor: '_id', sortable: true },
+    { header: 'Title', accessor: 'title', sortable: true },
+    { header: 'Difficulty', accessor: 'difficulty', sortable: true },
+    { header: 'Problem Page', accessor: 'link' },
+  ];
+
+  const data = currentProblems.map(problem => ({
+    ...problem,
+    link: (
+      <a href={`/problems/${problem._id}`} className='text-blue-500'>
+        View
+      </a>
+    ),
+  }));
 
   return (
     <div className='container mx-auto p-4 m-10'>
@@ -119,12 +137,15 @@ const AdminHomePage: React.FC = () => {
           onClick={() => setShowModal(true)}
           text='Add Problem'
           icon={<CiSquarePlus className='w-6 h-7 relative text-white' />}
+          className='w-full sm:w-60 md:w-72 lg:w-96 xl:w-[180px]'
+          bgColor='bg-blue-600'
+          borderColor='border-blue-600'
         />
       </div>
       <CustomTable
-        problems={problems}
-        currentProblems={currentProblems}
-        selectedProblems={selectedProblems}
+        data={data}
+        columns={columns}
+        selectedItems={selectedProblems}
         handleSelectAll={handleSelectAll}
         handleSelect={handleSelect}
         handleSort={handleSort}

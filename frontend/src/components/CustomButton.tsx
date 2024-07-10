@@ -1,20 +1,26 @@
 import React from 'react';
 
-interface AddProblemButtonProps {
+interface CustomButtonProps {
   onClick: () => void;
   text?: string;
   icon?: React.ReactNode;
+  className?: string;
+  bgColor?: string;
+  borderColor?: string;
 }
 
-const CustomButton: React.FC<AddProblemButtonProps> = ({
+const CustomButton: React.FC<CustomButtonProps> = ({
   onClick,
-  text = 'Add Problem',
+  text = 'Button',
   icon,
+  className = '',
+  bgColor = 'bg-blue-600',
+  borderColor = 'border-blue-600',
 }) => {
   return (
     <button
       onClick={onClick}
-      className='w-full sm:w-60 md:w-72 lg:w-96 xl:w-[180px] h-12 px-3 py-4 bg-blue-600 rounded-lg border-2 border-blue-600 flex items-center space-x-2'
+      className={`w-full h-12 px-3 py-4 rounded-lg border-2 flex items-center space-x-2 ${bgColor} ${borderColor} ${className}`}
     >
       {icon && <span className='w-7 h-7 relative text-white'>{icon}</span>}
       <div className='justify-center items-center gap-2.5 flex'>

@@ -63,10 +63,10 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
       )
         ? 'Completed'
         : user.attemptedProblems.includes(
-            problem._id as mongoose.Types.ObjectId,
-          )
-        ? 'Attempted'
-        : 'Not Attempted',
+              problem._id as mongoose.Types.ObjectId,
+            )
+          ? 'Attempted'
+          : 'Not Attempted',
     }));
 
     return res.json(problemStatus);
@@ -176,12 +176,14 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
       )
         ? 'Completed'
         : user.attemptedProblems.includes(
-            problem._id as mongoose.Types.ObjectId,
-          )
-        ? 'Attempted'
-        : user.assignedProblems.includes(problem._id as mongoose.Types.ObjectId)
-        ? 'Assigned'
-        : 'Not Assigned',
+              problem._id as mongoose.Types.ObjectId,
+            )
+          ? 'Attempted'
+          : user.assignedProblems.includes(
+                problem._id as mongoose.Types.ObjectId,
+              )
+            ? 'Assigned'
+            : 'Not Assigned',
     }));
 
     return res.json(problemStatus);
@@ -230,9 +232,8 @@ router.put('/:id', async (req: Request, res: Response) => {
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
     const problemId: string | undefined = req.params['id'];
-    const deletedProblem: IProblem | null = await Problem.findByIdAndDelete(
-      problemId,
-    );
+    const deletedProblem: IProblem | null =
+      await Problem.findByIdAndDelete(problemId);
     if (!deletedProblem) {
       return res.status(404).json({ message: 'Problem not found' });
     }

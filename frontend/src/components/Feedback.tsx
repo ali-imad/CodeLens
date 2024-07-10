@@ -16,7 +16,11 @@ const AnnotateButton: React.FC<AnnotateButtonProps> = (
       onClick={props.oc}
       disabled={props.isLoading}
       className={`
-        ${props.isLoading ? 'bg-gray-300 cursor-not-allowed' : 'bg-yellow-300 hover:bg-yellow-400'}
+        ${
+          props.isLoading
+            ? 'bg-gray-300 cursor-not-allowed'
+            : 'bg-yellow-300 hover:bg-yellow-400'
+        }
         text-gray-800
         font-medium 
         outline-gray-800
@@ -55,7 +59,6 @@ const Feedback: React.FC<FeedbackProps> = (props: FeedbackProps) => {
       if (!annotatedCode) {
         setIsLoading(true);
         try {
-          // annotate and pass in the history
           const response = await axios.post(
             `http://localhost:3000/attempts/${_id}/annotate`,
             { history },
@@ -63,6 +66,7 @@ const Feedback: React.FC<FeedbackProps> = (props: FeedbackProps) => {
           setCode(response.data.response);
           setAnnotatedCode(response.data.response);
           setIsLoading(false);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           console.error('Error annotating feedback:', error.message);
         }

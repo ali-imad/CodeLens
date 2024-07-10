@@ -1,11 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ProblemState } from '../pages/AdminHomePage';
+interface TableColumn {
+  header: string;
+  accessor: string;
+  sortable?: boolean;
+}
 
-interface ProblemTableProps {
-  problems: ProblemState[];
-  currentProblems: ProblemState[];
-  selectedProblems: Set<string>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface CustomTableProps<T extends Record<string, any>> {
+  data: T[];
+  columns: TableColumn[];
+  selectedItems: Set<string>;
   handleSelectAll: () => void;
   handleSelect: (id: string) => void;
   handleSort: (column: string) => void;
@@ -13,16 +16,17 @@ interface ProblemTableProps {
   sortOrder: 'asc' | 'desc';
 }
 
-const CustomTable: React.FC<ProblemTableProps> = ({
-  problems,
-  currentProblems,
-  selectedProblems,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CustomTable = <T extends Record<string, any>>({
+  data,
+  columns,
+  selectedItems,
   handleSelectAll,
   handleSelect,
   handleSort,
   sortBy,
   sortOrder,
-}) => {
+}: CustomTableProps<T>) => {
   return (
     <table className='min-w-full bg-white text-center'>
       <thead>
@@ -30,65 +34,48 @@ const CustomTable: React.FC<ProblemTableProps> = ({
           <th className='py-2 px-4 border-b cursor-pointer'>
             <input
               type='checkbox'
-              checked={selectedProblems.size === currentProblems.length}
+              checked={selectedItems.size === data.length}
               onChange={handleSelectAll}
               className='form-checkbox'
             />
           </th>
-          <th
-            className='py-2 px-4 border-b cursor-pointer'
-            onClick={() => handleSort('_id')}
-          >
-            Problem #
-            {sortBy === '_id' && (
-              <span className='ml-1'>{sortOrder === 'asc' ? '▲' : '▼'}</span>
-            )}
-          </th>
-          <th
-            className='py-2 px-4 border-b cursor-pointer'
-            onClick={() => handleSort('title')}
-          >
-            Title
-            {sortBy === 'title' && (
-              <span className='ml-1'>{sortOrder === 'asc' ? '▲' : '▼'}</span>
-            )}
-          </th>
-          <th
-            className='py-2 px-4 border-b cursor-pointer'
-            onClick={() => handleSort('difficulty')}
-          >
-            Difficulty
-            {sortBy === 'difficulty' && (
-              <span className='ml-1'>{sortOrder === 'asc' ? '▲' : '▼'}</span>
-            )}
-          </th>
-          <th className='py-2 px-4 border-b'>Problem Page</th>
+          {columns.map(column => (
+            <th
+              key={column.accessor}
+              className={`py-2 px-4 border-b ${
+                column.sortable ? 'cursor-pointer' : ''
+              }`}
+              onClick={
+                column.sortable ? () => handleSort(column.accessor) : undefined
+              }
+            >
+              {column.header}
+              {sortBy === column.accessor && (
+                <span className='ml-1'>{sortOrder === 'asc' ? '▲' : '▼'}</span>
+              )}
+            </th>
+          ))}
         </tr>
       </thead>
       <tbody>
-        {currentProblems.map(problem => (
+        {data.map(item => (
           <tr
-            key={problem._id}
-            className={selectedProblems.has(problem._id) ? 'bg-gray-200' : ''}
+            key={item['_id']}
+            className={selectedItems.has(item['_id']) ? 'bg-gray-200' : ''}
           >
             <td className='py-2 px-4 border-b'>
               <input
                 type='checkbox'
-                checked={selectedProblems.has(problem._id)}
-                onChange={() => handleSelect(problem._id)}
+                checked={selectedItems.has(item['_id'])}
+                onChange={() => handleSelect(item['_id'])}
                 className='form-checkbox'
               />
             </td>
-            <td className='py-2 px-4 border-b'>
-              {problems.indexOf(problem) + 1}
-            </td>
-            <td className='py-2 px-4 border-b'>{problem.title}</td>
-            <td className='py-2 px-4 border-b'>{problem.difficulty}</td>
-            <td className='py-2 px-4 border-b'>
-              <Link to={`/problems/${problem._id}`} className='text-blue-500'>
-                View
-              </Link>
-            </td>
+            {columns.map(column => (
+              <td key={column.accessor} className='py-2 px-4 border-b'>
+                {item[column.accessor]}
+              </td>
+            ))}
           </tr>
         ))}
       </tbody>
