@@ -8,10 +8,10 @@ import registerRouter from './routes/register';
 import attemptRouter from './routes/attempt';
 import authRouter from './routes/authToken';
 import userRouter from './routes/user';
-
 import { User } from './models/User';
 import Problem, { IProblem } from './models/Problem';
 import mockProblems from './sampleProblems';
+import path from 'path';
 
 dotenv.config();
 
@@ -21,12 +21,14 @@ const PORT: number = parseInt(process.env['PORT'] || '3000');
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Connect to MongoDB
 const uri: string = process.env['MONGODB_URI'] || '';
 mongoose.connect(uri);
 
 const connection: Connection = mongoose.connection;
+
 connection.once('open', async () => {
   console.log('Connected to MongoDB');
 
@@ -55,7 +57,6 @@ connection.once('open', async () => {
   }
 });
 
-// Routes
 app.get('/', (_req: Request, res: Response) => {
   res.send('Welcome to CodeLens API');
 });

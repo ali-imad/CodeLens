@@ -36,9 +36,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           .catch(error => {
             console.error('Token validation failed:', error);
             setErrorMessage('Session expired. Re-login required.');
-            setRememberMe(false);
             localStorage.removeItem('token');
+            setRememberMe(false);
           });
+      } else {
+        setRememberMe(false);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,6 +71,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
         localStorage.setItem('email', response.data.email);
         localStorage.setItem('username', response.data.username);
         localStorage.setItem('role', response.data.role);
+        localStorage.setItem('firstName', response.data.firstName);
+        localStorage.setItem('lastName', response.data.lastName);
         onLoginSuccess(response.data.username);
       }
     } catch (error) {
@@ -123,7 +127,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               type='checkbox'
               className='w-5 h-5 round '
               checked={showPassword}
-              onClick={() => setShowPassword(!showPassword)}
+              onChange={() => setShowPassword(!showPassword)}
             />
             <label
               htmlFor='showPassword'

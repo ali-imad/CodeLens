@@ -23,8 +23,8 @@ export enum UserRole {
 
 const UserSchema: Schema = new Schema({
   username: { type: String, required: true, unique: true },
-  firstName: { type: String, required: false, unique: false },
-  lastName: { type: String, required: false, unique: false },
+  firstName: { type: String, required: true, unique: false },
+  lastName: { type: String, required: true, unique: false },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: Object.values(UserRole), required: true },

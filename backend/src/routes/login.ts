@@ -9,8 +9,6 @@ dotenv.config();
 const JWT_SECRET_KEY: string =
   process.env['JWT_SECRET'] || 'default_secret_key';
 
-console.log('JWT_SECRET_KEY:', JWT_SECRET_KEY);
-
 const router: Router = express.Router();
 
 router.post('/', async (req: Request, res: Response) => {
@@ -47,6 +45,8 @@ router.post('/', async (req: Request, res: Response) => {
       username: user.username,
       email: user.email,
       role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
     });
   } catch (error) {
     console.error('Server error:', error);

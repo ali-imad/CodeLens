@@ -14,6 +14,7 @@ import LoginPage from './pages/LoginPage';
 import RegistrationPage from './pages/RegistrationPage';
 import AdminHomePage from './pages/AdminHomePage';
 import SelectInstructorPage from './pages/SelectInstructorPage';
+import ProfilePage from './pages/ProfilePage';
 import AllStudentViewPage from './pages/AllStudentsViewPage';
 
 const App: React.FC = () => {
@@ -48,6 +49,9 @@ const App: React.FC = () => {
     localStorage.removeItem('email');
     localStorage.removeItem('username');
     localStorage.removeItem('role');
+    localStorage.removeItem('profileImage');
+    localStorage.removeItem('firstName');
+    localStorage.removeItem('lastName');
   };
 
   return (
@@ -84,6 +88,7 @@ const App: React.FC = () => {
               {/* Redirect to homepage when logged in */}
               <Route path='/login' element={<Navigate to='/' replace />} />
               <Route path='/register' element={<Navigate to='/' replace />} />
+              <Route path='/profilePage' element={<ProfilePage />} />
             </Routes>
           ) : (
             <Routes>

@@ -15,12 +15,15 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
+    "@types/mime-types": "^2.1.4",
+    "@types/multer": "^1.4.11",
     "nodemon": "^3.1.4",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.3"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/sharp": "^0.32.0",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
@@ -28,6 +31,11 @@
     "express": "^4.19.2",
     "glob": "^11.0.0",
     "jsonwebtoken": "^9.0.2",
+    "mime-types": "^2.1.35",
+    "mongodb": "^5.9.2",
+    "multer": "^1.4.4",
+    "multer-gridfs-storage": "^5.0.2",
+    "sharp": "^0.33.4",
     "mongoose": "^8.5.0",
     "rimraf": "^6.0.0"
   },

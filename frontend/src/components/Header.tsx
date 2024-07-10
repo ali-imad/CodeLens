@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -10,6 +10,44 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
   const navigate = useNavigate();
+
+  const [image, setImage] = useState<string>(() => {
+    const profileImage = localStorage.getItem('profileImage');
+    return profileImage ? profileImage : 'http://localhost:3000/avatar.jpg';
+  });
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        if (username) {
+          const response = await axios.get(
+            `http://localhost:3000/users/${username}/fetchImage`,
+            { responseType: 'blob' },
+          );
+
+          const img = URL.createObjectURL(response.data);
+          setImage(img);
+          localStorage.setItem('profileImage', img);
+        }
+      } catch (error) {
+        setImage('http://localhost:3000/avatar.jpg');
+        console.error('Error fetching image:', error);
+      }
+    };
+    fetchImage();
+    const handleImageUploadChange = () => {
+      const isImageChanged = localStorage.getItem('imageChanged?') === 'true';
+      const localprofileImage = localStorage.getItem('profileImage');
+      if (isImageChanged && localprofileImage) {
+        setImage(localprofileImage);
+        localStorage.removeItem('imageChanged?');
+      }
+    };
+    window.addEventListener('storage', handleImageUploadChange);
+    return () => {
+      window.removeEventListener('storage', handleImageUploadChange);
+    };
+  }, [isLoggedIn]);
 
   const handleRandomProblem = async () => {
     try {
@@ -51,11 +89,13 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
             )}
 
             <span>Hi, {username}</span>
-            <img
-              src='https://via.placeholder.com/32'
-              alt='User Avatar'
-              className='rounded-full w-8 h-8'
-            />
+            <Link to='/profilePage'>
+              <img
+                src={image}
+                alt='User Avatar'
+                className='rounded-full w-9 h-9 object-cover'
+              />
+            </Link>
             <button
               onClick={onLogout}
               className='px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200 ease-in-out shadow-md'
