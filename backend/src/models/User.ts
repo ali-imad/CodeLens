@@ -11,6 +11,9 @@ export interface IUser extends Document {
   password: string;
   role: UserRole;
   instructor?: Types.ObjectId;
+  assignedProblems: Types.ObjectId[];
+  attemptedProblems: Types.ObjectId[];
+  completedProblems: Types.ObjectId[];
 }
 
 export enum UserRole {
@@ -26,6 +29,9 @@ const UserSchema: Schema = new Schema({
   password: { type: String, required: true },
   role: { type: String, enum: Object.values(UserRole), required: true },
   instructor: { type: Schema.Types.ObjectId, ref: 'User' },
+  assignedProblems: [{ type: Schema.Types.ObjectId, ref: 'Problem' }],
+  attemptedProblems: [{ type: Schema.Types.ObjectId, ref: 'Problem' }],
+  completedProblems: [{ type: Schema.Types.ObjectId, ref: 'Problem' }],
 });
 
 UserSchema.pre<IUser>('save', async function (next) {

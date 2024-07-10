@@ -88,6 +88,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     const newAttempt = new Attempt(newAttemptData);
     const savedAttempt = await newAttempt.save();
+    await savedAttempt.updateUserProgress();
 
     const response: AttemptResponse = {
       attempt: savedAttempt,

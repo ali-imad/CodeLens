@@ -24,3 +24,9 @@ export interface TestCaseResult {
   actualOutput: any;
   passed: boolean;
 }
+
+export enum ProblemStatus {
+  NotAttempted = 'Not Attempted',
+  Attempted = 'Attempted',
+  Completed = 'Completed',
+}

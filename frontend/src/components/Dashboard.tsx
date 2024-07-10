@@ -5,6 +5,8 @@ import ProblemDescription from '../pages/ProblemDescription';
 import DescriptionInput from './DescriptionInput';
 import Feedback from './Feedback';
 import { Difficulty, ITestCase, TestCaseResult } from '../types';
+import { ProblemStatus } from '../types';
+import ProblemStatusIcon from './ProblemStatusIcon';
 
 export interface IProblem extends Document {
   title: string;
@@ -38,6 +40,30 @@ const Dashboard: React.FC = () => {
   const [attemptResponse, setAttemptResponse] =
     useState<IAttemptResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [problemStatus, setProblemStatus] = useState<ProblemStatus>(
+    ProblemStatus.NotAttempted,
+  );
+
+  const fetchProblemStatus = async (
+    userId: string | undefined,
+    problemId: string | undefined,
+  ) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/problems/status/${userId}`,
+      );
+      const problemStatuses = response.data;
+      const currentProblemStatus = problemStatuses.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (p: any) => p.id === problemId,
+      );
+      if (currentProblemStatus) {
+        setProblemStatus(currentProblemStatus.status);
+      }
+    } catch (err) {
+      console.error('Error fetching problem status:', err);
+    }
+  };
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -47,6 +73,14 @@ const Dashboard: React.FC = () => {
         );
         setProblem(response.data);
         setError(null);
+
+        const userEmail = localStorage.getItem('email');
+        const userResponse = await axios.get(
+          `http://localhost:3000/email/${userEmail}`,
+        );
+        const userId = userResponse.data._id;
+
+        await fetchProblemStatus(userId, id);
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data.message || err.message);
@@ -86,6 +120,12 @@ const Dashboard: React.FC = () => {
         throw new Error('could not query LLM');
       }
       setAttemptResponse(response.data);
+
+      if (response.data.attempt.isPassed) {
+        setProblemStatus(ProblemStatus.Completed);
+      } else if (problemStatus === 'Not Attempted') {
+        setProblemStatus(ProblemStatus.Attempted);
+      }
     } catch (err) {
       console.error('Error submitting description:', err);
     } finally {
@@ -104,6 +144,9 @@ const Dashboard: React.FC = () => {
   return (
     <div className='flex h-screen'>
       <div className='flex flex-col w-1/2 p-4 border-r border-gray-200 overflow-y-auto'>
+        <div className='flex justify-end items-center mb-4'>
+          <ProblemStatusIcon status={problemStatus} />
+        </div>
         <ProblemDescription problem={problem} />
         <DescriptionInput
           onSubmit={handleDescriptionSubmit}

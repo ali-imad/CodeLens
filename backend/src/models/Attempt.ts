@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import Problem from './Problem';
-import { User } from './User';
 import { TestCaseResult } from '../services/testCase';
+import { User } from './User';
 
 export interface IAttempt extends Document {
   problemId: mongoose.Types.ObjectId;
@@ -11,6 +11,7 @@ export interface IAttempt extends Document {
   feedback: TestCaseResult[];
   isPassed: boolean;
   createdAt: Date;
+  updateUserProgress: () => Promise<void>;
 }
 
 const AttemptSchema: Schema = new Schema<IAttempt>({
@@ -53,5 +54,20 @@ AttemptSchema.pre<IAttempt>('save', async function (next) {
     next(error);
   }
 });
+
+AttemptSchema.methods['updateUserProgress'] = async function () {
+  const user = await User.findById(this['userId']);
+  if (!user) throw new Error('User not found');
+
+  if (!user.attemptedProblems.includes(this['problemId'])) {
+    user.attemptedProblems.push(this['problemId']);
+  }
+
+  if (this['isPassed'] && !user.completedProblems.includes(this['problemId'])) {
+    user.completedProblems.push(this['problemId']);
+  }
+
+  await user.save();
+};
 
 export default mongoose.model<IAttempt>('Attempt', AttemptSchema);
