@@ -17,10 +17,6 @@ RUN chmod +x ./make_model.sh
 # Expose port 11434
 EXPOSE 11434
 
-# Run the Ollama server
-ENTRYPOINT ["/bin/ollama"]
-CMD ["serve", "&"]
-
 # Run the script to copy/pull/make/update the model
 ENTRYPOINT ["/bin/sh"]
 CMD ["./make_model.sh"]

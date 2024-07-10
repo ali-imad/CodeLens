@@ -58,7 +58,7 @@ async function getCodeGenResp(
   // TODO: replace with debug print
   // console.log('Requesting LLM with:\n', req);
 
-  const response = await axios.post('http://localhost:11434/api/generate', req);
+  const response = await axios.post('http://ollama:11434/api/generate', req);
 
   if (
     response.status === 200 &&
@@ -86,7 +86,7 @@ async function getAnnotateResp(context: LLMContext[]) {
   // TODO: replace with debug print
   // console.log('Requesting LLM with:\n', req);
 
-  const response = await axios.post('http://localhost:11434/api/chat', req);
+  const response = await axios.post('http://ollama:11434/api/chat', req);
 
   if (
     response.status === 200 &&
