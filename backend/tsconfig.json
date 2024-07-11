@@ -3,6 +3,7 @@
     /* Base Options: */
     "target": "ES2020",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "allowJs": true,
     "moduleResolution": "NodeNext",
@@ -28,5 +29,7 @@
     "noEmit": true,
     /* If your code doesn't run in the DOM: */
     "lib": ["es2022"]
-  }
+  },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules", "src/**/*.test.ts"]
 }

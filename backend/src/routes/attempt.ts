@@ -18,10 +18,10 @@ interface AttemptResponse {
 }
 
 // Constants for cleaning generated code
-const START_TOKEN = '[[[START]]]';
-const END_TOKEN = '[[[END]]]';
+export const START_TOKEN = '[[[START]]]';
+export const END_TOKEN = '[[[END]]]';
 
-function cleanGenCode(
+export function cleanGenCode(
   generatedFunction: string,
   start_token: string,
   end_token: string,
