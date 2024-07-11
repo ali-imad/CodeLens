@@ -51,19 +51,33 @@ refine their explanations to improve their comprehension skills.
 git clone https://github.students.cs.ubc.ca/CPSC310-2024S/Project-Groups-07-Lab-B.git
 ```
 
-### Docker Setup
+### Docker Compose
 
-Ensure Docker Desktop is installed and running on your system. Provide Docker
-with at least 10 GB of system memory to adequately run the large language model.
-Navigate to the root directory of the project (where the docker-compose.yml file
-is located). Build and start the containers:
+To build and run the application using Docker, follow these steps:
+
+1. Ensure you have Docker and Docker Compose installed on your system.
+
+2. Clone this repository to your local machine.
+
+3. From the root directory of the project, run the following command:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
-This command will build the Docker images and start the containers for both the
-frontend and backend services.
+This command will build the Docker images and start the containers as defined in
+the `compose.yaml` file.
+
+4. Once the build process is complete and the containers are running, you can
+   access the application at:
+   
+   http://localhost:5173/
+
+5. To stop the application and remove the containers, use:
+
+```bash
+docker compose down
+```
 
 ## Prettier Configuration
 
