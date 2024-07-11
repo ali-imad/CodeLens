@@ -5,29 +5,95 @@ import 'mocha';
 import { cleanGenCode, END_TOKEN, START_TOKEN } from '../../src/routes/attempt';
 
 const chai = use(chaiHttp);
+const realPID = '66737f4f5decb739513a3857'
+const realUID = '668ea285cf364cd807952bd2'
 
-describe('GET / (sanity)', () => {
-  it('should return 200 OK', (done) => {
+describe('POST /attempt', () => {
+  it('should return 400 Invalid when inputting an object with an invalid problemId', (done) => {
     chai.request('http://localhost:3000')
-      .get('/')
+      .post('/attempts')
+      .send({
+        problemId: 'invalidId',
+        userId: realUID,
+        description: 'This is a test description',
+      })
       .end((err, res) => {
-        should().not.exist(err)
+        should().not.exist(err);
         should().exist(res);
+        res.should.have.status(400);
+        done();
+      });
+  });
+
+  it('should return 400 Invalid when inputting an object with an invalid userId', (done) => {
+    chai.request('http://localhost:3000')
+      .post('/attempts')
+      .send({
+        problemId: realPID,
+        userId: 'invalidUid',
+        description: 'This is a test description',
+      })
+      .end((err, res) => {
+        should().not.exist(err);
+        should().exist(res);
+        res.should.have.status(400);
+        done();
+      });
+  });
+
+  it('should return 201 OK when inputting an object with a valid problemId and userId', (done) => {
+    chai.request('http://localhost:3000')
+      .post('/attempts')
+      .send({
+        problemId: realPID,
+        userId: realUID,
+        description: 'This is a test description',
+      })
+      .end((err, res) => {
+        should().not.exist(err);
+        should().exist(res);
+        res.should.have.status(201);
+        done();
+      });
+  })
+});
+
+describe('GET /attempts', () => {
+  it('should return 200 OK and return all attempts', (done) => {
+    chai.request('http://localhost:3000')
+      .get('/attempts')
+      .end((err, res) => {
+        should().not.exist(err);
+        should().exist(res);
+        should().exist(res.body)
+        res.should.be.a.json;
         res.should.have.status(200);
-        done()
+        done();
       });
   });
+});
 
-  it('should not return 404 Not Found', (done) => {
+describe('POST /:id/annotate', () => {
+  it('should return 404 Not Found when inputting a missing attempt id', (done) => {
     chai.request('http://localhost:3000')
-      .get('/')
+      .post(`/attempts/${realUID}/annotate`) // UID not PID
+      .send({
+        attempt: {
+          userId: realUID,
+          problemId: realUID,
+          description: 'This is a test description',
+        },
+        history: [
+          {content: 'This is a test prompt', role: 'user'}
+        ]
+      })
       .end((err, res) => {
-        should().not.exist(err)
+        should().not.exist(err);
         should().exist(res);
-        res.should.not.have.status(404);
-        done()
+        res.should.have.status(404);
+        done();
       });
-  });
+  })
 });
 
 describe('Clean generated code', () => {
@@ -36,7 +102,7 @@ describe('Clean generated code', () => {
       'function hello() { return "Hello, World!"; }' +
       ' [[[END]]]';
     const cleanedFunction = cleanGenCode(generatedFunction, START_TOKEN, END_TOKEN);
-    should().exist(cleanedFunction)
+    should().exist(cleanedFunction);
     expect(cleanedFunction).to.equal('function hello() { return "Hello, World!"; }');
-  })
-})
+  });
+});

@@ -37,8 +37,9 @@ router.get('/:id', async (req: Request, res: Response) => {
     const problem: IProblem | null = await Problem.findById(problemId);
     if (!problem) {
       res.status(404).json({ message: 'Problem not found' });
+    } else {
+      res.json(problem);
     }
-    res.json(problem);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -210,37 +211,37 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // Update an existing problem
-router.put('/:id', async (req: Request, res: Response) => {
-  try {
-    const problemId: string | undefined = req.params['id'];
-    const { title, difficulty, functionBody } = req.body;
-    const updatedProblem: IProblem | null = await Problem.findByIdAndUpdate(
-      problemId,
-      { title, difficulty, functionBody },
-      { new: true },
-    );
-    if (!updatedProblem) {
-      return res.status(404).json({ message: 'Problem not found' });
-    }
-    return res.json(updatedProblem);
-  } catch (error: any) {
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-// Delete a problem
-router.delete('/:id', async (req: Request, res: Response) => {
-  try {
-    const problemId: string | undefined = req.params['id'];
-    const deletedProblem: IProblem | null =
-      await Problem.findByIdAndDelete(problemId);
-    if (!deletedProblem) {
-      return res.status(404).json({ message: 'Problem not found' });
-    }
-    return res.json({ message: 'Problem deleted successfully' });
-  } catch (error: any) {
-    return res.status(500).json({ error: error.message });
-  }
-});
+//router.put('/:id', async (req: Request, res: Response) => {
+//  try {
+//    const problemId: string | undefined = req.params['id'];
+//    const { title, difficulty, functionBody } = req.body;
+//    const updatedProblem: IProblem | null = await Problem.findByIdAndUpdate(
+//      problemId,
+//      { title, difficulty, functionBody },
+//      { new: true },
+//    );
+//    if (!updatedProblem) {
+//      return res.status(404).json({ message: 'Problem not found' });
+//    }
+//    return res.json(updatedProblem);
+//  } catch (error: any) {
+//    return res.status(500).json({ error: error.message });
+//  }
+//});
+//
+//// Delete a problem
+//router.delete('/:id', async (req: Request, res: Response) => {
+//  try {
+//    const problemId: string | undefined = req.params['id'];
+//    const deletedProblem: IProblem | null =
+//      await Problem.findByIdAndDelete(problemId);
+//    if (!deletedProblem) {
+//      return res.status(404).json({ message: 'Problem not found' });
+//    }
+//    return res.json({ message: 'Problem deleted successfully' });
+//  } catch (error: any) {
+//    return res.status(500).json({ error: error.message });
+//  }
+//});
 
 export default router;

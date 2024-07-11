@@ -104,6 +104,15 @@ async function getAnnotateResp(context: LLMContext[]) {
   }
 }
 
+export async function pingLLM(): Promise<boolean> {
+  try {
+    const response = await axios.get('http://ollama:11434/');
+    return response.status === 200;
+  } catch (error: any) {
+    return false;
+  }
+}
+
 export async function callLLM(
   prompt: string,
   context?: LLMContext[],
