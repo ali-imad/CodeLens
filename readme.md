@@ -26,6 +26,7 @@ refine their explanations to improve their comprehension skills.
 - [Technical Details](#technical-details)
 - [Key Functionalities](#key-functionalities)
 - [Development Practices](#development-practices)
+- [Testing](#testing)
 
 ## Features
 
@@ -52,6 +53,9 @@ git clone https://github.students.cs.ubc.ca/CPSC310-2024S/Project-Groups-07-Lab-
 ```
 
 ### Docker Compose
+
+Ensure Docker Desktop is installed and running on your system. Provide Docker
+with at least 10 GB of system memory to adequately run the large language model.
 
 To build and run the application using Docker, follow these steps:
 
@@ -154,10 +158,41 @@ application through your web browser. The backend should be running on
 
 - **Linting and Formatting:** Uses Prettier and ESLint to ensure consistent code
   quality and style.
-- **Testing:** Incorporates unit and integration tests using Mocha to verify the
-  functionality of both frontend and backend components.
+- **Unit Testing:** This project uses Mocha and Chai for unit testing.
+- **Integration Testing:** Integration tests are written to ensure that the
+  frontend and backend components work together as expected.
 
 ### Deployment
 
 - The application is designed to be deployed using Docker so that it can be run
   on any local environment.
+
+## Testing
+
+### Frontend Testing
+- Refer to the [Frontend Testing Guide](./frontEndTesting.md) for instructions
+  on testing the front-end
+
+### Backend Testing
+1. This project uses Mocha and Chai for back-end testing, run at the command line.
+2. To run the tests, first ensure the backend server is running. The simplest way to do this is to deploy the application via Docker Compose
+```bash
+# Cleans, builds and runs the application using Docker Compose
+docker compose down && docker compose build && docker compose up
+````
+
+3. Next, navigate to the `backend` directory.
+```bash
+cd backend
+```
+3. Run the following command to download any dependencies
+```bash
+npm install
+```
+
+4. Finally, run the tests using the following command
+```bash
+npm test
+```
+
+Note that, due to LLM processing time, tests regarding the "attempts" route may fail due to timeout. The LLM service was not tested extensively for this reason, as well. If the LLM service is not running, all tests can be expected to pass.
