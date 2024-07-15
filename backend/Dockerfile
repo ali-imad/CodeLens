@@ -30,4 +30,4 @@ COPY . .
 EXPOSE 3000
 
 # Command to run the Node.js application with nodemon
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]

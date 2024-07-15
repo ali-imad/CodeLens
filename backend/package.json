@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
-    "start": "nodemon src/index.ts",
+    "test": "cross-env NODE_ENV=test mocha",
+    "prod": "cross-env NODE_ENV=prod ts-node src/index.ts",
+    "dev": "cross-env NODE_ENV=dev nodemon src/index.ts",
+    "dev --docker": "cross-env NODE_ENV=dev DOCKER=true nodemon src/index.ts",
     "build": "tsc"
   },
   "keywords": [],

@@ -1,13 +1,11 @@
-// import { expect, should } from 'chai';
 import { expect } from 'chai';
 import mongoose from 'mongoose';
 import Attempt from '../../src/models/Attempt';
 import Problem from '../../src/models/Problem';
 import { User } from '../../src/models/User';
-import dotenv from 'dotenv';
-dotenv.config()
+import '../../src/utils/loadEnv';
 
-const DB_URI = process.env['MONGOTESTDB_URI'];
+const DB_URI = process.env['MONGODB_URI'];
 describe('Attempt Model', () => {
   before(async () => {
     // @ts-ignore
@@ -17,13 +15,12 @@ describe('Attempt Model', () => {
     }
     // Connect to the database
     if (!DB_URI) {
-      throw new Error('MONGODBTEST_URI must be set');
+      throw new Error('MONGODB_URI must be set');
     }
     let connection: mongoose.Connection = mongoose.connection;
     await mongoose.connect(DB_URI);
 
     connection.once('open', async () => {
-      console.log("Boom!")
         // Create a test user and problem
         await User.create({ username: 'testUser', password: 'testPassword' });
         await Problem.create({ title: 'Test Problem', difficulty: 'Easy' });
@@ -33,7 +30,7 @@ describe('Attempt Model', () => {
 
   after(async () => {
     // Clean up the database
-    await mongoose.connection.db.dropDatabase();
+    // await mongoose.connection.db.dropDatabase();
     await mongoose.connection.close();
   });
 

@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import mongoose, { Connection } from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import problemRouter from './routes/problem';
 import loginRouter from './routes/login';
 import registerRouter from './routes/register';
@@ -13,7 +12,8 @@ import Problem, { IProblem } from './models/Problem';
 import mockProblems from './sampleProblems';
 import path from 'path';
 
-dotenv.config();
+import './utils/loadEnv' // Load environment variables
+import { pingLLM } from './services/llmService';
 
 const app = express();
 const PORT: number = parseInt(process.env['PORT'] || '3000');
@@ -52,6 +52,9 @@ connection.once('open', async () => {
         'Problems already exist in the database. Skipping insertion.',
       );
     }
+    setTimeout(() => {
+      pingLLM() // prepare the LLM engine
+    }, 10000);
   } catch (error) {
     console.error('Error inserting problems:', error);
   }

@@ -14,6 +14,12 @@ export interface LLMChatResponse {
   response: string | null; // most recent response
   context?: LLMContext[] | undefined; // chat context
 }
+let OLLAMA_ROUTE = 'http://localhost:11434'
+if (process.env['DOCKER'] === 'true') {
+  // TODO: replace with debug print
+  //console.log('Using docker route')
+  OLLAMA_ROUTE = 'http://ollama:11434'
+}
 
 const addUserPrompt = (
   prompt: string,
@@ -58,7 +64,7 @@ async function getCodeGenResp(
   // TODO: replace with debug print
   // console.log('Requesting LLM with:\n', req);
 
-  const response = await axios.post('http://ollama:11434/api/generate', req);
+  const response = await axios.post(`${OLLAMA_ROUTE}/api/generate`, req);
 
   if (
     response.status === 200 &&
@@ -86,7 +92,7 @@ async function getAnnotateResp(context: LLMContext[]) {
   // TODO: replace with debug print
   // console.log('Requesting LLM with:\n', req);
 
-  const response = await axios.post('http://ollama:11434/api/chat', req);
+  const response = await axios.post(`${OLLAMA_ROUTE}/api/chat`, req);
 
   if (
     response.status === 200 &&
@@ -104,10 +110,25 @@ async function getAnnotateResp(context: LLMContext[]) {
   }
 }
 
+const CODEGEN_ROUTE = `${OLLAMA_ROUTE}/api/generate`;
+const CONTEXT_ROUTE = `${OLLAMA_ROUTE}/api/chat`;
+const MODEL_NAME = "codegeneval-llama3";
 export async function pingLLM(): Promise<boolean> {
   try {
-    const response = await axios.get('http://ollama:11434/');
-    return response.status === 200;
+    const response = await axios.get(OLLAMA_ROUTE);
+
+    // Preload model for chat/prompts
+    const preloadReq = {model: MODEL_NAME}
+    Promise.all([
+      axios.post(CODEGEN_ROUTE, preloadReq),
+      axios.post(CONTEXT_ROUTE, preloadReq)
+    ]).then(() => {
+      console.log(`${MODEL_NAME} pre-loaded`)
+    }).catch((err: any) => {
+      console.error(err.message)
+      throw new Error("Error preloading LLM engine")
+    })
+    return response.status === 200
   } catch (error: any) {
     return false;
   }
