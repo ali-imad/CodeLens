@@ -4,8 +4,18 @@ import * as ts from 'typescript';
 export const START_TOKEN = '[[[START]]]';
 export const END_TOKEN = '[[[END]]]';
 
+export function cleanGenCodeNoToken(
+  generatedFunction: string,
+) {
+  const start = generatedFunction.indexOf('function');
+  const end = generatedFunction.lastIndexOf('}');
+  generatedFunction = generatedFunction
+    .substring(start, end)
+  return generatedFunction;
+}
+
 // Removes the start and end tokens from the generated code
-export function cleanGenCode(
+export function cleanGenCodeWithToken(
   generatedFunction: string,
   start_token: string,
   end_token: string,

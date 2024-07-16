@@ -1,4 +1,5 @@
 import axios from 'axios';
+import '../../src/utils/loadEnv'; // Load environment variables
 
 export const ANNOTATE_TAG = '[ANNOTATE]';
 export const CODEGEN_TAG = '[CODEGEN]';
@@ -19,6 +20,12 @@ if (process.env['DOCKER'] === 'true') {
   // TODO: replace with debug print
   //console.log('Using docker route')
   OLLAMA_ROUTE = 'http://ollama:11434';
+}
+
+let MODEL_NAME = 'codegeneval-llama3';
+if (process.env['MODEL_NAME']) {
+  console.log('Using model name:', process.env['MODEL_NAME']);
+  MODEL_NAME = process.env['MODEL_NAME'];
 }
 
 const addUserPrompt = (
@@ -56,7 +63,7 @@ async function getCodeGenResp(
   context: LLMContext[] | undefined,
 ) {
   const req = {
-    model: 'codegeneval-llama3',
+    model: MODEL_NAME,
     prompt: prompt,
     stream: false,
   };
@@ -84,7 +91,7 @@ async function getCodeGenResp(
 
 async function getAnnotateResp(context: LLMContext[]) {
   const req = {
-    model: 'codegeneval-llama3',
+    model: MODEL_NAME,
     messages: context,
     stream: false,
   };
@@ -112,7 +119,6 @@ async function getAnnotateResp(context: LLMContext[]) {
 
 const CODEGEN_ROUTE = `${OLLAMA_ROUTE}/api/generate`;
 const CONTEXT_ROUTE = `${OLLAMA_ROUTE}/api/chat`;
-const MODEL_NAME = 'codegeneval-llama3';
 export async function pingLLM(): Promise<boolean> {
   try {
     const response = await axios.get(OLLAMA_ROUTE);

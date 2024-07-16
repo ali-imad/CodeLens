@@ -1,6 +1,7 @@
 #!/bin/bash
-model_name=llama3
-custom_model_name=codegeneval-llama3
+model_name=${BASE_MODEL_NAME:-'llama3'}
+custom_model_name=${MODEL_NAME:-'codegeneval-llama3'}
+filename=${MODEL_FILE:-'LLMEngine.txt'}
 
 # If DOCKER is true, use /bin/ollama as binpath
 if [ "$DOCKER" = "true" ]; then
@@ -23,7 +24,7 @@ sleep 5
 echo "Pulling $model_name..."
 eval $binpath pull $model_name
 echo "Creating $custom_model_name..."
-eval $binpath create $custom_model_name -f ./LLMEngine.txt
+eval $binpath create $custom_model_name -f ./$filename
 
 # kill Ollama
 wait $pid

@@ -2,7 +2,7 @@ import { expect, should, use } from 'chai';
 // @ts-ignore
 import chaiHttp from 'chai-http';
 import 'mocha';
-import { cleanGenCode, END_TOKEN, START_TOKEN } from '../../src/utils/codeGen';
+import { cleanGenCodeWithToken, END_TOKEN, START_TOKEN } from '../../src/utils/codeGen';
 
 const chai = use(chaiHttp);
 const realPID = '66737f4f5decb739513a3857';
@@ -105,7 +105,7 @@ describe('Clean generated code', () => {
       '[[[START]]] ' +
       'function hello() { return "Hello, World!"; }' +
       ' [[[END]]]';
-    const cleanedFunction = cleanGenCode(
+    const cleanedFunction = cleanGenCodeWithToken(
       generatedFunction,
       START_TOKEN,
       END_TOKEN,

@@ -10,10 +10,15 @@ import {
   LLMContext,
   pingLLM,
 } from '../services/llmService';
-import { cleanGenCode, END_TOKEN, START_TOKEN } from '../utils/codeGen';
+import { cleanGenCodeWithToken, cleanGenCodeNoToken, END_TOKEN, START_TOKEN } from '../utils/codeGen';
 import { runTests } from '../services/testCase';
 
 const router = express.Router();
+let cleanGenCode = (code: string) => cleanGenCodeNoToken(code);
+
+if (process.env['MODEL_NAME'] !== 'codegeneval-llama3') {
+  cleanGenCode = (code: string) => cleanGenCodeWithToken(code, START_TOKEN, END_TOKEN);
+}
 
 interface AttemptResponse {
   attempt: IAttempt;
@@ -52,7 +57,7 @@ router.post('/', async (req: Request, res: Response) => {
         generatedFunction.includes(START_TOKEN) &&
         generatedFunction.includes(END_TOKEN)
       ) {
-        generatedFunction = cleanGenCode(
+        generatedFunction = cleanGenCodeWithToken(
           generatedFunction,
           START_TOKEN,
           END_TOKEN,
@@ -166,11 +171,7 @@ router.post('/:id/annotate', async (req: Request, res: Response) => {
         generatedFunction.includes(START_TOKEN) &&
         generatedFunction.includes(END_TOKEN)
       ) {
-        generatedFunction = cleanGenCode(
-          generatedFunction,
-          START_TOKEN,
-          END_TOKEN,
-        );
+        generatedFunction = cleanGenCode(generatedFunction);
       }
     } else {
       return res.status(403).json({ message: 'Attempt not annotated' });

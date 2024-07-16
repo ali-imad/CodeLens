@@ -4,9 +4,7 @@ import chaiHttp from 'chai-http';
 import 'mocha';
 // @ts-ignore
 import jwt from 'jsonwebtoken';
-// @ts-ignore
-import dotenv from 'dotenv';
-dotenv.config();
+import '../../src/utils/loadEnv'; // Load environment variables
 const chai = use(chaiHttp);
 
 const JWT_SECRET_KEY: string =
