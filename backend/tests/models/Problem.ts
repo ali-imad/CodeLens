@@ -28,8 +28,8 @@ describe('Problem API', () => {
       { input: { nums: [3, 2, 4], target: 6 }, expectedOutput: [1, 2] },
       { input: { nums: [3, 3], target: 6 }, expectedOutput: [0, 1] },
       { input: { nums: [1, 2, 3, 4, 5], target: 8 }, expectedOutput: [2, 4] },
-      { input: { nums: [1, 5, 5, 2], target: 10 }, expectedOutput: [1, 2] }
-    ]
+      { input: { nums: [1, 5, 5, 2], target: 10 }, expectedOutput: [1, 2] },
+    ],
   };
 
   it('should create a new problem', done => {
@@ -44,13 +44,22 @@ describe('Problem API', () => {
         res.body.should.be.an('object');
         res.body.should.have.property('title').eql(problemData.title);
         res.body.should.have.property('difficulty').eql(problemData.difficulty);
-        res.body.should.have.property('testCases').that.is.an('array').with.lengthOf(5);
+        res.body.should.have
+          .property('testCases')
+          .that.is.an('array')
+          .with.lengthOf(5);
 
         res.body.testCases.forEach((testCase: any, index: number) => {
           testCase.should.have.property('input');
-          testCase.input.should.have.property('nums').eql(problemData.testCases[index]?.input.nums);
-          testCase.input.should.have.property('target').eql(problemData.testCases[index]?.input.target);
-          testCase.should.have.property('expectedOutput').eql(problemData.testCases[index]?.expectedOutput);
+          testCase.input.should.have
+            .property('nums')
+            .eql(problemData.testCases[index]?.input.nums);
+          testCase.input.should.have
+            .property('target')
+            .eql(problemData.testCases[index]?.input.target);
+          testCase.should.have
+            .property('expectedOutput')
+            .eql(problemData.testCases[index]?.expectedOutput);
         });
 
         done();

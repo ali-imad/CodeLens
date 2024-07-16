@@ -197,7 +197,7 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   try {
     const { title, difficulty, functionBody, testCases } = req.body;
-    const newProblem: IProblem = new Problem({
+    const newProblem = new Problem({
       title,
       difficulty,
       functionBody,

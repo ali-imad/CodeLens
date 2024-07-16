@@ -8,11 +8,11 @@ import attemptRouter from './routes/attempt';
 import authRouter from './routes/authToken';
 import userRouter from './routes/user';
 import { User } from './models/User';
-import Problem, { IProblem } from './models/Problem';
+import Problem from './models/Problem';
 import mockProblems from './sampleProblems';
 import path from 'path';
 
-import './utils/loadEnv' // Load environment variables
+import './utils/loadEnv'; // Load environment variables
 import { pingLLM } from './services/llmService';
 
 const app = express();
@@ -38,13 +38,14 @@ connection.once('open', async () => {
     if (existingProblemsCount === 0) {
       for (const mockProblem of mockProblems) {
         const { title, difficulty, functionBody, testCases } = mockProblem;
-        const newProblem: IProblem = new Problem({
+        const newProblem = new Problem({
+          // create a new problem object
           title,
           difficulty,
           functionBody,
           testCases,
         });
-        await newProblem.save();
+        await newProblem.save(); // save the problem object by passing it into the Mongoose constructor
       }
       console.log('All problems inserted successfully.');
     } else {
@@ -53,7 +54,7 @@ connection.once('open', async () => {
       );
     }
     setTimeout(() => {
-      pingLLM() // prepare the LLM engine
+      pingLLM(); // prepare the LLM engine
     }, 10000);
   } catch (error) {
     console.error('Error inserting problems:', error);

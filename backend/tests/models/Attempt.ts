@@ -11,7 +11,7 @@ describe('Attempt Model', () => {
     // @ts-ignore
     if (this && this.enableTimeouts) {
       // @ts-ignore
-      this.enableTimeouts(false)
+      this.enableTimeouts(false);
     }
     // Connect to the database
     if (!DB_URI) {
@@ -21,16 +21,15 @@ describe('Attempt Model', () => {
     await mongoose.connect(DB_URI);
 
     connection.once('open', async () => {
-        // Create a test user and problem
-        await User.create({ username: 'testUser', password: 'testPassword' });
-        await Problem.create({ title: 'Test Problem', difficulty: 'Easy' });
-      },
-    );
+      // Create a test user and problem
+      await User.create({ username: 'testUser', password: 'testPassword' });
+      await Problem.create({ title: 'Test Problem', difficulty: 'Easy' });
+    });
   });
 
   after(async () => {
     // Clean up the database
-    // await mongoose.connection.db.dropDatabase();
+    await mongoose.connection.db.dropDatabase();
     await mongoose.connection.close();
   });
 

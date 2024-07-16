@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 export enum Difficulty {
   Easy = 'Easy',
@@ -6,8 +6,8 @@ export enum Difficulty {
   Hard = 'Hard',
 }
 
-export interface ITestCase {
-  input: any;
+export interface ITestCase extends Document {
+  input: any[] | object;
   expectedOutput: any;
 }
 
@@ -18,7 +18,7 @@ export interface IProblem extends Document {
   testCases: ITestCase[];
 }
 
-const TestCaseSchema: Schema = new Schema({
+const TestCaseSchema: Schema = new Schema<ITestCase>({
   input: { type: Schema.Types.Mixed, required: true },
   expectedOutput: { type: Schema.Types.Mixed, required: true },
 });

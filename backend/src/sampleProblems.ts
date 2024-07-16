@@ -21,11 +21,11 @@ const findMedianSortedArraysTestCases = [
 ];
 
 const isPalindromeTestCases = [
-  { input: 'A man, a plan, a canal: Panama', expectedOutput: true },
-  { input: 'race a car', expectedOutput: false },
-  { input: ' ', expectedOutput: true },
-  { input: '0P', expectedOutput: false },
-  { input: 'madam', expectedOutput: true },
+  { input: ['A man, a plan, a canal: Panama'], expectedOutput: true },
+  { input: ['race a car'], expectedOutput: false },
+  { input: [' '], expectedOutput: true },
+  { input: ['0P'], expectedOutput: false },
+  { input: ['madam'], expectedOutput: true },
 ];
 
 const deepEqualTestCases = [
@@ -45,26 +45,26 @@ const deepEqualTestCases = [
   },
 ];
 const maxAreaTestCases = [
-  { input: [1, 8, 6, 2, 5, 4, 8, 3, 7], expectedOutput: 49 },
-  { input: [1, 1], expectedOutput: 1 },
-  { input: [4, 3, 2, 1, 4], expectedOutput: 16 },
-  { input: [1, 2, 1], expectedOutput: 2 },
-  { input: [2, 3, 10, 5, 7, 8, 9], expectedOutput: 36 },
+  { input: [[1, 8, 6, 2, 5, 4, 8, 3, 7]], expectedOutput: 49 },
+  { input: [[1, 1]], expectedOutput: 1 },
+  { input: [[4, 3, 2, 1, 4]], expectedOutput: 16 },
+  { input: [[1, 2, 1]], expectedOutput: 2 },
+  { input: [[2, 3, 10, 5, 7, 8, 9]], expectedOutput: 36 },
 ];
 const isNumberTestCases = [
-  { input: 123, expectedOutput: true },
-  { input: '123', expectedOutput: false },
-  { input: Infinity, expectedOutput: false },
-  { input: -123.45, expectedOutput: true },
-  { input: NaN, expectedOutput: false },
+  { input: [123], expectedOutput: true },
+  { input: ['123'], expectedOutput: false },
+  { input: [Infinity], expectedOutput: false },
+  { input: [-123.45], expectedOutput: true },
+  { input: [NaN], expectedOutput: false },
 ];
 
 const reverseStringTestCases = [
-  { input: 'hello', expectedOutput: 'olleh' },
-  { input: 'world', expectedOutput: 'dlrow' },
-  { input: '12345', expectedOutput: '54321' },
-  { input: 'racecar', expectedOutput: 'racecar' },
-  { input: '', expectedOutput: '' },
+  { input: ['hello'], expectedOutput: 'olleh' },
+  { input: ['world'], expectedOutput: 'dlrow' },
+  { input: ['12345'], expectedOutput: '54321' },
+  { input: ['racecar'], expectedOutput: 'racecar' },
+  { input: [''], expectedOutput: '' },
 ];
 
 const mockProblems = [

@@ -2,37 +2,22 @@ import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Attempt, { IAttempt } from '../models/Attempt';
 import Problem from '../models/Problem';
-import { runTests } from '../services/testCase';
 import {
   ANNOTATE_TAG,
   callLLM,
-  CODEGEN_TAG, LLMChatResponse,
-  LLMContext, pingLLM,
+  CODEGEN_TAG,
+  LLMChatResponse,
+  LLMContext,
+  pingLLM,
 } from '../services/llmService';
+import { cleanGenCode, END_TOKEN, START_TOKEN } from '../utils/codeGen';
+import { runTests } from '../services/testCase';
 
 const router = express.Router();
 
 interface AttemptResponse {
   attempt: IAttempt;
   history: LLMContext[] | undefined;
-}
-
-// Constants for cleaning generated code
-export const START_TOKEN = '[[[START]]]';
-export const END_TOKEN = '[[[END]]]';
-
-export function cleanGenCode(
-  generatedFunction: string,
-  start_token: string,
-  end_token: string,
-) {
-  const start = generatedFunction.indexOf(start_token);
-  const end = generatedFunction.indexOf(end_token);
-  generatedFunction = generatedFunction
-    .substring(start, end)
-    .replace(start_token, '')
-    .replace(end_token, '');
-  return generatedFunction.trim();
 }
 
 router.post('/', async (req: Request, res: Response) => {
@@ -55,7 +40,9 @@ router.post('/', async (req: Request, res: Response) => {
 
     // check if llm route is awake
     const llmIsAwake = await pingLLM();
-    let promptResp: LLMChatResponse = { response: `function hello() { return "Hello, World!"; }` };
+    let promptResp: LLMChatResponse = {
+      response: `function hello() { return "Hello, World!"; }`,
+    };
     if (llmIsAwake) {
       promptResp = await callLLM(prompt, []);
     }
