@@ -8,6 +8,7 @@ interface HeaderProps {
   onLogout: () => void;
 }
 
+const logo = '/src/assets/logo.png';
 const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
   const navigate = useNavigate();
 
@@ -61,8 +62,10 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
 
   return (
     <header className='bg-gray-800 text-white p-4 flex justify-between items-center'>
-      <div className='text-2xl font-bold'>
-        <Link to='/'>CodeLens</Link>
+      <div className='text-2xl font-bold -mt-4 -mb-4'>
+        <Link to='/'>
+          <img src={logo} className='cursor-pointer h-16 ' />
+        </Link>
       </div>
       <nav className='space-x-4 flex items-center'>
         <button

@@ -2,7 +2,11 @@ import { expect, should, use } from 'chai';
 // @ts-ignore
 import chaiHttp from 'chai-http';
 import 'mocha';
-import { cleanGenCodeWithToken, END_TOKEN, START_TOKEN } from '../../src/utils/codeGen';
+import {
+  cleanGenCodeWithToken,
+  END_TOKEN,
+  START_TOKEN,
+} from '../../src/utils/codeGen';
 
 const chai = use(chaiHttp);
 const realPID = '66737f4f5decb739513a3857';

@@ -10,7 +10,12 @@ import {
   LLMContext,
   pingLLM,
 } from '../services/llmService';
-import { cleanGenCodeWithToken, cleanGenCodeNoToken, END_TOKEN, START_TOKEN } from '../utils/codeGen';
+import {
+  cleanGenCodeWithToken,
+  cleanGenCodeNoToken,
+  END_TOKEN,
+  START_TOKEN,
+} from '../utils/codeGen';
 import { runTests } from '../services/testCase';
 import logger from '../utils/logger';
 
@@ -18,7 +23,8 @@ const router = express.Router();
 let cleanGenCode = (code: string) => cleanGenCodeNoToken(code);
 
 if (process.env['MODEL_NAME'] !== 'codegeneval-llama3') {
-  cleanGenCode = (code: string) => cleanGenCodeWithToken(code, START_TOKEN, END_TOKEN);
+  cleanGenCode = (code: string) =>
+    cleanGenCodeWithToken(code, START_TOKEN, END_TOKEN);
 }
 
 interface AttemptResponse {
