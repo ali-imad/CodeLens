@@ -1,5 +1,6 @@
 import { ITestCase } from '../models/Problem';
 import { cleanCode } from '../utils/codeGen';
+import logger from '../utils/logger';
 
 export interface TestCaseResult {
   input: any[] | object;
@@ -46,7 +47,7 @@ export function runTests(fnStr: string, testCases: ITestCase[]): TestResult {
 
     return { passed: allPassed, feedbackArray };
   } catch (error) {
-    console.error('Error running tests:', error);
+    logger.error('Error running tests:', error);
     return {
       passed: false,
       feedbackArray: testCases.map(testCase => ({

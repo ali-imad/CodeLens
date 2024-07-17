@@ -2,7 +2,8 @@ import express, { Request, Response, Router } from 'express';
 import { IUser, User } from '../models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import '../utils/loadEnv'; // Load environment variables
+import '../utils/loadEnv';
+import logger from '../utils/logger'; // Load environment variables
 
 const JWT_SECRET_KEY: string =
   process.env['JWT_SECRET'] || 'default_secret_key';
@@ -21,19 +22,22 @@ router.post('/', async (req: Request, res: Response) => {
         user.password || '',
       );
       if (validUser) {
+        logger.http(`200 ${req.url} - Valid user`)
         return res.status(200).json({
           message: 'Valid user',
           email: decoded.email,
           password: decoded.password,
         });
       } else {
+        logger.http(`400 ${req.url} - Invalid user`)
         return res.status(400).json({ message: 'Invalid user' });
       }
     } else {
+      logger.http(`400 ${req.url} - User does not exist`)
       return res.status(400).json({ message: 'User does not exist' });
     }
   } catch (error: any) {
-    console.error('Token verification failed due to :', error.message);
+    logger.error('Token verification failed due to :', error.message);
     return res.status(500).json({ message: 'Token verification failed' });
   }
 });

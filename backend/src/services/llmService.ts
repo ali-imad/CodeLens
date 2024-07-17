@@ -1,5 +1,6 @@
 import axios from 'axios';
-import '../../src/utils/loadEnv'; // Load environment variables
+import '../../src/utils/loadEnv';
+import logger from '../utils/logger'; // Load environment variables
 
 export const ANNOTATE_TAG = '[ANNOTATE]';
 export const CODEGEN_TAG = '[CODEGEN]';
@@ -15,16 +16,16 @@ export interface LLMChatResponse {
   response: string | null; // most recent response
   context?: LLMContext[] | undefined; // chat context
 }
+
 let OLLAMA_ROUTE = 'http://localhost:11434';
 if (process.env['DOCKER'] === 'true') {
-  // TODO: replace with debug print
-  //console.log('Using docker route')
+  logger.info(`Using docker route`);
   OLLAMA_ROUTE = 'http://ollama:11434';
 }
 
 let MODEL_NAME = 'codegeneval-llama3';
 if (process.env['MODEL_NAME']) {
-  console.log('Using model name:', process.env['MODEL_NAME']);
+  logger.info('Using model name:', process.env['MODEL_NAME']);
   MODEL_NAME = process.env['MODEL_NAME'];
 }
 
@@ -32,9 +33,8 @@ const addUserPrompt = (
   prompt: string,
   context?: LLMContext[],
 ): LLMContext[] => {
-  // TODO: replace with debug print
-  // console.log(`Adding user history with prompt: ${prompt}`);
-  // console.log(`Current context: ${context}`);
+  logger.debug(`Adding user history with prompt: ${prompt}`);
+  logger.debug(`Current context: ${context}`);
   if (!context) {
     return [{ role: 'user', content: prompt }];
   }
@@ -47,9 +47,8 @@ const addBotHistory = (
   prompt: string,
   context?: LLMContext[],
 ): LLMContext[] => {
-  // TODO: replace with debug print
-  // console.log(`Adding bot history with prompt: ${prompt}`);
-  // console.log(`Current context: ${context}`);
+  logger.debug(`Adding bot history with prompt: ${prompt}`);
+  logger.debug(`Current context: ${context}`);
   if (!context) {
     return [{ role: 'assistant', content: prompt }];
   }
@@ -68,8 +67,7 @@ async function getCodeGenResp(
     stream: false,
   };
 
-  // TODO: replace with debug print
-  // console.log('Requesting LLM with:\n', req);
+  logger.debug('Requesting LLM with:\n', req);
 
   const response = await axios.post(`${OLLAMA_ROUTE}/api/generate`, req);
 
@@ -85,7 +83,7 @@ async function getCodeGenResp(
       context,
     };
   } else {
-    throw new Error("LLM didn't respond with a valid response");
+    throw new Error('LLM didn\'t respond with a valid response');
   }
 }
 
@@ -96,8 +94,7 @@ async function getAnnotateResp(context: LLMContext[]) {
     stream: false,
   };
 
-  // TODO: replace with debug print
-  // console.log('Requesting LLM with:\n', req);
+  logger.debug('Requesting LLM with:\n', req);
 
   const response = await axios.post(`${OLLAMA_ROUTE}/api/chat`, req);
 
@@ -113,12 +110,13 @@ async function getAnnotateResp(context: LLMContext[]) {
       context,
     };
   } else {
-    throw new Error("LLM didn't respond with a valid response");
+    throw new Error('LLM didn\'t respond with a valid response');
   }
 }
 
 const CODEGEN_ROUTE = `${OLLAMA_ROUTE}/api/generate`;
 const CONTEXT_ROUTE = `${OLLAMA_ROUTE}/api/chat`;
+
 export async function pingLLM(): Promise<boolean> {
   try {
     const response = await axios.get(OLLAMA_ROUTE);
@@ -129,13 +127,15 @@ export async function pingLLM(): Promise<boolean> {
       axios.post(CODEGEN_ROUTE, preloadReq),
       axios.post(CONTEXT_ROUTE, preloadReq),
     ])
-      .then(() => {
-        console.log(`${MODEL_NAME} pre-loaded`);
+      .then((res: Awaited<axios.AxiosResponse<any>>[]) => {
+        res.map((r: axios.AxiosResponse<any>) => logger.http(`${r.status} ${r.config.url || ''}`));
+        logger.info(`${MODEL_NAME} pre-loaded`);
       })
       .catch((err: any) => {
-        console.error(err.message);
+        logger.info(err.message);
         throw new Error('Error preloading LLM engine');
       });
+    logger.http(`${response.status} ${response.config.url}`)
     return response.status === 200;
   } catch (error: any) {
     return false;
@@ -153,11 +153,11 @@ export async function callLLM(
     } else if (prompt.includes(ANNOTATE_TAG)) {
       return await getAnnotateResp(context);
     } else {
-      console.error('Invalid prompt, must include a valid tag');
+      logger.error('Invalid prompt, must include a valid tag');
       return { response: null, context };
     }
   } catch (error: any) {
-    console.error('Error calling LLM:', error.message);
+    logger.error(`Error calling LLM: ${error.message}`);
     throw error;
   }
 }

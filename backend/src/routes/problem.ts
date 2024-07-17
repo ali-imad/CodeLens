@@ -2,6 +2,7 @@ import express, { Router, Request, Response } from 'express';
 import Problem, { IProblem } from '../models/Problem';
 import { User } from '../models/User';
 import mongoose from 'mongoose';
+import logger from '../utils/logger';
 
 const router: Router = express.Router();
 
@@ -51,6 +52,7 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user = await User.findById(userId);
     if (!user) {
+      logger.http(`404 ${req.url} - User not found`)
       return res.status(404).json({ message: 'User not found' });
     }
 
@@ -70,8 +72,10 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
           : 'Not Attempted',
     }));
 
+    logger.http(`200 ${req.url} - Problem status fetched successfully`)
     return res.json(problemStatus);
   } catch (err: any) {
+    logger.http(`500 ${req.url} - ${err.message}`)
     return res.status(500).json({ message: err.message });
   }
 });
@@ -83,6 +87,7 @@ router.post('/assign', async (req: Request, res: Response) => {
 
     const instructor = await User.findById(instructorId);
     if (!instructor || instructor.role !== 'Instructor') {
+      logger.http(`403 ${req.url} - Not authorized to assign problems`)
       return res
         .status(403)
         .json({ message: 'Not authorized to assign problems' });
@@ -90,6 +95,7 @@ router.post('/assign', async (req: Request, res: Response) => {
 
     const student = await User.findById(studentId);
     if (!student || student.role !== 'Student') {
+      logger.http(`404 ${req.url} - Student not found`)
       return res.status(404).json({ message: 'Student not found' });
     }
 
@@ -101,8 +107,10 @@ router.post('/assign', async (req: Request, res: Response) => {
       $addToSet: { assignedProblems: { $each: problemObjectIds } },
     });
 
+    logger.http(`200 ${req.url} - Problems assigned successfully`)
     return res.status(200).json({ message: 'Problems assigned successfully' });
   } catch (err: any) {
+    logger.http(`500 ${req.url} - ${err.message}`)
     return res.status(500).json({ message: err.message });
   }
 });
@@ -113,13 +121,16 @@ router.get('/assigned/:userId', async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user = await User.findById(userId).populate('assignedProblems');
     if (!user) {
+      logger.http(`404 ${req.url} - User not found`)
       return res.status(404).json({ message: 'User not found' });
     }
+    logger.http(`200 ${req.url} - Assigned problems fetched successfully`)
     return res.json({
       count: user.assignedProblems.length,
       problems: user.assignedProblems,
     });
   } catch (err: any) {
+    logger.http(`500 ${req.url} - ${err.message}`)
     return res.status(500).json({ message: err.message });
   }
 });
@@ -130,13 +141,16 @@ router.get('/attempted/:userId', async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user = await User.findById(userId).populate('attemptedProblems');
     if (!user) {
+      logger.http(`404 ${req.url} - User not found`)
       return res.status(404).json({ message: 'User not found' });
     }
+    logger.http(`200 ${req.url} - Attempted problems fetched successfully`)
     return res.json({
       count: user.attemptedProblems.length,
       problems: user.attemptedProblems,
     });
   } catch (err: any) {
+    logger.http(`500 ${req.url} - ${err.message}`)
     return res.status(500).json({ message: err.message });
   }
 });
@@ -147,13 +161,16 @@ router.get('/completed/:userId', async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user = await User.findById(userId).populate('completedProblems');
     if (!user) {
+      logger.http(`404 ${req.url} - User not found`)
       return res.status(404).json({ message: 'User not found' });
     }
+    logger.http(`200 ${req.url} - Completed problems fetched successfully`)
     return res.json({
       count: user.completedProblems.length,
       problems: user.completedProblems,
     });
   } catch (err: any) {
+    logger.http(`500 ${req.url} - ${err.message}`)
     return res.status(500).json({ message: err.message });
   }
 });
@@ -164,6 +181,7 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user = await User.findById(userId);
     if (!user) {
+      logger.http(`404 ${req.url} - User not found`)
       return res.status(404).json({ message: 'User not found' });
     }
 
@@ -187,8 +205,10 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
             : 'Not Assigned',
     }));
 
+    logger.http(`200 ${req.url} - Problem status fetched successfully`)
     return res.json(problemStatus);
   } catch (err: any) {
+    logger.http(`500 ${req.url} - ${err.message}`)
     return res.status(500).json({ message: err.message });
   }
 });
@@ -221,10 +241,13 @@ router.post('/', async (req: Request, res: Response) => {
 //      { new: true },
 //    );
 //    if (!updatedProblem) {
+//      logger.http(`404 ${req.url} - Problem not found`)
 //      return res.status(404).json({ message: 'Problem not found' });
 //    }
+//    logger.http(`200 ${req.url} - Problem updated successfully`)
 //    return res.json(updatedProblem);
 //  } catch (error: any) {
+//    logger.http(`500 ${req.url} - ${error.message}`)
 //    return res.status(500).json({ error: error.message });
 //  }
 //});
@@ -236,10 +259,13 @@ router.post('/', async (req: Request, res: Response) => {
 //    const deletedProblem: IProblem | null =
 //      await Problem.findByIdAndDelete(problemId);
 //    if (!deletedProblem) {
+//      logger.http(`404 ${req.url} - Problem not found`)
 //      return res.status(404).json({ message: 'Problem not found' });
 //    }
+//    logger.http(`200 ${req.url} - Problem deleted successfully`)
 //    return res.json({ message: 'Problem deleted successfully' });
 //  } catch (error: any) {
+//    logger.http(`500 ${req.url} - ${error.message}`)
 //    return res.status(500).json({ error: error.message });
 //  }
 //});

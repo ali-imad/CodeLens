@@ -14,6 +14,7 @@ import path from 'path';
 
 import './utils/loadEnv'; // Load environment variables
 import { pingLLM } from './services/llmService';
+import logger from './utils/logger';
 
 const app = express();
 const PORT: number = parseInt(process.env['PORT'] || '3000');
@@ -30,7 +31,7 @@ mongoose.connect(uri);
 const connection: Connection = mongoose.connection;
 
 connection.once('open', async () => {
-  console.log('Connected to MongoDB');
+  logger.info('Connected to MongoDB');
 
   try {
     const existingProblemsCount = await Problem.countDocuments();
@@ -47,9 +48,9 @@ connection.once('open', async () => {
         });
         await newProblem.save(); // save the problem object by passing it into the Mongoose constructor
       }
-      console.log('All problems inserted successfully.');
+      logger.info('All problems inserted successfully.');
     } else {
-      console.log(
+      logger.info(
         'Problems already exist in the database. Skipping insertion.',
       );
     }
@@ -57,7 +58,7 @@ connection.once('open', async () => {
       pingLLM(); // prepare the LLM engine
     }, 10000);
   } catch (error) {
-    console.error('Error inserting problems:', error);
+    logger.error('Error inserting problems:', error);
   }
 });
 
@@ -71,10 +72,13 @@ app.get('/email/:email', async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
+      logger.http(`404 ${req.url} - User not found`)
       return res.status(404).json({ message: 'User not found' });
     }
+    logger.http(`200 ${req.url} - User found`)
     return res.status(200).json(user);
   } catch (err) {
+    logger.http(`500 ${req.url} - Failed to fetch user`)
     return res.status(500).json({ message: 'Failed to fetch user' });
   }
 });
@@ -88,7 +92,7 @@ app.use('/users', userRouter);
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  logger.info(`Server is running on port ${PORT}`);
 });
 
 export default app;

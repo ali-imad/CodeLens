@@ -5,6 +5,7 @@ import mime from 'mime-types';
 import mongoose from 'mongoose';
 import multer from 'multer';
 import sharp from 'sharp';
+import logger from '../utils/logger';
 
 const router: Router = express.Router();
 
@@ -13,6 +14,8 @@ router.get('/', async (_req: Request, res: Response) => {
     const users: IUser[] = await User.find();
     return res.json(users);
   } catch (err) {
+    logger.error('Failed to fetch users:', err);
+    logger.http(`500 ${_req.url} - Failed to fetch users`)
     return res.status(500).json({ message: 'Failed to fetch users' });
   }
 });
@@ -22,8 +25,9 @@ router.get('/students', async (_req: Request, res: Response) => {
     const students = await User.find({ role: 'Student' });
     return res.json(students);
   } catch (error) {
-    console.error('Error fetching students:', error);
-    return res.status(500).json({ error: 'Server error' });
+    logger.error('Error fetching students:', error);
+    logger.http(`500 ${_req.url} - Error fetching students`)
+    return res.status(500).json({ error: 'Error fetching students' });
   }
 });
 
@@ -40,7 +44,7 @@ router.get(
 
       res.status(200).json(students);
     } catch (error) {
-      console.error('Error fetching students:', error);
+      logger.error('Error fetching students:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   },
@@ -51,7 +55,7 @@ router.get('/instructors', async (_req: Request, res: Response) => {
     const instructors = await User.find({ role: 'Instructor' }, 'username');
     res.json(instructors);
   } catch (error) {
-    console.error('Error fetching instructors:', error);
+    logger.error('Error fetching instructors:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -67,12 +71,14 @@ router.put('/select-instructor', async (req: Request, res: Response) => {
     );
 
     if (!updatedUser) {
+      logger.http(`404 ${req.url} - User not found`)
       return res.status(404).json({ error: 'User not found' });
     }
 
+    logger.http(`200 ${req.url} - Instructor selected successfully!`)
     return res.status(200).json(updatedUser);
   } catch (error) {
-    console.error('Error setting instructor:', error);
+    logger.error('Error setting instructor:', error);
     return res.status(500).json({ error: 'Server error' });
   }
 });
@@ -97,17 +103,21 @@ router.get(
         return;
       }
 
+      // convert filename to ascii standard format
+      logger.debug(`Encoding display picture filename: ${file.filename}`);
+      const filename = encodeURIComponent(file.filename);
+
       const contentType =
         mime.lookup(file.filename) || 'application/octet-stream';
 
       res.set('Content-Type', contentType);
-      res.set('Content-Disposition', `inline; filename="${file.filename}"`);
+      res.set('Content-Disposition', `inline; filename="${filename}"`);
 
       const downloadStream = bucket.openDownloadStream(file._id);
 
       return new Promise<void>((resolve, reject) => {
         downloadStream.on('error', error => {
-          console.error('Error streaming file:', error);
+          logger.error('Error streaming file:', error);
           if (!res.headersSent) {
             res.status(500).send('An error occurred while streaming the file');
           }
@@ -126,7 +136,7 @@ router.get(
         });
       });
     } catch (error) {
-      console.error('Error fetching file:', error);
+      logger.error('Error fetching file:', error);
       if (!res.headersSent) {
         res.status(500).send('Failed to fetch file');
       }
@@ -217,6 +227,7 @@ router.post(
       await session.commitTransaction();
       session.endSession();
 
+      logger.http(`200 ${req.url} - Profile picture uploaded successfully!`)
       return res.status(200).json({
         message: 'Profile picture uploaded successfully!',
         uploadedFile: { id: fileId, ...req.file },
@@ -241,6 +252,7 @@ router.use((error: any, _req: Request, res: Response, _next: NextFunction) => {
         .status(400)
         .json({ message: 'File is too large. Maximum allowed size is 5MB.' });
     } else {
+      logger.http(`400 ${_req.url} - ${error.message}`)
       return res.status(400).json({ message: error.message });
     }
   } else {

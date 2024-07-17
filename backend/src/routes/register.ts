@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { User, UserRole } from '../models/User';
 import express, { Router } from 'express';
+import logger from '../utils/logger';
 
 const router: Router = express.Router();
 
@@ -10,6 +11,7 @@ router.post('/', async (req: Request, res: Response) => {
     const existingUser = await User.findOne({ email });
 
     if (!Object.values(UserRole).includes(role)) {
+      logger.http(`400 ${req.url} - Invalid user role.`)
       return res.status(400).json({ error: 'Invalid user role.' });
     }
 
@@ -29,6 +31,7 @@ router.post('/', async (req: Request, res: Response) => {
     });
     await newUser.save();
 
+    logger.http(`201 ${req.url} - New User Registered Successfully.`)
     return res.status(201).json({
       message: 'New User Registered Successfully.',
       username: newUser.username,
@@ -38,7 +41,7 @@ router.post('/', async (req: Request, res: Response) => {
       role: newUser.role,
     });
   } catch (error) {
-    console.error('Error:', error);
+    logger.error('Error:', error);
     return res.status(500).json({ error: 'Internal server error.' });
   }
 });

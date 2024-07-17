@@ -12,6 +12,7 @@ import {
 } from '../services/llmService';
 import { cleanGenCodeWithToken, cleanGenCodeNoToken, END_TOKEN, START_TOKEN } from '../utils/codeGen';
 import { runTests } from '../services/testCase';
+import logger from '../utils/logger';
 
 const router = express.Router();
 let cleanGenCode = (code: string) => cleanGenCodeNoToken(code);
@@ -33,11 +34,13 @@ router.post('/', async (req: Request, res: Response) => {
       !mongoose.Types.ObjectId.isValid(problemId) ||
       !mongoose.Types.ObjectId.isValid(userId)
     ) {
+      logger.http(`400 ${req.url} - Invalid ObjectId format`)
       return res.status(400).json({ message: 'Invalid ObjectId format' });
     }
 
     const problem = await Problem.findById(problemId);
     if (!problem) {
+      logger.http(`404 ${req.url} - Problem not found`)
       return res.status(404).json({ message: 'Problem not found' });
     }
 
@@ -92,8 +95,10 @@ router.post('/', async (req: Request, res: Response) => {
       history: promptResp.context,
     };
 
+    logger.http(`201 ${req.url} - Attempt created`)
     return res.status(201).json(response);
   } catch (err: any) {
+    logger.http(`500 ${req.url} - ${err.message}`)
     return res.status(500).json({ message: err.message });
   }
 });
@@ -103,6 +108,7 @@ router.get('/', async (_req: Request, res: Response) => {
     const attempts = await Attempt.find();
     res.json(attempts);
   } catch (err: any) {
+    logger.http(`500 ${_req.url} - ${err.message}`)
     res.status(500).json({ message: err.message });
   }
 });
@@ -115,6 +121,7 @@ router.get('/', async (_req: Request, res: Response) => {
 //       typeof problemId === 'undefined' ||
 //       !mongoose.Types.ObjectId.isValid(problemId)
 //     ) {
+//       logger.http(`400 ${req.url} - Invalid problemId format`)
 //       return res.status(400).json({ message: 'Invalid problemId format' });
 //     }
 //
@@ -123,6 +130,7 @@ router.get('/', async (_req: Request, res: Response) => {
 //     });
 //     return res.json(attempts);
 //   } catch (err: any) {
+//     logger.http(`500 ${req.url} - ${err.message}`)
 //     return res.status(500).json({ message: err.message });
 //   }
 // });
@@ -132,16 +140,19 @@ router.get('/', async (_req: Request, res: Response) => {
 //
 //   try {
 //     if (typeof id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
+//       logger.http(`400 ${req.url} - Invalid attempt id format`)
 //       return res.status(400).json({ message: 'Invalid attempt id format' });
 //     }
 //
 //     const attempt = await Attempt.findById(id);
 //     if (!attempt) {
+//       logger.http(`404 ${req.url} - Attempt not found`)
 //       return res.status(404).json({ message: 'Attempt not found' });
 //     }
 //
 //     return res.json(attempt);
 //   } catch (err: any) {
+//     logger.http(`500 ${req.url} - ${err.message}`)
 //     return res.status(500).json({ message: err.message });
 //   }
 // });
@@ -154,12 +165,14 @@ router.post('/:id/annotate', async (req: Request, res: Response) => {
   const history = req.body.history;
   try {
     if (typeof id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
+      logger.http(`400 ${req.url} - Invalid attempt id format`)
       return res.status(400).json({ message: 'Invalid attempt id format' });
     }
 
     let attempt = await Attempt.findById(id);
 
     if (!attempt) {
+      logger.http(`404 ${req.url} - Attempt not found`)
       return res.status(404).json({ message: 'Attempt not found' });
     }
 
@@ -174,11 +187,14 @@ router.post('/:id/annotate', async (req: Request, res: Response) => {
         generatedFunction = cleanGenCode(generatedFunction);
       }
     } else {
+      logger.http(`403 ${req.url} - Attempt not annotated`)
       return res.status(403).json({ message: 'Attempt not annotated' });
     }
 
+    logger.http(`200 ${req.url} - Attempt annotated`)
     return res.json({ response: generatedFunction, history: history });
   } catch (err: any) {
+    logger.http(`500 ${req.url} - ${err.message}`)
     return res.status(500).json({ message: err.message });
   }
 });
@@ -190,6 +206,7 @@ router.post('/:id/annotate', async (req: Request, res: Response) => {
 //
 //   try {
 //     if (typeof id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
+//       logger.http(`400 ${req.url} - Invalid attempt id format`)
 //       return res.status(400).json({ message: 'Invalid attempt id format' });
 //     }
 //
@@ -200,11 +217,14 @@ router.post('/:id/annotate', async (req: Request, res: Response) => {
 //     );
 //
 //     if (!updatedAttempt) {
+//       logger.http(`404 ${req.url} - Attempt not found`)
 //       return res.status(404).json({ message: 'Attempt not found' });
 //     }
 //
+//     logger.http(`200 ${req.url} - Attempt updated successfully`)
 //     return res.json(updatedAttempt);
 //   } catch (err: any) {
+//     logger.http(`500 ${req.url} - ${err.message}`)
 //     return res.status(500).json({ message: err.message });
 //   }
 // });
