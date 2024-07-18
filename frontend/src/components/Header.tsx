@@ -99,12 +99,14 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
                 className='rounded-full w-9 h-9 object-cover'
               />
             </Link>
-            <button
-              onClick={onLogout}
-              className='px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200 ease-in-out shadow-md'
-            >
-              Log Out
-            </button>
+            <Link to='/'>
+              <button
+                onClick={onLogout}
+                className='px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200 ease-in-out shadow-md'
+              >
+                Log Out
+              </button>
+            </Link>
           </div>
         ) : (
           <Link
