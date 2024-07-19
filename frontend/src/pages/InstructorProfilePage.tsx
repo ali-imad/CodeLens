@@ -2,29 +2,27 @@ import ProfileCard from '../components/ProfileCard';
 
 const ProfilePage: React.FC = () => {
   const user = {
-    userName: localStorage.getItem('username'),
+    username: localStorage.getItem('username'),
     firstName: localStorage.getItem('firstName'),
     lastName: localStorage.getItem('lastName'),
+    email: localStorage.getItem('email'),
     image1Url:
       'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ',
     image2Url: 'http://localhost:3000/avatar.jpg',
-    stats: {
-      assigned: 10,
-      attempted: 5,
-      completed: 3,
-    },
+    role: localStorage.getItem('role'),
   };
 
   return (
     <div>
-      <div className='container mx-auto mt-8'>
+      <div className='container mx-auto mt-8 profile-card'>
         <ProfileCard
-          userName={user.userName}
+          username={user.username}
           firstName={user.firstName}
           lastName={user.lastName}
+          email={user.email}
+          showStatsIcons={false}
           image1Url={user.image1Url}
           image2Url={user.image2Url}
-          stats={user.stats}
         />
       </div>
     </div>

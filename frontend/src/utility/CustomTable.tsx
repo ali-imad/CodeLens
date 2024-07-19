@@ -58,26 +58,34 @@ const CustomTable = <T extends Record<string, any>>({
         </tr>
       </thead>
       <tbody>
-        {data.map(item => (
-          <tr
-            key={item['_id']}
-            className={selectedItems.has(item['_id']) ? 'bg-gray-200' : ''}
-          >
-            <td className='py-2 px-4 border-b'>
-              <input
-                type='checkbox'
-                checked={selectedItems.has(item['_id'])}
-                onChange={() => handleSelect(item['_id'])}
-                className='form-checkbox'
-              />
-            </td>
-            {columns.map(column => (
-              <td key={column.accessor} className='py-2 px-4 border-b'>
-                {item[column.accessor]}
+        {data.length > 0 ? (
+          data.map(item => (
+            <tr
+              key={item['_id']}
+              className={selectedItems.has(item['_id']) ? 'bg-gray-200' : ''}
+            >
+              <td className='py-2 px-4 border-b'>
+                <input
+                  type='checkbox'
+                  checked={selectedItems.has(item['_id'])}
+                  onChange={() => handleSelect(item['_id'])}
+                  className='form-checkbox'
+                />
               </td>
-            ))}
+              {columns.map(column => (
+                <td key={column.accessor} className='py-2 px-4 border-b'>
+                  {item[column.accessor]}
+                </td>
+              ))}
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td className='py-2 px-4 border-b' colSpan={columns.length + 1}>
+              No data found
+            </td>
           </tr>
-        ))}
+        )}
       </tbody>
     </table>
   );

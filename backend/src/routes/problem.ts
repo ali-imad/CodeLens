@@ -58,7 +58,7 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
 
     const problems = await Problem.find();
     const problemStatus = problems.map(problem => ({
-      id: problem._id,
+      _id: problem._id,
       title: problem.title,
       difficulty: problem.difficulty,
       status: user.completedProblems.includes(
@@ -187,7 +187,7 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
 
     const problems = await Problem.find();
     const problemStatus = problems.map(problem => ({
-      id: problem._id,
+      _id: problem._id,
       title: problem.title,
       difficulty: problem.difficulty,
       status: user.completedProblems.includes(

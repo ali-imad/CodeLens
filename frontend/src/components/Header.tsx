@@ -92,13 +92,23 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
             )}
 
             <span>Hi, {username}</span>
-            <Link to='/profilePage'>
-              <img
-                src={image}
-                alt='User Avatar'
-                className='rounded-full w-9 h-9 object-cover'
-              />
-            </Link>
+            {localStorage.getItem('role') === 'Instructor' ? (
+              <Link to='/profilePage'>
+                <img
+                  src={image}
+                  alt='User Avatar'
+                  className='rounded-full w-9 h-9 object-cover'
+                />
+              </Link>
+            ) : (
+              <Link to={`/users/students/${username}`}>
+                <img
+                  src={image}
+                  alt='User Avatar'
+                  className='rounded-full w-9 h-9 object-cover'
+                />
+              </Link>
+            )}
             <Link to='/'>
               <button
                 onClick={onLogout}

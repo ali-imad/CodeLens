@@ -14,8 +14,9 @@ import LoginPage from './pages/LoginPage';
 import RegistrationPage from './pages/RegistrationPage';
 import AdminHomePage from './pages/AdminHomePage';
 import SelectInstructorPage from './pages/SelectInstructorPage';
-import ProfilePage from './pages/ProfilePage';
 import AllStudentViewPage from './pages/AllStudentsViewPage';
+import StudentProfilePage from './pages/StudentProfilePage';
+import InstructorProfilePage from './pages/InstructorProfilePage';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
@@ -88,13 +89,26 @@ const App: React.FC = () => {
               {/* Redirect to homepage when logged in */}
               <Route path='/login' element={<Navigate to='/' replace />} />
               <Route path='/register' element={<Navigate to='/' replace />} />
-              <Route path='/profilePage' element={<ProfilePage />} />
+              {role === 'Instructor' ? (
+                <Route
+                  path='/profilePage'
+                  element={<InstructorProfilePage />}
+                />
+              ) : (
+                <Route
+                  path='/profilePage'
+                  element={
+                    <Navigate to={`/users/students/${username}`} replace />
+                  }
+                />
+              )}
+              <Route
+                path='/users/students/:username'
+                element={<StudentProfilePage />}
+              />
             </Routes>
           ) : (
             <Routes>
-              <Route path='/' element={<NotLoggedInPage />} />
-              <Route path='/problems' element={<NotLoggedInPage />} />
-              <Route path='/problems/:id' element={<NotLoggedInPage />} />
               <Route
                 path='/login'
                 element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
@@ -105,6 +119,7 @@ const App: React.FC = () => {
                   <RegistrationPage onLoginSuccess={handleLoginSuccess} />
                 }
               />
+              <Route path='/*' element={<NotLoggedInPage />} />
             </Routes>
           )}
         </div>

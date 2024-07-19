@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { BsFilter } from 'react-icons/bs';
 import { CiExport } from 'react-icons/ci';
@@ -281,7 +282,14 @@ const AllStudentViewPage: React.FC = () => {
 
   const data = currentStudents.map(student => ({
     ...student,
-    realName: `${student.firstName} ${student.lastName}`,
+    realName: (
+      <Link
+        to={`/users/students/${student.username}`}
+        className='text-blue-500'
+      >
+        {student.firstName} {student.lastName}
+      </Link>
+    ),
   }));
 
   return (

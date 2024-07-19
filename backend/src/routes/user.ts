@@ -31,6 +31,26 @@ router.get('/students', async (_req: Request, res: Response) => {
   }
 });
 
+// Get student profile by username
+router.get('/students/:username', async (req: Request, res: Response) => {
+  try {
+    const { username } = req.params;
+    const student = await User.findOne({
+      username: username,
+      role: 'Student',
+    });
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    return res.status(200).json(student);
+  } catch (error) {
+    console.error('Error fetching student:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 router.get(
   '/students/by-instructor/:instructorId',
   async (req: Request, res: Response) => {
@@ -52,7 +72,7 @@ router.get(
 
 router.get('/instructors', async (_req: Request, res: Response) => {
   try {
-    const instructors = await User.find({ role: 'Instructor' }, 'username');
+    const instructors = await User.find({ role: 'Instructor' }, 'username firstName lastName');
     res.json(instructors);
   } catch (error) {
     logger.error('Error fetching instructors:', error);
@@ -86,9 +106,9 @@ router.put('/select-instructor', async (req: Request, res: Response) => {
 // Fetching the initial user profile image if exists in database .
 
 router.get(
-  '/:userName/fetchImage',
+  '/:username/fetchImage',
   async (req: Request, res: Response): Promise<void> => {
-    const { userName } = req.params;
+    const { username } = req.params;
 
     try {
       const db = mongoose.connection.db;
@@ -96,7 +116,7 @@ router.get(
         bucketName: 'uploadedImages',
       });
 
-      const file = await bucket.find({ 'metadata.id': userName }).next();
+      const file = await bucket.find({ 'metadata.id': username }).next();
 
       if (!file) {
         res.status(404).send('File not found');
@@ -164,7 +184,7 @@ const upload = multer({
 
 async function processAndUploadImage(
   file: Express.Multer.File,
-  userName: string,
+  username: string,
 ): Promise<mongoose.mongo.ObjectId> {
   const db = mongoose.connection.db;
   const bucket = new mongoose.mongo.GridFSBucket(db, {
@@ -178,7 +198,7 @@ async function processAndUploadImage(
 
   return new Promise((resolve, reject) => {
     const uploadStream = bucket.openUploadStream(file.originalname, {
-      metadata: { id: userName },
+      metadata: { id: username },
     });
 
     uploadStream.end(compressedFile);
@@ -194,7 +214,7 @@ async function processAndUploadImage(
 }
 
 router.post(
-  '/:userName/uploadImage',
+  '/:username/uploadImage',
   upload.single('image'),
   async (req: Request, res: Response, next: NextFunction) => {
     const session = await mongoose.startSession();
@@ -205,8 +225,8 @@ router.post(
         throw new Error('No file to upload');
       }
 
-      const userName = req.body.userName;
-      if (!userName) {
+      const username = req.body.username;
+      if (!username) {
         throw new Error('User name is required.');
       }
 
@@ -216,13 +236,13 @@ router.post(
       });
 
       const existingFile = await bucket
-        .find({ 'metadata.id': userName })
+        .find({ 'metadata.id': username })
         .next();
       if (existingFile) {
         await bucket.delete(existingFile._id);
       }
 
-      const fileId = await processAndUploadImage(req.file, userName);
+      const fileId = await processAndUploadImage(req.file, username);
 
       await session.commitTransaction();
       session.endSession();

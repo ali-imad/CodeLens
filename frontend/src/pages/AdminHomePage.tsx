@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import CustomTable from '../utility/CustomTable';
 import AddProblemModal from '../components/AddProblemModal';
@@ -114,9 +115,9 @@ const AdminHomePage: React.FC = () => {
   const data = currentProblems.map(problem => ({
     ...problem,
     link: (
-      <a href={`/problems/${problem._id}`} className='text-blue-500'>
+      <Link to={`/problems/${problem._id}`} className='text-blue-500'>
         View
-      </a>
+      </Link>
     ),
   }));
 
