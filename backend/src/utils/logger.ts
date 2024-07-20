@@ -1,9 +1,8 @@
 import * as winston from 'winston';
 import * as fs from 'fs';
 import * as path from 'path';
-import './loadEnv'
-
 import Transport from 'winston-transport';
+import { envLoaded, envFilePath } from './loadEnv';
 
 const Colors: any = {
   info: '\x1b[36m',
@@ -73,6 +72,13 @@ const logger = winston.createLogger({
 
 if (process.env['NODE_ENV'] !== 'production') {
   logger.add(new SimpleConsoleTransport({ format: winston.format.simple(), level: logLevel }));
+}
+
+if (!envLoaded) {
+  logger.warn(`Environment file not found at ${envFilePath}`);
+  logger.warn('Using default environment variables');
+} else {
+  logger.info(`Environment file loaded from ${envFilePath}`);
 }
 
 export default logger;
