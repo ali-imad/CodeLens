@@ -52,7 +52,7 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user = await User.findById(userId);
     if (!user) {
-      logger.http(`404 ${req.url} - User not found`)
+      logger.http(`404 ${req.url} - User not found`);
       return res.status(404).json({ message: 'User not found' });
     }
 
@@ -66,16 +66,16 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
       )
         ? 'Completed'
         : user.attemptedProblems.includes(
-              problem._id as mongoose.Types.ObjectId,
-            )
-          ? 'Attempted'
-          : 'Not Attempted',
+            problem._id as mongoose.Types.ObjectId,
+          )
+        ? 'Attempted'
+        : 'Not Attempted',
     }));
 
-    logger.http(`200 ${req.url} - Problem status fetched successfully`)
+    logger.http(`200 ${req.url} - Problem status fetched successfully`);
     return res.json(problemStatus);
   } catch (err: any) {
-    logger.http(`500 ${req.url} - ${err.message}`)
+    logger.http(`500 ${req.url} - ${err.message}`);
     return res.status(500).json({ message: err.message });
   }
 });
@@ -87,7 +87,7 @@ router.post('/assign', async (req: Request, res: Response) => {
 
     const instructor = await User.findById(instructorId);
     if (!instructor || instructor.role !== 'Instructor') {
-      logger.http(`403 ${req.url} - Not authorized to assign problems`)
+      logger.http(`403 ${req.url} - Not authorized to assign problems`);
       return res
         .status(403)
         .json({ message: 'Not authorized to assign problems' });
@@ -95,22 +95,30 @@ router.post('/assign', async (req: Request, res: Response) => {
 
     const student = await User.findById(studentId);
     if (!student || student.role !== 'Student') {
-      logger.http(`404 ${req.url} - Student not found`)
+      logger.http(`404 ${req.url} - Student not found`);
       return res.status(404).json({ message: 'Student not found' });
     }
 
-    const problemObjectIds = problemIds.map(
-      (id: string) => new mongoose.Types.ObjectId(id),
-    );
+    // Verify that all problemIds exist in the Problem collection
+    const existingProblems = await Problem.find({ _id: { $in: problemIds } });
+    if (existingProblems.length !== problemIds.length) {
+      logger.http(`400 ${req.url} - One or more problems do not exist`);
+      return res
+        .status(400)
+        .json({ message: 'One or more problems do not exist' });
+    }
+
+    // Use the existing problem IDs
+    const problemObjectIds = existingProblems.map(problem => problem._id);
 
     await User.findByIdAndUpdate(studentId, {
       $addToSet: { assignedProblems: { $each: problemObjectIds } },
     });
 
-    logger.http(`200 ${req.url} - Problems assigned successfully`)
+    logger.http(`200 ${req.url} - Problems assigned successfully`);
     return res.status(200).json({ message: 'Problems assigned successfully' });
   } catch (err: any) {
-    logger.http(`500 ${req.url} - ${err.message}`)
+    logger.http(`500 ${req.url} - ${err.message}`);
     return res.status(500).json({ message: err.message });
   }
 });
@@ -121,16 +129,16 @@ router.get('/assigned/:userId', async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user = await User.findById(userId).populate('assignedProblems');
     if (!user) {
-      logger.http(`404 ${req.url} - User not found`)
+      logger.http(`404 ${req.url} - User not found`);
       return res.status(404).json({ message: 'User not found' });
     }
-    logger.http(`200 ${req.url} - Assigned problems fetched successfully`)
+    logger.http(`200 ${req.url} - Assigned problems fetched successfully`);
     return res.json({
       count: user.assignedProblems.length,
       problems: user.assignedProblems,
     });
   } catch (err: any) {
-    logger.http(`500 ${req.url} - ${err.message}`)
+    logger.http(`500 ${req.url} - ${err.message}`);
     return res.status(500).json({ message: err.message });
   }
 });
@@ -141,16 +149,16 @@ router.get('/attempted/:userId', async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user = await User.findById(userId).populate('attemptedProblems');
     if (!user) {
-      logger.http(`404 ${req.url} - User not found`)
+      logger.http(`404 ${req.url} - User not found`);
       return res.status(404).json({ message: 'User not found' });
     }
-    logger.http(`200 ${req.url} - Attempted problems fetched successfully`)
+    logger.http(`200 ${req.url} - Attempted problems fetched successfully`);
     return res.json({
       count: user.attemptedProblems.length,
       problems: user.attemptedProblems,
     });
   } catch (err: any) {
-    logger.http(`500 ${req.url} - ${err.message}`)
+    logger.http(`500 ${req.url} - ${err.message}`);
     return res.status(500).json({ message: err.message });
   }
 });
@@ -161,16 +169,16 @@ router.get('/completed/:userId', async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user = await User.findById(userId).populate('completedProblems');
     if (!user) {
-      logger.http(`404 ${req.url} - User not found`)
+      logger.http(`404 ${req.url} - User not found`);
       return res.status(404).json({ message: 'User not found' });
     }
-    logger.http(`200 ${req.url} - Completed problems fetched successfully`)
+    logger.http(`200 ${req.url} - Completed problems fetched successfully`);
     return res.json({
       count: user.completedProblems.length,
       problems: user.completedProblems,
     });
   } catch (err: any) {
-    logger.http(`500 ${req.url} - ${err.message}`)
+    logger.http(`500 ${req.url} - ${err.message}`);
     return res.status(500).json({ message: err.message });
   }
 });
@@ -181,7 +189,7 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
     const { userId } = req.params;
     const user = await User.findById(userId);
     if (!user) {
-      logger.http(`404 ${req.url} - User not found`)
+      logger.http(`404 ${req.url} - User not found`);
       return res.status(404).json({ message: 'User not found' });
     }
 
@@ -195,20 +203,18 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
       )
         ? 'Completed'
         : user.attemptedProblems.includes(
-              problem._id as mongoose.Types.ObjectId,
-            )
-          ? 'Attempted'
-          : user.assignedProblems.includes(
-                problem._id as mongoose.Types.ObjectId,
-              )
-            ? 'Assigned'
-            : 'Not Assigned',
+            problem._id as mongoose.Types.ObjectId,
+          )
+        ? 'Attempted'
+        : user.assignedProblems.includes(problem._id as mongoose.Types.ObjectId)
+        ? 'Assigned'
+        : 'Not Assigned',
     }));
 
-    logger.http(`200 ${req.url} - Problem status fetched successfully`)
+    logger.http(`200 ${req.url} - Problem status fetched successfully`);
     return res.json(problemStatus);
   } catch (err: any) {
-    logger.http(`500 ${req.url} - ${err.message}`)
+    logger.http(`500 ${req.url} - ${err.message}`);
     return res.status(500).json({ message: err.message });
   }
 });

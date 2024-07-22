@@ -15,7 +15,7 @@ router.get('/', async (_req: Request, res: Response) => {
     return res.json(users);
   } catch (err) {
     logger.error('Failed to fetch users:', err);
-    logger.http(`500 ${_req.url} - Failed to fetch users`)
+    logger.http(`500 ${_req.url} - Failed to fetch users`);
     return res.status(500).json({ message: 'Failed to fetch users' });
   }
 });
@@ -26,7 +26,7 @@ router.get('/students', async (_req: Request, res: Response) => {
     return res.json(students);
   } catch (error) {
     logger.error('Error fetching students:', error);
-    logger.http(`500 ${_req.url} - Error fetching students`)
+    logger.http(`500 ${_req.url} - Error fetching students`);
     return res.status(500).json({ error: 'Error fetching students' });
   }
 });
@@ -72,7 +72,10 @@ router.get(
 
 router.get('/instructors', async (_req: Request, res: Response) => {
   try {
-    const instructors = await User.find({ role: 'Instructor' }, 'username firstName lastName');
+    const instructors = await User.find(
+      { role: 'Instructor' },
+      'username firstName lastName email',
+    );
     res.json(instructors);
   } catch (error) {
     logger.error('Error fetching instructors:', error);
@@ -91,11 +94,11 @@ router.put('/select-instructor', async (req: Request, res: Response) => {
     );
 
     if (!updatedUser) {
-      logger.http(`404 ${req.url} - User not found`)
+      logger.http(`404 ${req.url} - User not found`);
       return res.status(404).json({ error: 'User not found' });
     }
 
-    logger.http(`200 ${req.url} - Instructor selected successfully!`)
+    logger.http(`200 ${req.url} - Instructor selected successfully!`);
     return res.status(200).json(updatedUser);
   } catch (error) {
     logger.error('Error setting instructor:', error);
@@ -247,7 +250,7 @@ router.post(
       await session.commitTransaction();
       session.endSession();
 
-      logger.http(`200 ${req.url} - Profile picture uploaded successfully!`)
+      logger.http(`200 ${req.url} - Profile picture uploaded successfully!`);
       return res.status(200).json({
         message: 'Profile picture uploaded successfully!',
         uploadedFile: { id: fileId, ...req.file },
@@ -272,7 +275,7 @@ router.use((error: any, _req: Request, res: Response, _next: NextFunction) => {
         .status(400)
         .json({ message: 'File is too large. Maximum allowed size is 5MB.' });
     } else {
-      logger.http(`400 ${_req.url} - ${error.message}`)
+      logger.http(`400 ${_req.url} - ${error.message}`);
       return res.status(400).json({ message: error.message });
     }
   } else {

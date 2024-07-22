@@ -8,6 +8,8 @@ import CustomButton from '../utility/CustomButton';
 import CustomTable from '../utility/CustomTable';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaUserPlus } from 'react-icons/fa';
+import AssignProblemModal from '../components/AssignProblemModal';
 
 export interface StudentState {
   _id: string;
@@ -37,6 +39,7 @@ const AllStudentViewPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [showAssignModal, setShowAssignModal] = useState(false);
   const itemsPerPage = 8;
 
   useEffect(() => {
@@ -196,6 +199,58 @@ const AllStudentViewPage: React.FC = () => {
     setSelectedInstructor(event.target.value);
   };
 
+  const handleAssign = () => {
+    setShowAssignModal(true);
+  };
+
+  const handleAssignProblems = async (
+    problemIds: string[],
+    studentIds: string[],
+  ) => {
+    const instructorEmail = localStorage.getItem('email');
+
+    try {
+      const instructorsResponse = await axios.get(
+        'http://localhost:3000/users/instructors',
+      );
+      const instructors = instructorsResponse.data;
+
+      const currentInstructor = instructors.find(
+        (instructor: { email: string | null }) =>
+          instructor.email === instructorEmail,
+      );
+
+      const instructorId = currentInstructor._id;
+
+      for (const studentId of studentIds) {
+        await axios.post('http://localhost:3000/problems/assign', {
+          instructorId,
+          studentId,
+          problemIds,
+        });
+      }
+
+      toast.success('Problems assigned successfully', {
+        position: 'top-left',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } catch (error) {
+      console.error('Error assigning problems:', error);
+      toast.error('Error assigning problems. Please try again.', {
+        position: 'top-left',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
   const handleDownloadSelected = () => {
     if (selectedStudents.size === 0) {
       toast.warning(
@@ -313,17 +368,23 @@ const AllStudentViewPage: React.FC = () => {
             <BsFilter className='absolute top-3 left-3 text-gray-400' />
           </div>
         </div>
-        <div className='flex space-x-4'>
-          <div className='w-full md:w-4/12'>
-            <CustomButton
-              onClick={handleDownloadSelected}
-              text='Export Selected'
-              icon={<CiExport className='w-6 h-7 relative text-white' />}
-              className='w-full sm:w-72 md:w-80 lg:w-96 xl:w-[200px]'
-              bgColor='bg-gray-600'
-              borderColor='border-gray-600'
-            />
-          </div>
+        <div className='flex justify-between'>
+          <CustomButton
+            onClick={handleDownloadSelected}
+            text='Export Selected'
+            icon={<CiExport className='w-6 h-7 relative text-white' />}
+            className='w-full sm:w-72 md:w-80 lg:w-96 xl:w-[200px]'
+            bgColor='bg-gray-600'
+            borderColor='border-gray-600'
+          />
+          <CustomButton
+            onClick={handleAssign}
+            text='Assign Problem'
+            icon={<FaUserPlus className='w-6 h-7 relative text-white' />}
+            className='w-full sm:w-48 md:w-60 lg:w-84 xl:w-[200px]'
+            bgColor='bg-green-600'
+            borderColor='border-green-600'
+          />
         </div>
       </div>
       <CustomTable
@@ -342,6 +403,13 @@ const AllStudentViewPage: React.FC = () => {
         itemsPerPage={itemsPerPage}
         paginate={paginate}
       />
+      {showAssignModal && (
+        <AssignProblemModal
+          onClose={() => setShowAssignModal(false)}
+          onAssign={handleAssignProblems}
+          students={filteredStudents}
+        />
+      )}
       <ToastContainer />
     </div>
   );
