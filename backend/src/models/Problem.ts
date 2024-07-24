@@ -16,6 +16,7 @@ export interface IProblem extends Document {
   difficulty: Difficulty;
   functionBody: string;
   testCases: ITestCase[];
+  hints: string[];
 }
 
 const TestCaseSchema: Schema = new Schema<ITestCase>({
@@ -28,6 +29,7 @@ const ProblemSchema: Schema = new Schema<IProblem>({
   difficulty: { type: String, enum: Object.values(Difficulty), required: true },
   functionBody: { type: String, required: true },
   testCases: [TestCaseSchema],
+  hints: { type: [String], required: true },
 });
 
 export default mongoose.model<IProblem>('Problem', ProblemSchema);

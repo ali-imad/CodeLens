@@ -16,7 +16,7 @@ router.post('/', async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      logger.http(`400 ${req.url} - Email and password are required.`)
+      logger.http(`400 ${req.url} - Email and password are required.`);
       return res
         .status(400)
         .json({ error: 'Email and password are required.' });
@@ -25,13 +25,13 @@ router.post('/', async (req: Request, res: Response) => {
     const user: IUser | null = await User.findOne({ email });
 
     if (!user) {
-      logger.http(`400 ${req.url} - Invalid email or password.`)
+      logger.http(`400 ${req.url} - Invalid email or password.`);
       return res.status(400).json({ error: 'Invalid email or password.' });
     }
 
     const validPassword = await bcrypt.compare(password, user.password || '');
     if (!validPassword) {
-      logger.http(`400 ${req.url} - Invalid email or password.`)
+      logger.http(`400 ${req.url} - Invalid email or password.`);
       return res.status(400).json({ error: 'Invalid email or password.' });
     }
     // create a token with 2 day life
@@ -42,7 +42,7 @@ router.post('/', async (req: Request, res: Response) => {
       // { expiresIn: 2},
     );
 
-    logger.http(`200 ${req.url} - Login successful.`)
+    logger.http(`200 ${req.url} - Login successful.`);
     return res.status(200).json({
       message: 'Login successful.',
       token: token,

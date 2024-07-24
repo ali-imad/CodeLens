@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { Bell } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import axios, { AxiosResponse } from 'axios';
 import ProblemDescription from '../pages/ProblemDescription';
 import DescriptionInput from './DescriptionInput';
 import Feedback from './Feedback';
-import { Difficulty, ITestCase, TestCaseResult } from '../types';
-import { ProblemStatus } from '../types';
+import {
+  Difficulty,
+  ITestCase,
+  ProblemStatus,
+  TestCaseResult,
+  Verdict,
+} from '../types';
 import ProblemStatusIcon from './ProblemStatusIcon';
 
 export interface IProblem extends Document {
@@ -13,15 +19,38 @@ export interface IProblem extends Document {
   difficulty: Difficulty;
   functionBody: string;
   testCases: ITestCase[];
+  hints: string[];
 }
 
 interface IAttempt {
   _id: string;
   generatedCode: string;
-  feedback: TestCaseResult[];
-  isPassed: boolean;
   description: string;
+  feedback: TestCaseResult[];
+  isPassed: Verdict;
 }
+
+interface NotificationProps {
+  message: string | undefined;
+}
+
+const ErrorNotification: React.FC<NotificationProps> = ({ message }) => {
+  return (
+    <div className='bg-red-100 border-l-4 border-red-500 text-red-800 p-4 flex items-center shadow-md'>
+      <Bell className='h-6 w-6 mr-4' />
+      <span>{message}</span>
+    </div>
+  );
+};
+
+const HintNotification: React.FC<NotificationProps> = ({ message }) => {
+  return (
+    <div className='bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 flex items-center shadow-md'>
+      <Bell className='h-6 w-6 mr-4' />
+      <span>{message}</span>
+    </div>
+  );
+};
 
 interface ILLMHistory {
   role: string;
@@ -39,6 +68,7 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [attemptResponse, setAttemptResponse] =
     useState<IAttemptResponse | null>(null);
+  const [numAttempts, setNumAttempts] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [problemStatus, setProblemStatus] = useState<ProblemStatus>(
     ProblemStatus.NotAttempted,
@@ -53,13 +83,14 @@ const Dashboard: React.FC = () => {
         `http://localhost:3000/problems/status/${userId}`,
       );
       const problemStatuses = response.data;
-      const currentProblemStatus = problemStatuses.find(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (p: any) => p.id === problemId,
-      );
-      if (currentProblemStatus) {
-        setProblemStatus(currentProblemStatus.status);
+      for (const problemStatus of problemStatuses) {
+        if (problemStatus._id === problemId) {
+          setProblemStatus(problemStatus.status);
+          return // early return out
+        }
       }
+      // If the problem is not found, set the status to NotAttempted
+      setProblemStatus(ProblemStatus.NotAttempted);
     } catch (err) {
       console.error('Error fetching problem status:', err);
     }
@@ -73,6 +104,7 @@ const Dashboard: React.FC = () => {
         );
         setProblem(response.data);
         setError(null);
+        setNumAttempts(0);
 
         const userEmail = localStorage.getItem('email');
         const userResponse = await axios.get(
@@ -80,7 +112,7 @@ const Dashboard: React.FC = () => {
         );
         const userId = userResponse.data._id;
 
-        await fetchProblemStatus(userId, id);
+        const status = await fetchProblemStatus(userId, id);
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data.message || err.message);
@@ -91,12 +123,15 @@ const Dashboard: React.FC = () => {
     };
 
     if (id) {
-      fetchProblem();
       setAttemptResponse(null);
+      fetchProblem();
     }
   }, [id]);
 
   const handleDescriptionSubmit = async (description: string) => {
+    if (problem === null) {
+      return;
+    }
     if (attemptResponse) {
       setAttemptResponse(null);
     }
@@ -116,14 +151,20 @@ const Dashboard: React.FC = () => {
           description,
         },
       );
+
       if (!response.data || !response.data.attempt) {
         throw new Error('could not query LLM');
       }
       setAttemptResponse(response.data);
+      if (numAttempts < problem.hints.length) {
+        setNumAttempts(numAttempts + 1);
+      }
 
-      if (response.data.attempt.isPassed) {
+      if (response.data.attempt.isPassed === Verdict.Passed) {
         setProblemStatus(ProblemStatus.Completed);
-      } else if (problemStatus === 'Not Attempted') {
+      } else if (response.data.attempt.isPassed === Verdict.Error) {
+        setProblemStatus(ProblemStatus.Error);
+      } else if (response.data.attempt.isPassed === Verdict.Failed && problemStatus !== ProblemStatus.Completed) {
         setProblemStatus(ProblemStatus.Attempted);
       }
     } catch (err) {
@@ -147,6 +188,18 @@ const Dashboard: React.FC = () => {
         <div className='flex justify-end items-center mb-4'>
           <ProblemStatusIcon status={problemStatus} />
         </div>
+
+        {/* check if the problem is not completed and its hints exist before rendering */}
+        {problemStatus === ProblemStatus.Attempted ? (
+          problem.hints
+            .slice(0, numAttempts)
+            .map((hint: string, index: number) => (
+              <HintNotification key={index} message={hint} />
+            ))
+        ) : problemStatus === ProblemStatus.Error ? (
+          <ErrorNotification
+            message='An error occurred while running generated code. To prevent this, please assess the generated input and be more specific in your prompt.' />
+        ) : null}
         <ProblemDescription problem={problem} />
         <DescriptionInput
           onSubmit={handleDescriptionSubmit}

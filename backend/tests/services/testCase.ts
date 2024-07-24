@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { runTests, TestResult } from '../../src/services/testCase';
+import { runTests, TestResult, Verdict } from '../../src/services/testCase';
 import mockProblems from '../../src/sampleProblems';
 import { ITestCase } from '../../src/models/Problem';
 
@@ -27,12 +27,12 @@ describe('runTests', () => {
     ];
 
     const expected: TestResult = {
-      passed: true,
+      passed: Verdict.Passed,
       feedbackArray: testCases.map(({ input, expectedOutput }) => ({
         input,
         expectedOutput,
         actualOutput: expectedOutput,
-        passed: true,
+        passed: Verdict.Passed
       })),
     };
 
@@ -49,25 +49,25 @@ describe('runTests', () => {
     ];
 
     const expected: TestResult = {
-      passed: false,
+      passed: Verdict.Failed,
       feedbackArray: [
         {
           input: [1, 2],
           expectedOutput: [2, 1],
           actualOutput: [2, 1],
-          passed: true,
+          passed: Verdict.Passed,
         },
         {
           input: [2, 3],
           expectedOutput: [2, 3],
           actualOutput: [3, 2], // Actual output will be 5
-          passed: false,
+          passed: Verdict.Failed,
         },
         {
           input: [3, 4],
           expectedOutput: [4, 3],
           actualOutput: [4, 3],
-          passed: true,
+          passed: Verdict.Passed,
         },
       ],
     };
@@ -76,7 +76,7 @@ describe('runTests', () => {
     expect(result).to.deep.equal(expected);
   });
 
-  it('should return unsuccessful results when function under test throws an error', () => {
+  it('should return invalid verdict when function under test throws an error', () => {
     const functionUnderTest = 'throw new Error("Test error")';
     const testCases: TestCase[] = [
       { input: [1, 2], expectedOutput: 3 },
@@ -85,12 +85,12 @@ describe('runTests', () => {
     ];
 
     const expected: TestResult = {
-      passed: false,
+      passed: Verdict.Error,
       feedbackArray: testCases.map(({ input, expectedOutput }) => ({
         input,
         expectedOutput,
         actualOutput: null,
-        passed: false,
+        passed: Verdict.Error,
       })),
     };
 
@@ -104,11 +104,11 @@ describe('palindrome test-runner check (identical input)', () => {
     it(`Test Case #${index + 1}`, () => {
       const result = runTests(isPalindromeProblem.functionBody, [testCase]);
       expect(result).to.exist;
-      expect(result.passed).to.equal(true);
+      expect(result.passed).to.equal(Verdict.Passed);
       expect(result.feedbackArray).to.exist;
       expect(result.feedbackArray[0]).to.exist;
       // @ts-ignore
-      expect(result.feedbackArray[0].passed).to.equal(true);
+      expect(result.feedbackArray[0].passed).to.equal(Verdict.Passed);
     });
   });
 });
@@ -126,11 +126,11 @@ describe('palindrome test-runner check (generated input)', () => {
       `;
       const result = runTests(fnStr, [testCase]);
       expect(result).to.exist;
-      expect(result.passed).to.equal(true);
+      expect(result.passed).to.equal(Verdict.Passed);
       expect(result.feedbackArray).to.exist;
       expect(result.feedbackArray[0]).to.exist;
       // @ts-ignore
-      expect(result.feedbackArray[0].passed).to.equal(true);
+      expect(result.feedbackArray[0].passed).to.equal(Verdict.Passed);
     });
   });
 });
@@ -140,11 +140,11 @@ describe('median test-runner check (identical input)', () => {
     it(`Test Case #${index + 1}`, () => {
       const result = runTests(medianTwoArrsProblem.functionBody, [testCase]);
       expect(result).to.exist;
-      expect(result.passed).to.equal(true);
+      expect(result.passed).to.equal(Verdict.Passed);
       expect(result.feedbackArray).to.exist;
       expect(result.feedbackArray[0]).to.exist;
       // @ts-ignore
-      expect(result.feedbackArray[0].passed).to.equal(true);
+      expect(result.feedbackArray[0].passed).to.equal(Verdict.Passed);
     });
   });
 });
@@ -154,11 +154,11 @@ describe('max area test-runner check (identical input)', () => {
     it(`Test Case #${index + 1}`, () => {
       const result = runTests(maxRectProblem.functionBody, [testCase]);
       expect(result).to.exist;
-      expect(result.passed).to.equal(true);
+      expect(result.passed).to.equal(Verdict.Passed);
       expect(result.feedbackArray).to.exist;
       expect(result.feedbackArray[0]).to.exist;
       // @ts-ignore
-      expect(result.feedbackArray[0].passed).to.equal(true);
+      expect(result.feedbackArray[0].passed).to.equal(Verdict.Passed);
     });
   });
 });

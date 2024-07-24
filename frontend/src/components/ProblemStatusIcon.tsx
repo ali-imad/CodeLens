@@ -9,9 +9,12 @@ const ProblemStatusIcon: React.FC<{
   if (status === ProblemStatus.Attempted) {
     statusColor = 'text-yellow-500';
     statusIcon = '⟳';
-  } else if (status === 'Completed') {
+  } else if (status === ProblemStatus.Completed) {
     statusColor = 'text-green-500';
     statusIcon = '✓';
+  } else if (status === ProblemStatus.Error) {
+    statusColor = 'text-red-500';
+    statusIcon = '⚠';
   }
 
   return (

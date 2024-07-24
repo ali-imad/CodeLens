@@ -11,7 +11,7 @@ router.post('/', async (req: Request, res: Response) => {
     const existingUser = await User.findOne({ email });
 
     if (!Object.values(UserRole).includes(role)) {
-      logger.http(`400 ${req.url} - Invalid user role.`)
+      logger.http(`400 ${req.url} - Invalid user role.`);
       return res.status(400).json({ error: 'Invalid user role.' });
     }
 
@@ -31,7 +31,7 @@ router.post('/', async (req: Request, res: Response) => {
     });
     await newUser.save();
 
-    logger.http(`201 ${req.url} - New User Registered Successfully.`)
+    logger.http(`201 ${req.url} - New User Registered Successfully.`);
     return res.status(201).json({
       message: 'New User Registered Successfully.',
       username: newUser.username,

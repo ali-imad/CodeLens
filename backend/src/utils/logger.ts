@@ -42,7 +42,6 @@ class SimpleConsoleTransport extends Transport {
   };
 }
 
-
 // Log directory path
 const LOG_DIR = path.join(__dirname, '../..', 'logs');
 
@@ -65,13 +64,21 @@ const logger = winston.createLogger({
   level: logLevel,
   format: winston.format.simple(),
   transports: [
-    new winston.transports.File({ filename: FULL_LOG_FILENAME, level: 'debug' }),
+    new winston.transports.File({
+      filename: FULL_LOG_FILENAME,
+      level: 'debug',
+    }),
     new winston.transports.File({ filename: COMBINED_LOG_FILENAME }),
   ],
 });
 
 if (process.env['NODE_ENV'] !== 'production') {
-  logger.add(new SimpleConsoleTransport({ format: winston.format.simple(), level: logLevel }));
+  logger.add(
+    new SimpleConsoleTransport({
+      format: winston.format.simple(),
+      level: logLevel,
+    }),
+  );
 }
 
 if (!envLoaded) {

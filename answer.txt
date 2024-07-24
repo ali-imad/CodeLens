@@ -1,0 +1,1 @@
+This function determines the two indexes of the two values in the input array 'a' that add up to the target input sum 'b'. If there is no such values, an Error is thrown

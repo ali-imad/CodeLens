@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import Problem from './Problem';
-import { TestCaseResult } from '../services/testCase';
+import { TestCaseResult, Verdict } from '../services/testCase';
 import { User } from './User';
 
 export interface IAttempt extends Document {
@@ -9,7 +9,7 @@ export interface IAttempt extends Document {
   description: string;
   generatedCode: string;
   feedback: TestCaseResult[];
-  isPassed: boolean;
+  isPassed: Verdict;
   createdAt: Date;
   updateUserProgress: () => Promise<void>;
 }
@@ -28,10 +28,10 @@ const AttemptSchema: Schema = new Schema<IAttempt>({
       input: { type: [Schema.Types.Mixed], required: true },
       expectedOutput: { type: Schema.Types.Mixed, required: true },
       actualOutput: { type: Schema.Types.Mixed },
-      passed: { type: Boolean, required: true },
+      passed: { type: String, required: true },
     },
   ],
-  isPassed: { type: Boolean, default: false },
+  isPassed: { type: String, default: Verdict.Failed },
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -55,15 +55,19 @@ AttemptSchema.pre<IAttempt>('save', async function (next) {
   }
 });
 
+// @ts-ignore
 AttemptSchema.methods['updateUserProgress'] = async function () {
-  const user = await User.findById(this['userId']);
+  const user: any = await User.findById(this['userId']);
   if (!user) throw new Error('User not found');
 
   if (!user.attemptedProblems.includes(this['problemId'])) {
     user.attemptedProblems.push(this['problemId']);
   }
 
-  if (this['isPassed'] && !user.completedProblems.includes(this['problemId'])) {
+  if (
+    this['isPassed'] === Verdict.Passed &&
+    !user.completedProblems.includes(this['problemId'])
+  ) {
     user.completedProblems.push(this['problemId']);
   }
 

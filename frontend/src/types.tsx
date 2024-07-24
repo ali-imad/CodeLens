@@ -16,17 +16,25 @@ export interface IProblem extends Document {
   difficulty: Difficulty;
   functionBody: string;
   testCases: ITestCase[];
+  hints: string[];
+}
+
+export enum Verdict {
+  Passed = 'Passed',
+  Failed = 'Failed',
+  Error = 'Error',
 }
 
 export interface TestCaseResult {
   input: any[];
   expectedOutput: any;
   actualOutput: any;
-  passed: boolean;
+  passed: Verdict;
 }
 
 export enum ProblemStatus {
   NotAttempted = 'Not Attempted',
+  Error = 'Error',
   Attempted = 'Attempted',
   Completed = 'Completed',
 }

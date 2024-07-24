@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { IAttemptResponse } from './Dashboard.tsx';
+import { Verdict } from '../types.tsx';
 
 interface AnnotateButtonProps {
   oc: () => void;
@@ -138,10 +139,18 @@ const Feedback: React.FC<FeedbackProps> = (props: FeedbackProps) => {
                 <span className='font-semibold'>Passed: </span>
                 <span
                   className={`font-bold ${
-                    result.passed ? 'text-green-600' : 'text-red-600'
+                    result.passed === Verdict.Passed
+                      ? 'text-green-600'
+                      : result.passed === Verdict.Error
+                        ? 'text-pink-400'
+                        : 'text-red-600'
                   }`}
                 >
-                  {result.passed ? 'Yes' : 'No'}
+                  {result.passed === Verdict.Passed
+                    ? 'Yes'
+                    : result.passed === Verdict.Error
+                      ? 'Error'
+                      : 'No'}
                 </span>
               </div>
             </div>
@@ -153,10 +162,18 @@ const Feedback: React.FC<FeedbackProps> = (props: FeedbackProps) => {
         <h2 className='text-xl font-bold mb-2'>Overall Result</h2>
         <div
           className={`text-lg font-semibold ${
-            isPassed ? 'text-green-600' : 'text-red-600'
+            isPassed === Verdict.Passed
+              ? 'text-green-600'
+              : isPassed === Verdict.Error
+                ? 'text-pink-400'
+                : 'text-red-600'
           }`}
         >
-          {isPassed ? 'Accepted' : 'Failed'}
+          {isPassed === Verdict.Passed
+            ? 'Accepted'
+            : isPassed === Verdict.Error
+              ? 'Invalid Attempt'
+              : 'Failed'}
         </div>
       </div>
     </div>

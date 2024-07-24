@@ -12,4 +12,4 @@ if (fs.existsSync(envFilePath)) {
   dotenv.config({ path: envFilePath });
 }
 
-export { envLoaded, envFilePath }
+export { envLoaded, envFilePath };

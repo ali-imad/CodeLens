@@ -15,6 +15,7 @@ export interface ProblemState {
   dateCompleted?: string;
   dateAssigned?: string;
   attempts?: string;
+
   [key: string]: string | number | undefined;
 }
 
@@ -31,6 +32,7 @@ export interface StudentState {
   assignedProblems?: ProblemState[];
   attemptedProblems?: ProblemState[];
   completedProblems?: ProblemState[];
+
   [key: string]: string | number | undefined | any[];
 }
 
@@ -78,8 +80,6 @@ const StudentProfilePage: React.FC = () => {
   const [currentAssignedPage, setCurrentPageAssigned] = useState<number>(1);
   const itemsPerPage = 5;
 
-  const [showModal, setShowModal] = useState<boolean>(false);
-
   useEffect(() => {
     const fetchStudent = async () => {
       try {
@@ -97,15 +97,14 @@ const StudentProfilePage: React.FC = () => {
           numberOfAssigned: getArrayLength(student.assignedProblems),
           numberOfAttempted: getArrayLength(student.attemptedProblems),
           numberOfCompleted: getArrayLength(student.completedProblems),
-        };
+        } as StudentState;
         setStudent(updatedStudent);
       } catch (error) {
         console.error('Error fetching student details:', error);
       }
     };
-
     fetchStudent();
-  }, [username]);
+  }, [student]);
 
   useEffect(() => {
     const fetchProblems = async (url: string) => {
@@ -351,7 +350,7 @@ const StudentProfilePage: React.FC = () => {
           <h2 className='text-3xl font-bold mb-4'>Problems Assigned</h2>
           {user.role === 'Instructor' && (
             <CustomButton
-              onClick={() => setShowModal(true)}
+              onClick={() => {}}
               text='Assign Problem'
               icon={<CiSquarePlus className='w-6 h-7 relative text-white' />}
               className='px-6 py-3 w-48 sm:w-60 md:w-72 lg:w-96 xl:w-[210px]'

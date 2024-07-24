@@ -23,6 +23,8 @@
     "@types/mocha": "^10.0.7",
     "@types/multer": "^1.4.11",
     "@types/uuid": "^10.0.0",
+    "@types/bcrypt": "^5.0.2",
+    "@types/sharp": "^0.32.0",
     "chai": "^4.0.0",
     "chai-http": "^4.0.0",
     "cross-env": "^7.0.3",
@@ -36,8 +38,6 @@
     "winston": "^3.13.1"
   },
   "dependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/sharp": "^0.32.0",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",

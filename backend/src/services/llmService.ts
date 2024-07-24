@@ -83,7 +83,7 @@ async function getCodeGenResp(
       context,
     };
   } else {
-    throw new Error('LLM didn\'t respond with a valid response');
+    throw new Error("LLM didn't respond with a valid response");
   }
 }
 
@@ -110,7 +110,7 @@ async function getAnnotateResp(context: LLMContext[]) {
       context,
     };
   } else {
-    throw new Error('LLM didn\'t respond with a valid response');
+    throw new Error("LLM didn't respond with a valid response");
   }
 }
 
@@ -128,14 +128,16 @@ export async function pingLLM(): Promise<boolean> {
       axios.post(CONTEXT_ROUTE, preloadReq),
     ])
       .then((res: Awaited<axios.AxiosResponse<any>>[]) => {
-        res.map((r: axios.AxiosResponse<any>) => logger.http(`${r.status} ${r.config.url || ''}`));
+        res.map((r: axios.AxiosResponse<any>) =>
+          logger.http(`${r.status} ${r.config.url || ''}`),
+        );
         logger.info(`${MODEL_NAME} pre-loaded`);
       })
       .catch((err: any) => {
         logger.info(err.message);
         throw new Error('Error preloading LLM engine');
       });
-    logger.http(`${response.status} ${response.config.url}`)
+    logger.http(`${response.status} ${response.config.url}`);
     return response.status === 200;
   } catch (error: any) {
     return false;

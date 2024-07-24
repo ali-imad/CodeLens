@@ -38,13 +38,15 @@ connection.once('open', async () => {
 
     if (existingProblemsCount === 0) {
       for (const mockProblem of mockProblems) {
-        const { title, difficulty, functionBody, testCases } = mockProblem;
+        const { title, difficulty, functionBody, testCases, hints } =
+          mockProblem;
         const newProblem = new Problem({
           // create a new problem object
           title,
           difficulty,
           functionBody,
           testCases,
+          hints,
         });
         await newProblem.save(); // save the problem object by passing it into the Mongoose constructor
       }
@@ -72,13 +74,13 @@ app.get('/email/:email', async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      logger.http(`404 ${req.url} - User not found`)
+      logger.http(`404 ${req.url} - User not found`);
       return res.status(404).json({ message: 'User not found' });
     }
-    logger.http(`200 ${req.url} - User found`)
+    logger.http(`200 ${req.url} - User found`);
     return res.status(200).json(user);
   } catch (err) {
-    logger.http(`500 ${req.url} - Failed to fetch user`)
+    logger.http(`500 ${req.url} - Failed to fetch user`);
     return res.status(500).json({ message: 'Failed to fetch user' });
   }
 });

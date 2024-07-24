@@ -22,18 +22,18 @@ router.post('/', async (req: Request, res: Response) => {
         user.password || '',
       );
       if (validUser) {
-        logger.http(`200 ${req.url} - Valid user`)
+        logger.http(`200 ${req.url} - Valid user`);
         return res.status(200).json({
           message: 'Valid user',
           email: decoded.email,
           password: decoded.password,
         });
       } else {
-        logger.http(`400 ${req.url} - Invalid user`)
+        logger.http(`400 ${req.url} - Invalid user`);
         return res.status(400).json({ message: 'Invalid user' });
       }
     } else {
-      logger.http(`400 ${req.url} - User does not exist`)
+      logger.http(`400 ${req.url} - User does not exist`);
       return res.status(400).json({ message: 'User does not exist' });
     }
   } catch (error: any) {

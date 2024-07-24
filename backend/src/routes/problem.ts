@@ -6,6 +6,14 @@ import logger from '../utils/logger';
 
 const router: Router = express.Router();
 
+export enum ProblemStatus {
+  NotAttempted = 'Not Attempted',
+  Error = 'Error',
+  Attempted = 'Attempted',
+  Assigned = 'Assigned',
+  Completed = 'Completed',
+}
+
 // Retrieve all problems
 router.get('/', async (_req: Request, res: Response) => {
   try {
@@ -43,40 +51,6 @@ router.get('/:id', async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     res.status(500).json({ error: error.message });
-  }
-});
-
-// get status of the problem
-router.get('/status/:userId', async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
-    const user = await User.findById(userId);
-    if (!user) {
-      logger.http(`404 ${req.url} - User not found`);
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const problems = await Problem.find();
-    const problemStatus = problems.map(problem => ({
-      _id: problem._id,
-      title: problem.title,
-      difficulty: problem.difficulty,
-      status: user.completedProblems.includes(
-        problem._id as mongoose.Types.ObjectId,
-      )
-        ? 'Completed'
-        : user.attemptedProblems.includes(
-            problem._id as mongoose.Types.ObjectId,
-          )
-        ? 'Attempted'
-        : 'Not Attempted',
-    }));
-
-    logger.http(`200 ${req.url} - Problem status fetched successfully`);
-    return res.json(problemStatus);
-  } catch (err: any) {
-    logger.http(`500 ${req.url} - ${err.message}`);
-    return res.status(500).json({ message: err.message });
   }
 });
 
@@ -187,7 +161,7 @@ router.get('/completed/:userId', async (req: Request, res: Response) => {
 router.get('/status/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const user = await User.findById(userId);
+    const user: any = await User.findById(userId);
     if (!user) {
       logger.http(`404 ${req.url} - User not found`);
       return res.status(404).json({ message: 'User not found' });
@@ -201,17 +175,20 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
       status: user.completedProblems.includes(
         problem._id as mongoose.Types.ObjectId,
       )
-        ? 'Completed'
+        ? ProblemStatus.Completed
         : user.attemptedProblems.includes(
+              problem._id as mongoose.Types.ObjectId,
+            )
+          ? ProblemStatus.Attempted
+          : user.assignedProblems.includes(
             problem._id as mongoose.Types.ObjectId,
           )
-        ? 'Attempted'
-        : user.assignedProblems.includes(problem._id as mongoose.Types.ObjectId)
-        ? 'Assigned'
-        : 'Not Assigned',
+          ? ProblemStatus.Assigned : ProblemStatus.NotAttempted
     }));
 
     logger.http(`200 ${req.url} - Problem status fetched successfully`);
+    logger.debug(`problemStatus: ${JSON.stringify(problemStatus).split(',').join('\n')}`)
+
     return res.json(problemStatus);
   } catch (err: any) {
     logger.http(`500 ${req.url} - ${err.message}`);
