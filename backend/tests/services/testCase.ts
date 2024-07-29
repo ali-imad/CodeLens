@@ -32,7 +32,7 @@ describe('runTests', () => {
         input,
         expectedOutput,
         actualOutput: expectedOutput,
-        passed: Verdict.Passed
+        passed: Verdict.Passed,
       })),
     };
 

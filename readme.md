@@ -74,7 +74,7 @@ the `compose.yaml` file.
 
 4. Once the build process is complete and the containers are running, you can
    access the application at:
-   
+
    http://localhost:5173/
 
 5. To stop the application and remove the containers, use:
@@ -170,29 +170,40 @@ application through your web browser. The backend should be running on
 ## Testing
 
 ### Frontend Testing
+
 - Refer to the [Frontend Testing Guide](./frontEndTesting.md) for instructions
   on testing the front-end
 
 ### Backend Testing
-1. This project uses Mocha and Chai for back-end testing, run at the command line.
-2. To run the tests, first ensure the backend server is running. The simplest way to do this is to deploy the application via Docker Compose
+
+1. This project uses Mocha and Chai for back-end testing, run at the command
+   line.
+2. To run the tests, first ensure the backend server is running. The simplest
+   way to do this is to deploy the application via Docker Compose
+
 ```bash
 # Cleans, builds and runs the application using Docker Compose
 docker compose down && docker compose build && docker compose up
-````
+```
 
 3. Next, navigate to the `backend` directory.
+
 ```bash
 cd backend
 ```
+
 3. Run the following command to download any dependencies
+
 ```bash
 npm install
 ```
 
 4. Finally, run the tests using the following command
+
 ```bash
 npm test
 ```
 
-Note that, due to LLM processing time, tests regarding the "attempts" route may fail due to timeout. The LLM service was not tested extensively for this reason, as well. If the LLM service is not running, all tests can be expected to pass.
+Note that, due to LLM processing time, tests regarding the "attempts" route may
+fail due to timeout. The LLM service was not tested extensively for this reason,
+as well. If the LLM service is not running, all tests can be expected to pass.

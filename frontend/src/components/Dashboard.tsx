@@ -86,7 +86,7 @@ const Dashboard: React.FC = () => {
       for (const problemStatus of problemStatuses) {
         if (problemStatus._id === problemId) {
           setProblemStatus(problemStatus.status);
-          return // early return out
+          return; // early return out
         }
       }
       // If the problem is not found, set the status to NotAttempted
@@ -164,7 +164,10 @@ const Dashboard: React.FC = () => {
         setProblemStatus(ProblemStatus.Completed);
       } else if (response.data.attempt.isPassed === Verdict.Error) {
         setProblemStatus(ProblemStatus.Error);
-      } else if (response.data.attempt.isPassed === Verdict.Failed && problemStatus !== ProblemStatus.Completed) {
+      } else if (
+        response.data.attempt.isPassed === Verdict.Failed &&
+        problemStatus !== ProblemStatus.Completed
+      ) {
         setProblemStatus(ProblemStatus.Attempted);
       }
     } catch (err) {
@@ -197,8 +200,7 @@ const Dashboard: React.FC = () => {
               <HintNotification key={index} message={hint} />
             ))
         ) : problemStatus === ProblemStatus.Error ? (
-          <ErrorNotification
-            message='An error occurred while running generated code. To prevent this, please assess the generated input and be more specific in your prompt.' />
+          <ErrorNotification message='An error occurred while running generated code. To prevent this, please assess the generated input and be more specific in your prompt.' />
         ) : null}
         <ProblemDescription problem={problem} />
         <DescriptionInput
