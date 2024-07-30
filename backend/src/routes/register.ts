@@ -34,6 +34,7 @@ router.post('/', async (req: Request, res: Response) => {
     logger.http(`201 ${req.url} - New User Registered Successfully.`);
     return res.status(201).json({
       message: 'New User Registered Successfully.',
+      id: newUser._id,
       username: newUser.username,
       firstName: newUser.firstName,
       lastName: newUser.lastName,

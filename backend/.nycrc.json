@@ -1,0 +1,14 @@
+{
+  "extension": [".ts"],
+  "include": ["src/**/*.ts"],
+  "exclude": ["tests/**/*.ts"],
+  "all": false,
+  "require": ["ts-node/register"],
+  "reporter": [
+        "html",
+        "lcov",
+        "text",
+        "text-summary"
+    ],
+    "report-dir": "coverage"
+}

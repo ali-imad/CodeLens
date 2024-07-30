@@ -2,22 +2,46 @@ import { expect } from 'chai';
 import { runTests, TestResult, Verdict } from '../../src/services/testCase';
 import mockProblems from '../../src/sampleProblems';
 import { ITestCase } from '../../src/models/Problem';
+import 'mocha';
 
-const isPalindromeProblem = mockProblems.find(
-  problem => problem.title === 'Palindrome Check',
-);
-const medianTwoArrsProblem = mockProblems.find(
-  problem => problem.title === 'Median of Two Sorted Arrays',
-);
-const maxRectProblem = mockProblems.find(
-  problem => problem.title === 'Container With Most Water',
-);
-if (!isPalindromeProblem || !medianTwoArrsProblem || !maxRectProblem)
-  throw new Error('Test problem(s) not found');
+const getProblems = () => {
+  const isPalindromeProblem = mockProblems.find(
+    problem => problem.title === 'Palindrome Check',
+  );
+  const medianTwoArrsProblem = mockProblems.find(
+    problem => problem.title === 'Median of Two Sorted Arrays',
+  );
+  const maxRectProblem = mockProblems.find(
+    problem => problem.title === 'Container With Most Water',
+  );
+  if (!isPalindromeProblem || !medianTwoArrsProblem || !maxRectProblem)
+    throw new Error('Test problem(s) not found');
+
+  return { isPalindromeProblem, medianTwoArrsProblem, maxRectProblem };
+};
 
 type TestCase = Omit<ITestCase, keyof Document>;
 
+describe('Problem loading', () => {
+  it('should throw an error if any test problem is not found', () => {
+    const originalMockProblems = [...mockProblems];
+
+    mockProblems.length = 0;
+
+    expect(() => getProblems()).to.throw('Test problem(s) not found');
+
+    mockProblems.push(...originalMockProblems);
+  });
+
+  it('should not throw an error if all test problems are found', () => {
+    expect(() => getProblems()).not.to.throw();
+  });
+});
+
 describe('runTests', () => {
+  const { isPalindromeProblem, medianTwoArrsProblem, maxRectProblem } =
+    getProblems();
+
   it('should return successful results when function under test passes all test cases', () => {
     const functionUnderTest = 'function swap(a, b) { return [b, a]; }';
     const testCases: TestCase[] = [
@@ -40,11 +64,21 @@ describe('runTests', () => {
     expect(result).to.deep.equal(expected);
   });
 
+  it('SHould return error when no test cases in problem', () => {
+    const functionUnderTest = 'function swap(a, b) { return [b, a]; }';
+    const testCases: TestCase[] = [];
+    try {
+      runTests(functionUnderTest, testCases as ITestCase[]);
+    } catch (error: any) {
+      expect(error.message).to.equal('No test cases provided');
+    }
+  });
+
   it('should return unsuccessful results when the function under test fails any test cases', () => {
     const functionUnderTest = 'function swap(a, b) { return [b, a]; }';
     const testCases: TestCase[] = [
       { input: [1, 2], expectedOutput: [2, 1] },
-      { input: [2, 3], expectedOutput: [2, 3] }, // Expected output would be [3, 2]
+      { input: [2, 3], expectedOutput: [2, 3] },
       { input: [3, 4], expectedOutput: [4, 3] },
     ];
 
@@ -60,7 +94,7 @@ describe('runTests', () => {
         {
           input: [2, 3],
           expectedOutput: [2, 3],
-          actualOutput: [3, 2], // Actual output will be 5
+          actualOutput: [3, 2],
           passed: Verdict.Failed,
         },
         {
@@ -100,6 +134,7 @@ describe('runTests', () => {
 });
 
 describe('palindrome test-runner check (identical input)', () => {
+  const { isPalindromeProblem } = getProblems();
   isPalindromeProblem.testCases.forEach((testCase: any, index: number) => {
     it(`Test Case #${index + 1}`, () => {
       const result = runTests(isPalindromeProblem.functionBody, [testCase]);
@@ -114,9 +149,9 @@ describe('palindrome test-runner check (identical input)', () => {
 });
 
 describe('palindrome test-runner check (generated input)', () => {
+  const { isPalindromeProblem } = getProblems();
   isPalindromeProblem.testCases.forEach((testCase: any, index: number) => {
     it(`Test Case #${index + 1}`, () => {
-      // simulate generated code
       const fnStr = `
     function isPalindrome(str) {
       str = str.toLowerCase();
@@ -136,6 +171,7 @@ describe('palindrome test-runner check (generated input)', () => {
 });
 
 describe('median test-runner check (identical input)', () => {
+  const { medianTwoArrsProblem } = getProblems();
   medianTwoArrsProblem.testCases.forEach((testCase: any, index: number) => {
     it(`Test Case #${index + 1}`, () => {
       const result = runTests(medianTwoArrsProblem.functionBody, [testCase]);
@@ -150,6 +186,7 @@ describe('median test-runner check (identical input)', () => {
 });
 
 describe('max area test-runner check (identical input)', () => {
+  const { maxRectProblem } = getProblems();
   maxRectProblem.testCases.forEach((testCase: any, index: number) => {
     it(`Test Case #${index + 1}`, () => {
       const result = runTests(maxRectProblem.functionBody, [testCase]);

@@ -18,7 +18,7 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
@@ -30,6 +30,6 @@
     /* If your code doesn't run in the DOM: */
     "lib": ["es2022"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "tests/services.ts"],
   "exclude": ["node_modules", "src/**/*.test.ts"]
 }

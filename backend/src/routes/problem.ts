@@ -177,14 +177,12 @@ router.get('/status/:userId', async (req: Request, res: Response) => {
       )
         ? ProblemStatus.Completed
         : user.attemptedProblems.includes(
-              problem._id as mongoose.Types.ObjectId,
-            )
-          ? ProblemStatus.Attempted
-          : user.assignedProblems.includes(
-                problem._id as mongoose.Types.ObjectId,
-              )
-            ? ProblemStatus.Assigned
-            : ProblemStatus.NotAttempted,
+            problem._id as mongoose.Types.ObjectId,
+          )
+        ? ProblemStatus.Attempted
+        : user.assignedProblems.includes(problem._id as mongoose.Types.ObjectId)
+        ? ProblemStatus.Assigned
+        : ProblemStatus.NotAttempted,
     }));
 
     logger.http(`200 ${req.url} - Problem status fetched successfully`);

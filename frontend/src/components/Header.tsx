@@ -32,7 +32,6 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn, username, onLogout }) => {
         }
       } catch (error) {
         setImage('http://localhost:3000/avatar.jpg');
-        console.error('Error fetching image:', error);
       }
     };
     fetchImage();

@@ -122,7 +122,7 @@ router.get(
       const file = await bucket.find({ 'metadata.id': username }).next();
 
       if (!file) {
-        res.status(404).send('File not found');
+        res.status(404).send({ message: 'File not found' });
         return;
       }
 

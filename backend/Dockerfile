@@ -26,8 +26,10 @@ RUN npm install --unsafe-perm=true --allow-root
 # Copy the rest of the application code
 COPY . .
 
+ARG COMMAND
+
 # Expose the port on which the Node.js application will run
-EXPOSE 3000
+EXPOSE 3000 8080
 
 # Command to run the Node.js application with nodemon
-CMD ["npm", "run", "dev"]
+CMD ["sh", "-c", "npm run ${COMMAND:-prod}"]

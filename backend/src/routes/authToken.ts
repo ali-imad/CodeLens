@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import '../utils/loadEnv';
 import logger from '../utils/logger'; // Load environment variables
 
-const JWT_SECRET_KEY: string =
+export const JWT_SECRET_KEY: string =
   process.env['JWT_SECRET'] || 'default_secret_key';
 
 const router: Router = express.Router();

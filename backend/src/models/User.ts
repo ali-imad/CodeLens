@@ -14,6 +14,7 @@ export interface IUser extends Document {
   assignedProblems: Types.ObjectId[];
   attemptedProblems: Types.ObjectId[];
   completedProblems: Types.ObjectId[];
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 export enum UserRole {

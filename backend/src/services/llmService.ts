@@ -17,19 +17,19 @@ export interface LLMChatResponse {
   context?: LLMContext[] | undefined; // chat context
 }
 
-let OLLAMA_ROUTE = 'http://localhost:11434';
+export let OLLAMA_ROUTE = 'http://localhost:11434';
 if (process.env['DOCKER'] === 'true') {
   logger.info(`Using docker route`);
   OLLAMA_ROUTE = 'http://ollama:11434';
 }
 
-let MODEL_NAME = 'codegeneval-llama3';
+export let MODEL_NAME = 'codegeneval-llama3';
 if (process.env['MODEL_NAME']) {
-  logger.info('Using model name:', process.env['MODEL_NAME']);
+  logger.info('Using model name: '+ process.env['MODEL_NAME']);
   MODEL_NAME = process.env['MODEL_NAME'];
 }
 
-const addUserPrompt = (
+export const addUserPrompt = (
   prompt: string,
   context?: LLMContext[],
 ): LLMContext[] => {
@@ -43,7 +43,7 @@ const addUserPrompt = (
   return context;
 };
 
-const addBotHistory = (
+export const addBotHistory = (
   prompt: string,
   context?: LLMContext[],
 ): LLMContext[] => {
@@ -123,23 +123,35 @@ export async function pingLLM(): Promise<boolean> {
 
     // Preload model for chat/prompts
     const preloadReq = { model: MODEL_NAME };
+
     Promise.all([
       axios.post(CODEGEN_ROUTE, preloadReq),
       axios.post(CONTEXT_ROUTE, preloadReq),
     ])
       .then((res: Awaited<axios.AxiosResponse<any>>[]) => {
-        res.map((r: axios.AxiosResponse<any>) =>
-          logger.http(`${r.status} ${r.config.url || ''}`),
-        );
+        res.map((r: axios.AxiosResponse<any>) => {
+          if (r.config?.url) {
+            logger.http(`${r.status} ${r.config.url}`);
+          } else {
+            logger.http(`${r.status} - URL not available`);
+          }
+        });
         logger.info(`${MODEL_NAME} pre-loaded`);
       })
       .catch((err: any) => {
         logger.info(err.message);
         throw new Error('Error preloading LLM engine');
       });
-    logger.http(`${response.status} ${response.config.url}`);
+
+    if (response.config?.url) {
+      logger.http(`${response.status} ${response.config.url}`);
+    } else {
+      logger.http(`${response.status} - URL not available`);
+    }
+
     return response.status === 200;
   } catch (error: any) {
+    logger.error(`Error pinging LLM: ${error.message}`);
     return false;
   }
 }

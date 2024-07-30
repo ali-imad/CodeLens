@@ -40,7 +40,7 @@ router.post('/', async (req: Request, res: Response) => {
       !mongoose.Types.ObjectId.isValid(problemId) ||
       !mongoose.Types.ObjectId.isValid(userId)
     ) {
-      logger.http(`400 ${req.url} - Invalid ObjectId format`);
+      logger.http(`400 ${req.url} - Invalid ObjectId format`);;
       return res.status(400).json({ message: 'Invalid ObjectId format' });
     }
 
@@ -119,50 +119,6 @@ router.get('/', async (_req: Request, res: Response) => {
   }
 });
 
-// router.get('/problem/:problemId', async (req: Request, res: Response) => {
-//   const { problemId } = req.params;
-//
-//   try {
-//     if (
-//       typeof problemId === 'undefined' ||
-//       !mongoose.Types.ObjectId.isValid(problemId)
-//     ) {
-//       logger.http(`400 ${req.url} - Invalid problemId format`)
-//       return res.status(400).json({ message: 'Invalid problemId format' });
-//     }
-//
-//     const attempts = await Attempt.find({
-//       problemId: new mongoose.Types.ObjectId(problemId),
-//     });
-//     return res.json(attempts);
-//   } catch (err: any) {
-//     logger.http(`500 ${req.url} - ${err.message}`)
-//     return res.status(500).json({ message: err.message });
-//   }
-// });
-//
-// router.get('/:id', async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//
-//   try {
-//     if (typeof id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
-//       logger.http(`400 ${req.url} - Invalid attempt id format`)
-//       return res.status(400).json({ message: 'Invalid attempt id format' });
-//     }
-//
-//     const attempt = await Attempt.findById(id);
-//     if (!attempt) {
-//       logger.http(`404 ${req.url} - Attempt not found`)
-//       return res.status(404).json({ message: 'Attempt not found' });
-//     }
-//
-//     return res.json(attempt);
-//   } catch (err: any) {
-//     logger.http(`500 ${req.url} - ${err.message}`)
-//     return res.status(500).json({ message: err.message });
-//   }
-// });
-
 router.post('/:id/annotate', async (req: Request, res: Response) => {
   // Find the attempt by id
   const { id } = req.params;
@@ -204,35 +160,5 @@ router.post('/:id/annotate', async (req: Request, res: Response) => {
     return res.status(500).json({ message: err.message });
   }
 });
-
-// // PUT update attempt by id
-// router.put('/:id', async (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   const { generatedCode, feedback, isPassed } = req.body;
-//
-//   try {
-//     if (typeof id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
-//       logger.http(`400 ${req.url} - Invalid attempt id format`)
-//       return res.status(400).json({ message: 'Invalid attempt id format' });
-//     }
-//
-//     const updatedAttempt = await Attempt.findByIdAndUpdate(
-//       id,
-//       { generatedCode, feedback, isPassed },
-//       { new: true },
-//     );
-//
-//     if (!updatedAttempt) {
-//       logger.http(`404 ${req.url} - Attempt not found`)
-//       return res.status(404).json({ message: 'Attempt not found' });
-//     }
-//
-//     logger.http(`200 ${req.url} - Attempt updated successfully`)
-//     return res.json(updatedAttempt);
-//   } catch (err: any) {
-//     logger.http(`500 ${req.url} - ${err.message}`)
-//     return res.status(500).json({ message: err.message });
-//   }
-// });
 
 export default router;

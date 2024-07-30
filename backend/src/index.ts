@@ -92,9 +92,10 @@ app.use('/attempts', attemptRouter);
 app.use('/authToken', authRouter);
 app.use('/users', userRouter);
 
-// Start the server
-app.listen(PORT, () => {
-  logger.info(`Server is running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    logger.info(`Server is running on port ${PORT}`);
+  });
+}
 
 export default app;
