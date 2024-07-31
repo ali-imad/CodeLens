@@ -73,7 +73,12 @@ const CustomTable = <T extends Record<string, any>>({
                 />
               </td>
               {columns.map(column => (
-                <td key={column.accessor} className='py-2 px-4 border-b'>
+                <td
+                  key={column.accessor}
+                  className={`py-2 px-4 border-b ${
+                    columns.length < 5 ? 'max-w-10' : ''
+                  }`}
+                >
                   {item[column.accessor]}
                 </td>
               ))}

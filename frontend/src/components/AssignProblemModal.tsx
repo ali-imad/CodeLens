@@ -58,6 +58,14 @@ const AssignProblemModal: React.FC<AssignProblemModalProps> = ({
     setSelectedStudents(newSelectedStudents);
   };
 
+  useEffect(() => {
+    const selectedStudent = new Set<string>();
+    if (students.length === 1 && students[0]) {
+      selectedStudent.add(students[0]._id);
+    }
+    setSelectedStudents(selectedStudent);
+  }, []);
+
   const handleAssign = () => {
     onAssign(Array.from(selectedProblems), Array.from(selectedStudents));
     onClose();

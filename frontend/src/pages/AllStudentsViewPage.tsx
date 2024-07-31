@@ -20,7 +20,7 @@ export interface StudentState {
   numberOfAttempted: number;
   numberOfCompleted: number;
   instructor?: string;
-  [key: string]: string | number | undefined;
+  [key: string]: string | number | undefined | any[];
 }
 
 export interface InstructorState {

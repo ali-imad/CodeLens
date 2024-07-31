@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ProfileCard from '../components/ProfileCard';
 import ProblemsTable from '../utility/CustomTable';
-import { CiSquarePlus } from 'react-icons/ci';
+import { FaUserPlus } from 'react-icons/fa';
 import Pagination from '../components/Pagination';
 import CustomButton from '../utility/CustomButton';
 import { useParams } from 'react-router-dom';
+import AssignProblemModal from '../components/AssignProblemModal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export interface ProblemState {
   _id: string;
@@ -28,7 +31,7 @@ export interface StudentState {
   numberOfAssigned: number;
   numberOfAttempted: number;
   numberOfCompleted: number;
-  instructor?: string | undefined;
+  instructor?: string;
   assignedProblems?: ProblemState[];
   attemptedProblems?: ProblemState[];
   completedProblems?: ProblemState[];
@@ -52,6 +55,7 @@ const StudentProfilePage: React.FC = () => {
   };
 
   const [student, setStudent] = useState<StudentState | null>(null);
+  const [students, setStudents] = useState<StudentState[]>([]);
   const [instructor, setInstructor] = useState<InstructorState | null>(null);
 
   const [completedProblems, setCompletedProblems] = useState<ProblemState[]>(
@@ -78,56 +82,60 @@ const StudentProfilePage: React.FC = () => {
 
   const [currentPageCompleted, setCurrentPageCompleted] = useState<number>(1);
   const [currentAssignedPage, setCurrentPageAssigned] = useState<number>(1);
+
+  const [showAssignModal, setShowAssignModal] = useState(false);
   const itemsPerPage = 5;
 
+  const fetchStudent = async () => {
+    try {
+      const { data: student } = await axios.get(
+        `http://localhost:3000/users/students/${username}`,
+      );
+
+      const getArrayLength = (
+        prop: any[] | string | number | undefined,
+      ): number => (Array.isArray(prop) ? prop.length : 0);
+
+      const updatedStudent: StudentState = {
+        ...student,
+        username: username,
+        numberOfAssigned: getArrayLength(student.assignedProblems),
+        numberOfAttempted: getArrayLength(student.attemptedProblems),
+        numberOfCompleted: getArrayLength(student.completedProblems),
+      } as StudentState;
+      setStudent(updatedStudent);
+      setStudents([updatedStudent]);
+    } catch (error) {
+      console.error('Error fetching student details:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchStudent = async () => {
-      try {
-        const { data: student } = await axios.get(
-          `http://localhost:3000/users/students/${username}`,
-        );
-
-        const getArrayLength = (
-          prop: any[] | string | number | undefined,
-        ): number => (Array.isArray(prop) ? prop.length : 0);
-
-        const updatedStudent: StudentState = {
-          ...student,
-          username: username,
-          numberOfAssigned: getArrayLength(student.assignedProblems),
-          numberOfAttempted: getArrayLength(student.attemptedProblems),
-          numberOfCompleted: getArrayLength(student.completedProblems),
-        } as StudentState;
-        setStudent(updatedStudent);
-      } catch (error) {
-        console.error('Error fetching student details:', error);
-      }
-    };
     fetchStudent();
   }, [student]);
 
+  const fetchProblems = async (url: string) => {
+    try {
+      const { data } = await axios.get<[]>(url);
+      const updatedProblems = data.map(({ _id, title, status }) => ({
+        _id,
+        title,
+        status,
+      }));
+
+      setCompletedProblems(
+        updatedProblems.filter(({ status }) => status === 'Completed'),
+      );
+
+      setAssignedProblems(
+        updatedProblems.filter(({ status }) => status === 'Assigned'),
+      );
+    } catch (err) {
+      console.error('Error fetching problems:', err);
+    }
+  };
+
   useEffect(() => {
-    const fetchProblems = async (url: string) => {
-      try {
-        const { data } = await axios.get<[]>(url);
-        const updatedProblems = data.map(({ _id, title, status }) => ({
-          _id,
-          title,
-          status,
-        }));
-
-        setCompletedProblems(
-          updatedProblems.filter(({ status }) => status === 'Completed'),
-        );
-
-        setAssignedProblems(
-          updatedProblems.filter(({ status }) => status === 'Assigned'),
-        );
-      } catch (err) {
-        console.error('Error fetching problems:', err);
-      }
-    };
-
     if (student) {
       fetchProblems(`http://localhost:3000/problems/status/${student._id}`);
     }
@@ -268,16 +276,62 @@ const StudentProfilePage: React.FC = () => {
     setSelectedAssignedProblems(newSelectedAssignedProblems);
   };
 
+  const handleAssign = () => {
+    setShowAssignModal(true);
+  };
+
+  const handleAssignProblems = async (problemIds: string[]) => {
+    const instructorEmail = localStorage.getItem('email');
+    try {
+      const instructorsResponse = await axios.get(
+        'http://localhost:3000/users/instructors',
+      );
+      const instructors = instructorsResponse.data;
+
+      const currentInstructor = instructors.find(
+        (instructor: { email: string | null }) =>
+          instructor.email === instructorEmail,
+      );
+
+      const instructorId = currentInstructor._id;
+      const studentId = student?._id;
+      await axios.post('http://localhost:3000/problems/assign', {
+        instructorId,
+        studentId,
+        problemIds,
+      });
+      toast.success('Problems assigned successfully', {
+        position: 'top-left',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      await fetchProblems(`http://localhost:3000/problems/status/${studentId}`);
+    } catch (error) {
+      console.error('Error assigning problems:', error);
+      toast.error('Error assigning problems. Please try again.', {
+        position: 'top-left',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  };
+
   const columnsCompleted = [
     { header: 'Title', accessor: 'title', sortable: true },
-    { header: 'Date Completed', accessor: 'dateCompleted', sortable: true },
+    //{ header: 'Date Completed', accessor: 'dateCompleted', sortable: true },
     { header: 'Attempts', accessor: 'attempts', sortable: true },
     { header: 'Problem Page', accessor: 'link' },
   ];
 
   const columnsAssigned = [
     { header: 'Title', accessor: 'title', sortable: true },
-    { header: 'Date Assigned', accessor: 'dateAssigned', sortable: true },
+    //{ header: 'Date Assigned', accessor: 'dateAssigned', sortable: true },
     { header: 'Attempts', accessor: 'attempts', sortable: true },
     { header: 'Problem Page', accessor: 'link' },
   ];
@@ -350,12 +404,12 @@ const StudentProfilePage: React.FC = () => {
           <h2 className='text-3xl font-bold mb-4'>Problems Assigned</h2>
           {user.role === 'Instructor' && (
             <CustomButton
-              onClick={() => {}}
+              onClick={handleAssign}
               text='Assign Problem'
-              icon={<CiSquarePlus className='w-6 h-7 relative text-white' />}
-              className='px-6 py-3 w-48 sm:w-60 md:w-72 lg:w-96 xl:w-[210px]'
-              bgColor='bg-blue-600'
-              borderColor='border-blue-600'
+              icon={<FaUserPlus className='w-6 h-7 relative text-white' />}
+              className='w-full sm:w-48 md:w-60 lg:w-84 xl:w-[200px]'
+              bgColor='bg-green-600'
+              borderColor='border-green-600'
             />
           )}
         </div>
@@ -376,6 +430,14 @@ const StudentProfilePage: React.FC = () => {
             itemsPerPage={itemsPerPage}
             paginate={paginateAssigned}
           />
+          {showAssignModal && (
+            <AssignProblemModal
+              onClose={() => setShowAssignModal(false)}
+              onAssign={handleAssignProblems}
+              students={students}
+            />
+          )}
+          <ToastContainer />
         </div>
       </div>
     </div>
