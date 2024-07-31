@@ -128,12 +128,14 @@ const StudentProfilePage: React.FC = () => {
       );
 
       setAssignedProblems(
-        updatedProblems.filter(({ status }) => status === 'Assigned'),
-      );
-    } catch (err) {
-      console.error('Error fetching problems:', err);
-    }
-  };
+          updatedProblems.filter(
+            ({ status }) => status === 'Assigned' || status === 'Attempted',
+          ),
+        );
+      } catch (err) {
+        console.error('Error fetching problems:', err);
+      }
+    };
 
   useEffect(() => {
     if (student) {
