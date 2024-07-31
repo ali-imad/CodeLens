@@ -17,6 +17,8 @@ interface RegistrationPageProps {
   onLoginSuccess: (username: string) => void;
 }
 
+const imageUrl = 'http://localhost:3000/avatar.jpg';
+
 const RegistrationPage: React.FC<RegistrationPageProps> = ({
   onLoginSuccess,
 }) => {
@@ -59,6 +61,21 @@ const RegistrationPage: React.FC<RegistrationPageProps> = ({
         formData,
       );
       if (response.status === 201) {
+        // upload the default image for user on successful registration
+        const imageFileBlob = await fetch(imageUrl).then(response =>
+          response.blob(),
+        );
+        const formDatawithDefaultImage = new FormData();
+        formDatawithDefaultImage.append('username', formData.username);
+        formDatawithDefaultImage.append('image', imageFileBlob);
+        const res = await axios.post(
+          `http://localhost:3000/users/${formData.username}/uploadImage`,
+          formDatawithDefaultImage,
+        );
+        if (res.status === 200) {
+          localStorage.setItem('profileImage', imageUrl);
+        }
+
         localStorage.setItem('email', response.data.email);
         localStorage.setItem('username', formData.username);
         localStorage.setItem('firstName', formData.firstName);
