@@ -45,7 +45,8 @@ interface FeedbackProps extends IAttemptResponse {
 
 const Feedback: React.FC<FeedbackProps> = (props: FeedbackProps) => {
   // Extract props
-  const { _id, generatedCode, description, feedback, isPassed } = props.attempt;
+  const { _id, generatedCode, description, feedback, isPassed, timeTaken } =
+    props.attempt;
   const { isLoading, setIsLoading } = props;
   const history = props.history;
 
@@ -99,6 +100,10 @@ const Feedback: React.FC<FeedbackProps> = (props: FeedbackProps) => {
         <h2 className='text-xl font-bold mb-4'>User Description</h2>
         <p className='bg-gray-100 p-4 rounded-lg whitespace-pre-line'>
           {description}
+        </p>
+        <h2 className='text-xs font-bold mb-1 inline'>Time Taken: </h2>
+        <p className='text-xs inline font-medium'>
+          {Math.floor(timeTaken / 10) / 100} seconds
         </p>
       </div>
 

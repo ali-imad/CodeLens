@@ -61,8 +61,8 @@ describe('LLM Service Integration Tests', () => {
       delete require.cache[require.resolve('../../src/services/llmService')]; // Clear the require cache
       const llmService = require('../../src/services/llmService'); // Re-import the module
 
-      expect(loggerInfoStub.calledWith('Using model name: '+ 'custom-model')).to
-        .be.true;
+      expect(loggerInfoStub.calledWith('Using model name: ' + 'custom-model'))
+        .to.be.true;
       expect(llmService.MODEL_NAME).to.equal('custom-model');
     });
   });
@@ -86,7 +86,7 @@ describe('LLM Service Integration Tests', () => {
   describe('pingLLM', () => {
     it('should return true if LLM is reachable and log pre-loaded models', async () => {
       process.env['DOCKER'] = 'true';
-      process.env['MODEL_NAME'] = 'codegeneval-llama3'
+      process.env['MODEL_NAME'] = 'codegeneval-llama3';
       delete require.cache[require.resolve('../../src/services/llmService')]; // Clear the require cache
       const llmService = require('../../src/services/llmService'); // Re-import the module
 
@@ -100,13 +100,15 @@ describe('LLM Service Integration Tests', () => {
       const result = await llmService.pingLLM();
 
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       expect(result).to.be.true;
       expect(axiosGetStub.calledOnce).to.be.true;
       expect(axiosPostStub.calledTwice).to.be.true;
-      
-      expect(loggerInfoStub.calledWith(`${llmService.MODEL_NAME} pre-loaded`)).to.be.true;
-      expect(loggerHttpStub.calledWith(`${200} ${llmService.OLLAMA_ROUTE}`)).to.be.true;
+
+      expect(loggerInfoStub.calledWith(`${llmService.MODEL_NAME} pre-loaded`))
+        .to.be.true;
+      expect(loggerHttpStub.calledWith(`${200} ${llmService.OLLAMA_ROUTE}`)).to
+        .be.true;
     });
 
     it('should return false if LLM is not reachable', async () => {
@@ -174,11 +176,13 @@ describe('LLM Service Integration Tests', () => {
     it('should log error and return null response for invalid prompt', async () => {
       const prompt = 'Invalid prompt';
       const context: LLMContext[] = [{ role: 'user', content: prompt }];
-    
+
       const result = await callLLM(prompt, context);
       expect(result).to.deep.equal({ response: null, context });
       expect(loggerErrorStub.calledOnce).to.be.true;
-      expect(loggerErrorStub.calledWith('Invalid prompt, must include a valid tag')).to.be.true;
+      expect(
+        loggerErrorStub.calledWith('Invalid prompt, must include a valid tag'),
+      ).to.be.true;
     });
 
     it('should throw an error if the LLM API call fails', async () => {
@@ -194,7 +198,9 @@ describe('LLM Service Integration Tests', () => {
         const typedErr = err as Error;
         expect(typedErr).to.equal(error);
         expect(loggerErrorStub.calledOnce).to.be.true;
-        expect(loggerErrorStub.calledWith(`Error calling LLM: ${typedErr.message}`)).to.be.true;
+        expect(
+          loggerErrorStub.calledWith(`Error calling LLM: ${typedErr.message}`),
+        ).to.be.true;
       }
     });
 
@@ -209,9 +215,13 @@ describe('LLM Service Integration Tests', () => {
         await callLLM(prompt, context);
       } catch (err) {
         const typedErr = err as Error;
-        expect(typedErr.message).to.equal("LLM didn't respond with a valid response");
+        expect(typedErr.message).to.equal(
+          "LLM didn't respond with a valid response",
+        );
         expect(loggerErrorStub.calledOnce).to.be.true;
-        expect(loggerErrorStub.calledWith(`Error calling LLM: ${typedErr.message}`)).to.be.true;
+        expect(
+          loggerErrorStub.calledWith(`Error calling LLM: ${typedErr.message}`),
+        ).to.be.true;
       }
     });
   });

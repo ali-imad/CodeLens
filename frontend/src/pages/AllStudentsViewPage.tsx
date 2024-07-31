@@ -6,10 +6,12 @@ import { CiExport } from 'react-icons/ci';
 import Pagination from '../components/Pagination';
 import CustomButton from '../utility/CustomButton';
 import CustomTable from '../utility/CustomTable';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaUserPlus } from 'react-icons/fa';
 import AssignProblemModal from '../components/AssignProblemModal';
+import { IAttempt } from '../components/Dashboard.tsx';
+import { Verdict } from '../types.tsx';
 
 export interface StudentState {
   _id: string;
@@ -19,6 +21,7 @@ export interface StudentState {
   numberOfAssigned: number;
   numberOfAttempted: number;
   numberOfCompleted: number;
+  avgCompletionTime: number;
   instructor?: string;
   [key: string]: string | number | undefined | any[];
 }
@@ -62,6 +65,13 @@ const AllStudentViewPage: React.FC = () => {
           return 0;
         };
 
+        const allStudentAttempts = await Promise.all(
+          students.map(student =>
+            axios.get('http://localhost:3000/attempts/' + student._id),
+          ),
+        );
+        console.debug('All student attempts:', allStudentAttempts);
+
         const updatedStudents: StudentState[] = students.map(
           (student: StudentState) => {
             const numberOfAssigned: number = getArrayLength(
@@ -73,6 +83,42 @@ const AllStudentViewPage: React.FC = () => {
             const numberOfCompleted: number = getArrayLength(
               student['completedProblems'],
             );
+
+            // access each attempt by ObjectID and, if the attempt is completed, add it to "timeTotal"
+            let numAttempts = 0;
+            let totalTime = 0;
+            if (allStudentAttempts) {
+              let currStudentAttempts;
+              for (const studentAttempts of allStudentAttempts) {
+                if (
+                  studentAttempts.data.length > 0 &&
+                  studentAttempts.data[0].userId === student._id
+                ) {
+                  currStudentAttempts = studentAttempts.data;
+                  break;
+                }
+              }
+              if (
+                !currStudentAttempts ||
+                typeof currStudentAttempts === 'undefined'
+              ) {
+                currStudentAttempts = [];
+              }
+              currStudentAttempts.map((attempt: IAttempt) => {
+                if (
+                  attempt.isPassed === Verdict.Passed &&
+                  attempt.timeTaken &&
+                  attempt.timeTaken !== 0
+                ) {
+                  numAttempts++;
+                  totalTime += attempt.timeTaken;
+                }
+              });
+            }
+            const avgCompletionTime: number =
+              numAttempts === 0
+                ? NaN
+                : Math.round(totalTime / 100 / numAttempts) / 10;
 
             const _id: string = student._id;
             const firstName: string = student.firstName;
@@ -88,6 +134,7 @@ const AllStudentViewPage: React.FC = () => {
               numberOfAssigned,
               numberOfAttempted,
               numberOfCompleted,
+              avgCompletionTime,
               instructor,
             };
           },
@@ -280,6 +327,7 @@ const AllStudentViewPage: React.FC = () => {
       '# of Problems Assigned',
       '# of Problems Attempted',
       '# of Problems Completed',
+      'Avg Completion Time (sec)',
     ];
     const csvRows = [
       csvHeader.join(','),
@@ -291,6 +339,7 @@ const AllStudentViewPage: React.FC = () => {
           student.numberOfAssigned,
           student.numberOfAttempted,
           student.numberOfCompleted,
+          student.avgCompletionTime,
         ].join(','),
       ),
     ];
@@ -333,6 +382,11 @@ const AllStudentViewPage: React.FC = () => {
     {
       header: '# of Problems Completed',
       accessor: 'numberOfCompleted',
+      sortable: true,
+    },
+    {
+      header: 'Avg Completion Time (sec)',
+      accessor: 'avgCompletionTime',
       sortable: true,
     },
   ];

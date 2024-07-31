@@ -37,7 +37,7 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'User does not exist' });
     }
   } catch (error: any) {
-    logger.error('Token verification failed due to :', error.message);
+    logger.warn('Token verification failed due to :', error.message);
     return res.status(500).json({ message: 'Token verification failed' });
   }
 });

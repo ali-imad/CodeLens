@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import axios, { AxiosResponse } from 'axios';
 import ProblemDescription from '../pages/ProblemDescription';
 import DescriptionInput from './DescriptionInput';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Feedback from './Feedback';
 import {
   Difficulty,
@@ -22,10 +24,11 @@ export interface IProblem extends Document {
   hints: string[];
 }
 
-interface IAttempt {
+export interface IAttempt {
   _id: string;
   generatedCode: string;
   description: string;
+  timeTaken: number;
   feedback: TestCaseResult[];
   isPassed: Verdict;
 }
@@ -73,6 +76,7 @@ const Dashboard: React.FC = () => {
   const [problemStatus, setProblemStatus] = useState<ProblemStatus>(
     ProblemStatus.NotAttempted,
   );
+  const [startTime, setStartTime] = useState<number>(0);
 
   const fetchProblemStatus = async (
     userId: string | undefined,
@@ -97,6 +101,7 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
+    setStartTime(Date.now());
     const fetchProblem = async () => {
       try {
         const response: AxiosResponse<IProblem> = await axios.get(
@@ -112,7 +117,7 @@ const Dashboard: React.FC = () => {
         );
         const userId = userResponse.data._id;
 
-        const status = await fetchProblemStatus(userId, id);
+        await fetchProblemStatus(userId, id);
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data.message || err.message);
@@ -135,6 +140,7 @@ const Dashboard: React.FC = () => {
     if (attemptResponse) {
       setAttemptResponse(null);
     }
+    const timeTaken = Date.now() - startTime;
     setIsLoading(true);
     try {
       const userEmail = localStorage.getItem('email');
@@ -143,23 +149,48 @@ const Dashboard: React.FC = () => {
       );
       const userId = userResponse.data._id;
 
+      toast.info('Generating code...', {
+        position: 'top-right',
+        autoClose: 1500,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+      });
+
       const response: AxiosResponse<IAttemptResponse> = await axios.post(
         `http://localhost:3000/attempts`,
         {
           problemId: id,
           userId,
           description,
+          timeTaken,
         },
       );
 
       if (!response.data || !response.data.attempt) {
+        toast.error('Server error occurred generating code', {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: false,
+        });
         throw new Error('could not query LLM');
       }
-      setAttemptResponse(response.data);
-      if (numAttempts < problem.hints.length) {
-        setNumAttempts(numAttempts + 1);
-      }
 
+      toast.success('Code generated successfully!', {
+        position: 'top-right',
+        autoClose: 2300,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: false,
+      });
+
+      setAttemptResponse(response.data);
+      setStartTime(Date.now());
       if (response.data.attempt.isPassed === Verdict.Passed) {
         setProblemStatus(ProblemStatus.Completed);
       } else if (response.data.attempt.isPassed === Verdict.Error) {
@@ -168,6 +199,9 @@ const Dashboard: React.FC = () => {
         response.data.attempt.isPassed === Verdict.Failed &&
         problemStatus !== ProblemStatus.Completed
       ) {
+        if (numAttempts < problem.hints.length) {
+          setNumAttempts(numAttempts + 1);
+        }
         setProblemStatus(ProblemStatus.Attempted);
       }
     } catch (err) {
@@ -218,6 +252,7 @@ const Dashboard: React.FC = () => {
           />
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 };

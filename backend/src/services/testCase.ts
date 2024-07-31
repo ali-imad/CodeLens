@@ -64,7 +64,7 @@ export function runTests(fnStr: string, testCases: ITestCase[]): TestResult {
       actualOutput: null,
       passed: Verdict.Error,
     }));
-    logger.error('Error running tests:', error);
+    logger.warn('Error running tests:', error);
     return {
       passed: Verdict.Error,
       feedbackArray: errorArray,

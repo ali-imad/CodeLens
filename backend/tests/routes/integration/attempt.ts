@@ -1,5 +1,4 @@
 import { expect, use } from 'chai';
-// @ts-ignore
 import chaiHttp from 'chai-http';
 import 'mocha';
 import mongoose, { ObjectId } from 'mongoose';
@@ -301,6 +300,78 @@ describe('Attempt Route Integration Tests', function () {
           expect(newAtmpt).to.have.property('isPassed', 'Passed');
           done();
         });
+    });
+  });
+  describe('User Attempts Route Integration Tests', function () {
+    describe('GET /attempts/:userID', () => {
+      it('Should retrieve all attempts for a valid user - return 200', done => {
+        chai
+          .request(app)
+          .get(`/attempts/${student._id}`)
+          .end((err, res) => {
+            expect(err).to.be.null;
+            expect(res).to.have.status(200);
+            expect(res.body).to.be.an('array');
+            expect(res.body.length).to.equal(2);
+
+            res.body.forEach((attempt: any) => {
+              expect(attempt.userId.toString()).to.equal(
+                student._id.toString(),
+              );
+            });
+
+            done();
+          });
+      });
+
+      it('Should return 400 for invalid user ID format', done => {
+        const invalidUserId = 'invalid-user-id';
+        chai
+          .request(app)
+          .get(`/attempts/${invalidUserId}`)
+          .end((err, res) => {
+            expect(err).to.be.null;
+            expect(res).to.have.status(400);
+            expect(res.body).to.have.property(
+              'message',
+              'Invalid ObjectId format',
+            );
+            done();
+          });
+      });
+
+      it('Should return 404 for non-existent user', done => {
+        const idNotInDb = new mongoose.Types.ObjectId(
+          '758ec9c4c8b37726e2f2b9c3',
+        );
+        chai
+          .request(app)
+          .get(`/attempts/${idNotInDb}`)
+          .end((err, res) => {
+            expect(err).to.be.null;
+            expect(res).to.have.status(404);
+            expect(res.body).to.have.property('message', 'User not found');
+            done();
+          });
+      });
+
+      it('Should return an empty array for a user with no attempts', async () => {
+        // Create a new user with no attempts
+        const newUserWithNoAttempts = await User.create({
+          ...student,
+          _id: new mongoose.Types.ObjectId(),
+          email: 'no-attempts@example.com',
+          username: 'no-attempts-user',
+        });
+
+        const res = await chai
+          .request(app)
+          .get(`/attempts/${newUserWithNoAttempts._id}`);
+
+        expect(res).to.have.status(200);
+        expect(res.body).to.be.an('array');
+        expect(res.body.length).to.equal(0);
+      });
     });
   });
 

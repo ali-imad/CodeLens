@@ -23,14 +23,16 @@ describe('Attempt Model Unit Tests', () => {
       userId: new mongoose.Types.ObjectId(),
       description: 'Test description',
       generatedCode: 'console.log("test");',
-      feedback: [{
-        input: [1, 2],
-        expectedOutput: 3,
-        actualOutput: 3,
-        passed: Verdict.Passed
-      }] as TestCaseResult[],
+      feedback: [
+        {
+          input: [1, 2],
+          expectedOutput: 3,
+          actualOutput: 3,
+          passed: Verdict.Passed,
+        },
+      ] as TestCaseResult[],
       isPassed: Verdict.Passed,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     const saveStub = sandbox.stub(Attempt.prototype, 'save').resolves(attempt);
@@ -54,14 +56,16 @@ describe('Attempt Model Unit Tests', () => {
       userId: new mongoose.Types.ObjectId(),
       description: 'Test description',
       generatedCode: 'console.log("test");',
-      feedback: [{
-        input: [1, 2],
-        expectedOutput: 3,
-        actualOutput: 3,
-        passed: Verdict.Passed
-      }] as TestCaseResult[],
+      feedback: [
+        {
+          input: [1, 2],
+          expectedOutput: 3,
+          actualOutput: 3,
+          passed: Verdict.Passed,
+        },
+      ] as TestCaseResult[],
       isPassed: Verdict.Passed,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     sandbox.stub(Attempt.prototype, 'save').resolves(attempt);
@@ -86,18 +90,22 @@ describe('Attempt Model Unit Tests', () => {
       userId: new mongoose.Types.ObjectId(),
       description: 'Test description',
       generatedCode: 'console.log("test");',
-      feedback: [{
-        input: [1, 2],
-        expectedOutput: 3,
-        actualOutput: 3,
-        passed: Verdict.Passed
-      }] as TestCaseResult[],
+      feedback: [
+        {
+          input: [1, 2],
+          expectedOutput: 3,
+          actualOutput: 3,
+          passed: Verdict.Passed,
+        },
+      ] as TestCaseResult[],
       isPassed: Verdict.Passed,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     const saveStub = sandbox.stub(Attempt.prototype, 'save').resolves(attempt);
-    const findByIdAndDeleteStub = sandbox.stub(Attempt, 'findByIdAndDelete').resolves(attempt);
+    const findByIdAndDeleteStub = sandbox
+      .stub(Attempt, 'findByIdAndDelete')
+      .resolves(attempt);
     const findByIdStub = sandbox.stub(Attempt, 'findById').resolves(null);
 
     await attempt.save();
@@ -116,14 +124,16 @@ describe('Attempt Model Unit Tests', () => {
       userId: new mongoose.Types.ObjectId(),
       description: 'Test description',
       generatedCode: 'console.log("test");',
-      feedback: [{
-        input: [1, 2],
-        expectedOutput: 3,
-        actualOutput: 3,
-        passed: Verdict.Passed
-      }] as TestCaseResult[],
+      feedback: [
+        {
+          input: [1, 2],
+          expectedOutput: 3,
+          actualOutput: 3,
+          passed: Verdict.Passed,
+        },
+      ] as TestCaseResult[],
       isPassed: Verdict.Passed,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     sandbox.stub(Attempt.prototype, 'save').rejects({
@@ -139,7 +149,9 @@ describe('Attempt Model Unit Tests', () => {
     } catch (error: any) {
       expect(error).to.exist;
       expect(error.errors.problemId).to.exist;
-      expect(error.errors.problemId.message).to.equal('Path `problemId` is required.');
+      expect(error.errors.problemId.message).to.equal(
+        'Path `problemId` is required.',
+      );
     }
   });
 
@@ -160,14 +172,16 @@ describe('Attempt Model Unit Tests', () => {
       userId: user._id,
       description: 'Test description',
       generatedCode: 'console.log("test");',
-      feedback: [{
-        input: [1, 2],
-        expectedOutput: 3,
-        actualOutput: 3,
-        passed: Verdict.Passed
-      }] as TestCaseResult[],
+      feedback: [
+        {
+          input: [1, 2],
+          expectedOutput: 3,
+          actualOutput: 3,
+          passed: Verdict.Passed,
+        },
+      ] as TestCaseResult[],
       isPassed: Verdict.Passed,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     const findByIdStub = sandbox.stub(User, 'findById').resolves(user);
@@ -187,14 +201,16 @@ describe('Attempt Model Unit Tests', () => {
       userId: new mongoose.Types.ObjectId(),
       description: 'Test description',
       generatedCode: 'console.log("test");',
-      feedback: [{
-        input: [1, 2],
-        expectedOutput: 3,
-        actualOutput: 3,
-        passed: Verdict.Passed
-      }] as TestCaseResult[],
+      feedback: [
+        {
+          input: [1, 2],
+          expectedOutput: 3,
+          actualOutput: 3,
+          passed: Verdict.Passed,
+        },
+      ] as TestCaseResult[],
       isPassed: Verdict.Passed,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
 
     sandbox.stub(User, 'findById').resolves(null);

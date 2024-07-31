@@ -25,7 +25,7 @@ if (process.env['DOCKER'] === 'true') {
 
 export let MODEL_NAME = 'codegeneval-llama3';
 if (process.env['MODEL_NAME']) {
-  logger.info('Using model name: '+ process.env['MODEL_NAME']);
+  logger.info('Using model name: ' + process.env['MODEL_NAME']);
   MODEL_NAME = process.env['MODEL_NAME'];
 }
 
