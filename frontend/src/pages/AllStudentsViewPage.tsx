@@ -40,6 +40,7 @@ const AllStudentViewPage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [refreshTable, setRefreshTable] = useState(false);
   const itemsPerPage = 8;
 
   useEffect(() => {
@@ -112,7 +113,7 @@ const AllStudentViewPage: React.FC = () => {
 
     fetchStudents();
     fetchInstructors();
-  }, []);
+  }, [refreshTable]);
 
   useEffect(() => {
     if (selectedInstructor === '') {
@@ -230,6 +231,7 @@ const AllStudentViewPage: React.FC = () => {
         });
       }
 
+      setRefreshTable(true);
       toast.success('Problems assigned successfully', {
         position: 'top-left',
         autoClose: 3000,
@@ -347,6 +349,12 @@ const AllStudentViewPage: React.FC = () => {
     ),
   }));
 
+  useEffect(() => {
+    if (refreshTable) {
+      setRefreshTable(false);
+    }
+  }, [refreshTable]);
+
   return (
     <div className='container mx-auto p-4 m-10'>
       <div className='mb-8'>
@@ -405,7 +413,10 @@ const AllStudentViewPage: React.FC = () => {
       />
       {showAssignModal && (
         <AssignProblemModal
-          onClose={() => setShowAssignModal(false)}
+          onClose={() => {
+            setShowAssignModal(false);
+            setRefreshTable(true);
+          }}
           onAssign={handleAssignProblems}
           students={filteredStudents}
         />
