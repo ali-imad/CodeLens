@@ -58,7 +58,6 @@ const StudentProfilePage: React.FC = () => {
   const [profileOwner, setProfileOwner] = useState<string | null>(null); // username that will be used to decide which profile page to render
 
   const [student, setStudent] = useState<StudentState | null>(null);
-  const [students, setStudents] = useState<StudentState[]>([]);
   const [instructor, setInstructor] = useState<InstructorState | null>(null);
 
   const [completedProblems, setCompletedProblems] = useState<ProblemState[]>(
@@ -90,30 +89,30 @@ const StudentProfilePage: React.FC = () => {
   const itemsPerPage = 5;
 
   const fetchStudent = async () => {
-      if (!profileOwner) return;
+    if (!profileOwner) return;
 
-      try {
-        const { data: student } = await axios.get(
-          `http://localhost:3000/users/students/${profileOwner}`,
-        );
+    try {
+      const { data: student } = await axios.get(
+        `http://localhost:3000/users/students/${profileOwner}`,
+      );
 
-        const getArrayLength = (
-          prop: any[] | string | number | undefined,
-        ): number => (Array.isArray(prop) ? prop.length : 0);
+      const getArrayLength = (
+        prop: any[] | string | number | undefined,
+      ): number => (Array.isArray(prop) ? prop.length : 0);
 
-        const updatedStudent: StudentState = {
-          ...student,
-          username: profileOwner,
-          numberOfAssigned: getArrayLength(student.assignedProblems),
-          numberOfAttempted: getArrayLength(student.attemptedProblems),
-          numberOfCompleted: getArrayLength(student.completedProblems),
-        } as StudentState;
-        setStudent(updatedStudent);
-      } catch (error) {
-        console.error('Error fetching student details:', error);
-      }
-    };
-  
+      const updatedStudent: StudentState = {
+        ...student,
+        username: profileOwner,
+        numberOfAssigned: getArrayLength(student.assignedProblems),
+        numberOfAttempted: getArrayLength(student.attemptedProblems),
+        numberOfCompleted: getArrayLength(student.completedProblems),
+      } as StudentState;
+      setStudent(updatedStudent);
+    } catch (error) {
+      console.error('Error fetching student details:', error);
+    }
+  };
+
   useEffect(() => {
     if (user.role !== 'Instructor') {
       setProfileOwner(user.username); // if accessing as student, use the username of current user
@@ -140,20 +139,20 @@ const StudentProfilePage: React.FC = () => {
       );
 
       setAssignedProblems(
-          updatedProblems.filter(
-            ({ status }) => status === 'Assigned' || status === 'Attempted',
-          ),
-        );
-      } catch (err) {
-        console.error('Error fetching problems:', err);
-      }
-    };
+        updatedProblems.filter(
+          ({ status }) => status === 'Assigned' || status === 'Attempted',
+        ),
+      );
+    } catch (err) {
+      console.error('Error fetching problems:', err);
+    }
+  };
 
   useEffect(() => {
     if (student) {
       fetchProblems(`http://localhost:3000/problems/status/${student._id}`);
     }
-  }, [student?._id]);
+  }, [student, student?._id]);
 
   useEffect(() => {
     const fetchInstructors = async () => {
@@ -289,7 +288,6 @@ const StudentProfilePage: React.FC = () => {
     }
     setSelectedAssignedProblems(newSelectedAssignedProblems);
   };
-
 
   const handleAssign = () => {
     setShowAssignModal(true);
@@ -449,7 +447,7 @@ const StudentProfilePage: React.FC = () => {
             <AssignProblemModal
               onClose={() => setShowAssignModal(false)}
               onAssign={handleAssignProblems}
-              students={students}
+              students={[]}
             />
           )}
           <ToastContainer />
