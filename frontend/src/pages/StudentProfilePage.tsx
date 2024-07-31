@@ -46,13 +46,16 @@ export interface InstructorState {
 }
 
 const StudentProfilePage: React.FC = () => {
-  const { username } = useParams();
+  const { username: givenUsername } = useParams<{ username: string }>(); //username that is passed through url
   const user = {
     image1Url:
       'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE0NTg5fQ',
     image2Url: 'http://localhost:3000/avatar.jpg',
     role: localStorage.getItem('role'),
+    username: localStorage.getItem('username'), // username of current user
   };
+
+  const [profileOwner, setProfileOwner] = useState<string | null>(null); // username that will be used to decide which profile page to render
 
   const [student, setStudent] = useState<StudentState | null>(null);
   const [students, setStudents] = useState<StudentState[]>([]);
@@ -87,32 +90,41 @@ const StudentProfilePage: React.FC = () => {
   const itemsPerPage = 5;
 
   const fetchStudent = async () => {
-    try {
-      const { data: student } = await axios.get(
-        `http://localhost:3000/users/students/${username}`,
-      );
+      if (!profileOwner) return;
 
-      const getArrayLength = (
-        prop: any[] | string | number | undefined,
-      ): number => (Array.isArray(prop) ? prop.length : 0);
+      try {
+        const { data: student } = await axios.get(
+          `http://localhost:3000/users/students/${profileOwner}`,
+        );
 
-      const updatedStudent: StudentState = {
-        ...student,
-        username: username,
-        numberOfAssigned: getArrayLength(student.assignedProblems),
-        numberOfAttempted: getArrayLength(student.attemptedProblems),
-        numberOfCompleted: getArrayLength(student.completedProblems),
-      } as StudentState;
-      setStudent(updatedStudent);
-      setStudents([updatedStudent]);
-    } catch (error) {
-      console.error('Error fetching student details:', error);
+        const getArrayLength = (
+          prop: any[] | string | number | undefined,
+        ): number => (Array.isArray(prop) ? prop.length : 0);
+
+        const updatedStudent: StudentState = {
+          ...student,
+          username: profileOwner,
+          numberOfAssigned: getArrayLength(student.assignedProblems),
+          numberOfAttempted: getArrayLength(student.attemptedProblems),
+          numberOfCompleted: getArrayLength(student.completedProblems),
+        } as StudentState;
+        setStudent(updatedStudent);
+      } catch (error) {
+        console.error('Error fetching student details:', error);
+      }
+    };
+  
+  useEffect(() => {
+    if (user.role !== 'Instructor') {
+      setProfileOwner(user.username); // if accessing as student, use the username of current user
+    } else {
+      setProfileOwner(givenUsername || null); // if accessing as instructor, use the username from the url
     }
-  };
+  }, [givenUsername, user.role, user.username]);
 
   useEffect(() => {
     fetchStudent();
-  }, [student]);
+  }, [profileOwner]);
 
   const fetchProblems = async (url: string) => {
     try {
@@ -141,7 +153,7 @@ const StudentProfilePage: React.FC = () => {
     if (student) {
       fetchProblems(`http://localhost:3000/problems/status/${student._id}`);
     }
-  }, [student]);
+  }, [student?._id]);
 
   useEffect(() => {
     const fetchInstructors = async () => {
