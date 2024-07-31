@@ -27,6 +27,13 @@ const CustomTable = <T extends Record<string, any>>({
   sortBy,
   sortOrder,
 }: CustomTableProps<T>) => {
+  const problemTitleManagement =
+    'Instructor' === localStorage.getItem('role')
+      ? data
+      : data.map((item, index: number) => ({
+          ...item,
+          title: `Problem ${index + 1}`,
+        }));
   return (
     <table className='min-w-full bg-white text-center'>
       <thead>
@@ -58,8 +65,8 @@ const CustomTable = <T extends Record<string, any>>({
         </tr>
       </thead>
       <tbody>
-        {data.length > 0 ? (
-          data.map(item => (
+        {problemTitleManagement.length > 0 ? (
+          problemTitleManagement.map(item => (
             <tr
               key={item['_id']}
               className={selectedItems.has(item['_id']) ? 'bg-gray-200' : ''}
