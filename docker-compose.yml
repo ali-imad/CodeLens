@@ -1,0 +1,52 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      args:
+        COMMAND: ${COMMAND:-prod}
+    container_name: server_codelens
+    ports:
+      - '3000:3000'
+      - '8080:8080'
+    command: ['sh', '-c', 'npm run ${COMMAND:-prod}']
+    environment:
+      - MONGODB_URI=
+      - PORT=3000
+      - JWT_SECRET=
+      - NODE_ENV=dev
+      - DOCKER=true
+      - MODEL_NAME=codegeneval-llama3
+      - LOG_LEVEL=info
+    volumes:
+      - ./backend/reports:/app/reports
+    stdin_open: true
+    tty: true
+
+  frontend:
+    build: ./frontend
+    container_name: client_codelens
+    ports:
+      - '5173:5173'
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:3000
+    stdin_open: true
+    tty: true
+
+  ollama:
+    container_name: ollama_service
+    environment:
+      MODEL_FILE: ${MODEL_FILE:-LLMEngine.txt}
+      MODEL_NAME: ${MODEL_NAME:-codegeneval-llama3}
+      BASE_MODEL_NAME: ${BASE_MODEL_NAME:-llama3}
+    build:
+      context: ./llm
+      dockerfile: Dockerfile
+    ports:
+      - '11434:11434'
+    volumes:
+      - ${OLLAMA_PATH:-~/.ollama}:/root/.ollama
+      - ./llm:/llm
+    pull_policy: always
+    tty: true
+    restart: unless-stopped
+    entrypoint: ['/usr/bin/bash', '/llm/make_model.sh']
